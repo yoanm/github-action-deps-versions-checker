@@ -83,7 +83,7 @@ export class GithubPushBehavior implements Behavior {
         );
 
         if (lockFile === undefined) {
-            logger.info(this.packageManager.getLockFilename() + ' not updated on between base and head commits !');
+            logger.info(`${this.packageManager.getLockFilename()} not updated on between ${this.baseCommitSha.substr(0, 7)} and ${this.headCommitSha.substr(0, 7)} ...`);
         }
 
         return lockFile !== undefined;
