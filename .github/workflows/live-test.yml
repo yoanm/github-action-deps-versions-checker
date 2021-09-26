@@ -5,6 +5,10 @@ on: # rebuild any PRs and main branch changes
     branches:
       - master
 
+concurrency:
+  group: "Live-test-${{ github.head_ref }}"
+  cancel-in-progress: true
+
 jobs:
   main: # make sure the action works on a clean machine without building
     name: "Ensure action is working on a clean machine without building"

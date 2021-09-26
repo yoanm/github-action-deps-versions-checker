@@ -5,6 +5,10 @@ on: # rebuild any PRs and main branch changes
     branches:
       - master
 
+concurrency:
+  group: "CI-${{ github.head_ref }}"
+  cancel-in-progress: true
+
 jobs:
   main:
     name: "Tests"
@@ -16,5 +20,7 @@ jobs:
         run: yarn install
       - name: "Compile"
         run: npm run compile
+      - name: "Detect forgotten compilation before push"
+        run: test -z "$(git diff --name-only dist/)"
       - name: "Lint"
         run: npm run lint

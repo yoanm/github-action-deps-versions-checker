@@ -4,7 +4,7 @@ exports.commentPkgTypeFactory = exports.COMMENT_COMMIT_REGEXP = exports.COMMENT_
 const sections_1 = require("./sections");
 const utils_1 = require("./utils");
 exports.COMMENT_HEADER = '<!-- packagesVersionsChecker -->';
-exports.COMMENT_COMMIT_REGEXP = '<\!\-\- commit="([^"]+)" \-\->';
+exports.COMMENT_COMMIT_REGEXP = '<!-- commit="([^"]+)" -->';
 const commentPkgTypeFactory = (packageManagerType) => `<!-- type="${packageManagerType}" -->`;
 exports.commentPkgTypeFactory = commentPkgTypeFactory;
 function createBody(packageManagerType, commit, packagesDiff) {
