@@ -4,11 +4,10 @@ on: # rebuild any PRs and main branch changes
   push:
     branches:
       - master
-      - 'releases/*'
 
 jobs:
   main:
-    name: "Test"
+    name: "Tests"
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout"
