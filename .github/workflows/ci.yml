@@ -16,5 +16,7 @@ jobs:
         run: yarn install
       - name: "Compile"
         run: npm run compile
+      - name: "Detect forgotten compilation before push"
+        run: test -z "$(git diff dist --name-only | wc -l)"
       - name: "Lint"
         run: npm run lint
