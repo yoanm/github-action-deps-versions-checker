@@ -17,6 +17,6 @@ jobs:
       - name: "Compile"
         run: npm run compile
       - name: "Detect forgotten compilation before push"
-        run: test -z "$(git diff dist --name-only | wc -l)"
+        run: test -z "$(git diff --name-only dist/)"
       - name: "Lint"
         run: npm run lint
