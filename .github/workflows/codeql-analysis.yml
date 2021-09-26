@@ -14,8 +14,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  analyze:
-    name: Analyze
+  codeql-analyse:
+    name: CodeQl Analyze
     runs-on: ubuntu-latest
     permissions:
       actions: read
