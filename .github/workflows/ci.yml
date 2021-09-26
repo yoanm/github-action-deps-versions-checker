@@ -1,4 +1,4 @@
-name: 'github-action-test'
+name: 'CI'
 on: # rebuild any PRs and main branch changes
   pull_request:
   push:
@@ -7,8 +7,8 @@ on: # rebuild any PRs and main branch changes
       - 'releases/*'
 
 jobs:
-  ci:
-    name: "CI"
+  test:
+    name: "Test"
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout"
