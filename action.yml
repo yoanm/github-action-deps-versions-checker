@@ -1,11 +1,38 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Index packages versions checker'
+branding:
+  icon: 'package'
+  color: 'orange'
+description: |
+  In case lock file is updated, action will output versions differences as PR comment
+  Action requires at least following permissions:
+   - "pull-requests: write": Used to know if lock file has been updated or not and manage result comment
+     - In case you set `post-results` at `false`, read access is enough (`pull-requests: read`)
+   - "contents: read": Used to fetch old and current package manager files
 inputs:
-  milliseconds: # change this
+  gh-token:
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+    description: |
+      Github token used to fetch PR data from github API.
+      See action description for minimal permission requirements
+  manager:
+    required: true
+    description: 'Which package manager to assess (Available: \"composer\")'
+  context:
+    required: true
+    description: "Whether it's PR or tag event (Available: \"PR\")"
+    default: "PR"
+  post-results:
+    required: true
+    description: "Whether to post results as comment (\"true\" | \"false\")"
+    default: "true"
+  force:
+    required: false
+    description: "Force assessment even if no change occurred since last comment (Useful only for PRs and mostly if you need to rely on action output)"
+    default: "false"
+outputs:
+  diff:
+    description: "List of packages with version differences. See PackageVersionDiff type for more information"
 runs:
   using: 'node12'
+  pre: 'bin/configure.js'
   main: 'dist/index.js'
