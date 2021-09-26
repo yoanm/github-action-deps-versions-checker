@@ -44,7 +44,6 @@ async function run(): Promise<void> {
     logger.error(error instanceof Error ? error : `Unknown error ! ${error}`);
     core.setFailed("An error occurred ! See log above.");
   }
-  // useles - to remove
 }
 
 run();
