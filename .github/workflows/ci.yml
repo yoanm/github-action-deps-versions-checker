@@ -10,8 +10,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  main:
-    name: "Tests"
+  ci-tests:
+    name: "CI tests"
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout"
