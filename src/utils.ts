@@ -4,18 +4,19 @@ import {PackageManagerType} from "PackageManager";
 import {GithubPRBehavior} from "./behavior/GithubPRBehavior";
 import logger from "./logger";
 import Composer from "./PackageManager/Composer";
+import {GithubPushBehavior} from "./behavior/GithubPushBehavior";
 
 export function behaviorFactory(
-    contextType: string,
+    event_name: string,
     repositoryData: PayloadRepository,
     webHookPayload: WebhookPayload,
     packageManagerType: PackageManagerType,
     postResults: boolean,
     force: boolean,
 ): Behavior {
-  switch (contextType) {
-    case 'PR':
-      logger.debug('Using PR behavior!');
+  switch (event_name) {
+    case 'pull_request':
+      logger.debug(`Using PR behavior for PR #${webHookPayload.number}`);
       if (webHookPayload.pull_request === undefined) {
         throw new Error('Pull Request context is undefined !');
       }
@@ -27,9 +28,23 @@ export function behaviorFactory(
           postResults,
           force,
       );
+    case 'push':
+      logger.debug(`Using push behavior for ref ${webHookPayload.ref}`);
+      if (webHookPayload.before === undefined || webHookPayload.after === undefined) {
+        throw new Error('before and after commit must exist !');
+      }
+      return new GithubPushBehavior(
+          repositoryData.owner.login,
+          repositoryData.name,
+          webHookPayload.before,
+          webHookPayload.after,
+          packageManagerType,
+          postResults,
+          force,
+      );
   }
 
-  throw new Error('Context type "'+contextType+'" is not supported !');
+  throw new Error('Context type "'+event_name+'" is not supported !');
 }
 
 export function packageManagerFactory(packageManagerType: PackageManagerType): Composer {

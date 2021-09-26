@@ -10,7 +10,8 @@
 ### Append results as PR comment
 ```
 name: 'Append PR extra infos'
-on: pull_request
+on: 
+  pull_request: [ synchronize ]
 jobs:
   main:
     name: "Composer package updates"
@@ -34,7 +35,8 @@ jobs:
 
 ```
 name: 'Append PR extra infos'
-on: pull_request
+on: 
+  pull_request: [ synchronize ]
 jobs:
   main:
     name: "Composer package updates"
@@ -70,7 +72,6 @@ It's not mandatory to define `permissions`, but it increases your repository sec
 _Check `action.yml` file for more information about inputs_
 - `gh-token` **Required**
 - `manager` **Required**
-- `context` **Default to `PR`**
 - `post-results` **Default to `true`**
 - `force` **Default to `false`**
 
