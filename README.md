@@ -10,7 +10,8 @@
 ### Append results as PR comment
 ```
 name: 'Append PR extra infos'
-on: pull_request
+on: 
+  pull_request: [ synchronize ]
 jobs:
   main:
     name: "Composer package updates"
@@ -34,7 +35,8 @@ jobs:
 
 ```
 name: 'Append PR extra infos'
-on: pull_request
+on: 
+  pull_request: [ synchronize ]
 jobs:
   main:
     name: "Composer package updates"
