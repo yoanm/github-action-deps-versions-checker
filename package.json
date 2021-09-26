@@ -21,7 +21,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "compile": "rm -rf dist && tsc"
+    "compile": "rm -rf dist && tsc",
+    "lint": "eslint src/**/*.ts"
   },
   "repository": {
     "type": "git",
