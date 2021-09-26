@@ -1,11 +1,11 @@
 {
-  "name": "github-action-composer-pkg-versions-checker",
+  "name": "github-action-deps-versions-checker",
   "author": "Yoanm",
   "dependencies": {
     "@actions/core": "^1.5.0",
     "@actions/github": "^5.0.0"
   },
-  "description": "Github",
+  "description": "Github action to check deps versions",
   "version": "1.0.0",
   "main": "jest.config.js",
   "devDependencies": {
@@ -26,7 +26,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yoanm/github-action-composer-pkg-versions-checker.git"
+    "url": "git+https://github.com/yoanm/github-action-deps-versions-checker.git"
   },
   "keywords": [
     "actions",
@@ -35,7 +35,7 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/yoanm/github-action-composer-pkg-versions-checker/issues"
+    "url": "https://github.com/yoanm/github-action-deps-versions-checker/issues"
   },
-  "homepage": "https://github.com/yoanm/github-action-composer-pkg-versions-checker#readme"
+  "homepage": "https://github.com/yoanm/github-action-deps-versions-checker#readme"
 }
