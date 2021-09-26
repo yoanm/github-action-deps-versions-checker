@@ -31,12 +31,16 @@ export function behaviorFactory(
     case 'push':
       logger.debug(`Using push behavior for ref ${webHookPayload.ref}`);
       const tagMatch = webHookPayload.ref?.match(/^refs\/tags\/(v?\d+(?:\.\d+)?(?:\.\d+)?)$/);
-      if (!tagMatch || tagMatch[0]?.length <= 0 || webHookPayload.sha?.length <= 0) {
-        throw new Error('Only semver tags with a commit associated are managed !');
+      if (!tagMatch || tagMatch[0]?.length <= 0) {
+        throw new Error('Only semver tags are managed !');
       }
 
       if (webHookPayload.created !== true) {
         throw new Error('Only newly created tags are managed');
+      }
+
+      if (webHookPayload.sha?.length <= 0) {
+        throw new Error('Tag must have a commit attached !');
       }
 
       return new GithubPushTagBehavior(
