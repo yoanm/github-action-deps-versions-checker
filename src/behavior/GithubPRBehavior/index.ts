@@ -22,15 +22,11 @@ export class GithubPRBehavior implements Behavior{
     constructor(
         repositoryOwner: string,
         repositoryName: string,
-        payload: WebhookPayload['pull_request'],
+        payload: NonNullable<WebhookPayload['pull_request']>,
         packageManagerType: PackageManagerType,
         postResults: boolean,
         force: boolean,
     ) {
-        if (undefined === payload) {
-            throw new Error('Pull Request context is undefined !');
-        }
-
         this.prId = payload.number;
         this.baseCommitSha = payload.base.sha;
         this.headCommitSha = payload.head.sha;

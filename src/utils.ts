@@ -16,6 +16,9 @@ export function behaviorFactory(
   switch (contextType) {
     case 'PR':
       logger.debug('Using PR behavior!');
+      if (webHookPayload.pull_request === undefined) {
+        throw new Error('Pull Request context is undefined !');
+      }
       return new GithubPRBehavior(
           repositoryData.owner.login,
           repositoryData.name,

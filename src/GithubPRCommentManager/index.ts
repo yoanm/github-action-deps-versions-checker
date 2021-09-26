@@ -28,31 +28,29 @@ export class GithubPRCommentManager {
     }
 
     public async getPrevious(): Promise<Comment & { commitRef: string } | undefined> {
-        if (!this.postResults) {
-            return undefined;
-        }
         if (this.previousComment === null) {
-            logger.debug('Loading previous comment ...');
-            const comment = await getLastCommentMatching(
-                this.repositoryOwner,
-                this.repositoryName,
-                this.prId,
-                new RegExp(
-                    '^'
-                    +COMMENT_HEADER.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
-                    +commentPkgTypeFactory(this.packageManagerType)
-                ),
-            );
+            this.previousComment = undefined;
+            if (this.postResults) {
+                logger.debug('Loading previous comment ...');
+                const comment = await getLastCommentMatching(
+                    this.repositoryOwner,
+                    this.repositoryName,
+                    this.prId,
+                    new RegExp(
+                        '^'
+                        + COMMENT_HEADER.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
+                        + commentPkgTypeFactory(this.packageManagerType)
+                    ),
+                );
 
-            const match = comment?.body?.match(new RegExp(COMMENT_COMMIT_REGEXP));
+                const match = comment?.body?.match(new RegExp(COMMENT_COMMIT_REGEXP));
 
-            if (!comment || !match) {
-                this.previousComment = undefined;
-            } else {
-                this.previousComment = {
-                    ...comment,
-                    commitRef: match[1],
-                };
+                if (comment && match) {
+                    this.previousComment = {
+                        ...comment,
+                        commitRef: match[1],
+                    };
+                }
             }
         }
 

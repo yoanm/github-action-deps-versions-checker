@@ -258,7 +258,7 @@ export default class PackageVersionDiffListCreator<
             return parseInt(before) > parseInt(after)
                 ? 'DOWN'
                 : 'UP'
-                ;
+            ;
         }
     }
 

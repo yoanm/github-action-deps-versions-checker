@@ -16,8 +16,6 @@ export class GithubFileManager {
     }
 
     public async getPRFile(filename: string, prNumber: number, fileStatusFilter: string[] | undefined = undefined): Promise<File | undefined> {
-        // Get updated files from PR and not from last commit !
-        // action has to be executed if any commit from the PR update the file, not only the last commit
         const file = await getPRFile(
             this.repositoryOwner,
             this.repositoryName,
