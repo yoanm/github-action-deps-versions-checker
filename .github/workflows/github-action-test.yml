@@ -1,4 +1,4 @@
-name: 'github-action-test'
+name: 'live-test'
 on: # rebuild any PRs and main branch changes
   pull_request:
   push:
@@ -7,7 +7,7 @@ on: # rebuild any PRs and main branch changes
       - 'releases/*'
 
 jobs:
-  live-test: # make sure the action works on a clean machine without building
+  main: # make sure the action works on a clean machine without building
     name: "Ensure action is working on a clean machine without building"
     runs-on: ubuntu-latest
     steps:

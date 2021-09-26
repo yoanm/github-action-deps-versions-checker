@@ -1,5 +1,5 @@
 <p align="center">
-    <a href="https://github.com/yoanm/github-action-deps-versions-checker/actions/workflows/github-action-test.yml?query=event%3Apush"><img alt="typescript-action status" src="https://github.com/yoanm/github-action-deps-versions-checker/actions/workflows/github-action-test.yml/badge.svg?event=push"></a>
+    <a href="https://github.com/yoanm/github-action-deps-versions-checker/actions/workflows/live-test.yml?query=event%3Apush"><img alt="typescript-action status" src="https://github.com/yoanm/github-action-deps-versions-checker/actions/workflows/live-test.yml/badge.svg?event=push"></a>
     <a href="https://github.com/yoanm/github-action-deps-versions-checker/actions/workflows/ci.yml?query=event%3Apush"><img alt="typescript-action status" src="https://github.com/yoanm/github-action-deps-versions-checker/actions/workflows/ci.yml/badge.svg?event=push"></a>
 </p>
 

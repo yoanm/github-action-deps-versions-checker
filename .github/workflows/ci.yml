@@ -7,7 +7,7 @@ on: # rebuild any PRs and main branch changes
       - 'releases/*'
 
 jobs:
-  test:
+  main:
     name: "Test"
     runs-on: ubuntu-latest
     steps:
