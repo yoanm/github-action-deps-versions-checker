@@ -3,17 +3,13 @@ branding:
   icon: 'package'
   color: 'orange'
 description: |
-  In case lock file is updated, action will output versions differences as PR comment
-  Action requires at least following permissions:
-   - "pull-requests: write": Used to know if lock file has been updated or not and manage result comment
-     - In case you set `post-results` at `false`, read access is enough (`pull-requests: read`)
-   - "contents: read": Used to fetch old and current package manager files
+  In case lock file is updated, action will output versions differences as comment
 inputs:
   gh-token:
     required: true
     description: |
-      Github token used to fetch PR data from github API.
-      See action description for minimal permission requirements
+      Github token used to fetch data from github API.
+      See Readme for minimal permission requirements
   manager:
     required: true
     description: 'Which package manager to assess (Available: \"composer\")'
