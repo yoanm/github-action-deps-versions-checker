@@ -5,7 +5,7 @@
     "@actions/core": "^1.5.0",
     "@actions/github": "^5.0.0"
   },
-  "description": "<p align=\"center\">   <a href=\"https://github.com/actions/typescript-action/actions\"><img alt=\"typescript-action status\" src=\"https://github.com/actions/typescript-action/workflows/build-test/badge.svg\"></a> </p>",
+  "description": "Github",
   "version": "1.0.0",
   "main": "jest.config.js",
   "devDependencies": {
@@ -27,8 +27,12 @@
     "type": "git",
     "url": "git+https://github.com/yoanm/github-action-composer-pkg-versions-checker.git"
   },
-  "keywords": [],
-  "license": "ISC",
+  "keywords": [
+    "actions",
+    "check",
+    "dependency"
+  ],
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/yoanm/github-action-composer-pkg-versions-checker/issues"
   },

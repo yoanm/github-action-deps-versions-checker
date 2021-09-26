@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/actions/typescript-action/actions"><img alt="typescript-action status" src="https://github.com/actions/typescript-action/workflows/build-test/badge.svg"></a>
+  <a href="https://github.com/yoanm/github-action-deps-versions-checker/actions"><img alt="typescript-action status" src="https://github.com/yoanm/github-action-deps-versions-checker/workflows/github-action-test/badge.svg"></a>
 </p>
 
 # Create a JavaScript Action using TypeScript
