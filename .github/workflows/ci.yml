@@ -1,0 +1,20 @@
+name: 'CI'
+on: # rebuild any PRs and main branch changes
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  main:
+    name: "Tests"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v2
+      - name: "Install"
+        run: yarn install
+      - name: "Compile"
+        run: npm run compile
+      - name: "Lint"
+        run: npm run lint

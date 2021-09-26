@@ -1,0 +1,21 @@
+name: 'live-test'
+on: # rebuild any PRs and main branch changes
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  main: # make sure the action works on a clean machine without building
+    name: "Ensure action is working on a clean machine without building"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout current code"
+        uses: actions/checkout@v2
+      - name: "Configure action"
+        run: node bin/configure.js # Mandatory as `pre` execution is not supported for local action
+      - name: "Execute action for composer"
+        uses: ./
+        with:
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          manager: composer
