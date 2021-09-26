@@ -4,6 +4,7 @@ import {PackageManagerType} from "PackageManager";
 import {GithubPRBehavior} from "./behavior/GithubPRBehavior";
 import logger from "./logger";
 import Composer from "./PackageManager/Composer";
+import {GithubPushBehavior} from "./behavior/GithubPushBehavior";
 
 export function behaviorFactory(
     event_name: string,
@@ -15,7 +16,7 @@ export function behaviorFactory(
 ): Behavior {
   switch (event_name) {
     case 'pull_request':
-      logger.debug('Using PR behavior!');
+      logger.debug(`Using PR behavior for PR #${webHookPayload.number}`);
       if (webHookPayload.pull_request === undefined) {
         throw new Error('Pull Request context is undefined !');
       }
@@ -23,6 +24,20 @@ export function behaviorFactory(
           repositoryData.owner.login,
           repositoryData.name,
           webHookPayload.pull_request,
+          packageManagerType,
+          postResults,
+          force,
+      );
+    case 'push':
+      logger.debug(`Using push behavior for ref ${webHookPayload.ref}`);
+      if (webHookPayload.before === undefined || webHookPayload.after === undefined) {
+        throw new Error('before and after commit must exist !');
+      }
+      return new GithubPushBehavior(
+          repositoryData.owner.login,
+          repositoryData.name,
+          webHookPayload.before,
+          webHookPayload.after,
           packageManagerType,
           postResults,
           force,

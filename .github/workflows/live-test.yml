@@ -1,10 +1,13 @@
 name: 'live-test'
 on: # rebuild any PRs and main branch changes
   pull_request:
+    types: [ synchronize ]
   push:
     branches:
       - master
       - manage-release
+    tags:
+      - v*
   schedule:
     - cron: '36 9 1 * *'
 

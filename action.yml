@@ -13,10 +13,6 @@ inputs:
   manager:
     required: true
     description: 'Which package manager to assess (Available: \"composer\")'
-  context:
-    required: true
-    description: "Whether it's PR or tag event (Available: \"PR\")"
-    default: "PR"
   post-results:
     required: true
     description: "Whether to post results as comment (\"true\" | \"false\")"

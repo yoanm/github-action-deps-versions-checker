@@ -70,7 +70,6 @@ It's not mandatory to define `permissions`, but it increases your repository sec
 _Check `action.yml` file for more information about inputs_
 - `gh-token` **Required**
 - `manager` **Required**
-- `context` **Default to `PR`**
 - `post-results` **Default to `true`**
 - `force` **Default to `false`**
 
