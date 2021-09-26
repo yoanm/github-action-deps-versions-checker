@@ -14,7 +14,7 @@ jobs:
       - name: "Checkout"
         uses: actions/checkout@v2
       - name: "Install"
-        run: yorn install
+        run: yarn install
       - name: "Compile"
         run: npm run compile
       - name: "Lint"
