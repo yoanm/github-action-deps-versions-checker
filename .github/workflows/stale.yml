@@ -19,6 +19,7 @@ jobs:
     - uses: actions/stale@v3
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
+        exempt-draft-pr: true
         days-before-issue-stale: 30
         days-before-pr-stale: 15
         stale-issue-message: 'Issue marked as staled, will be closed in 30 days'
