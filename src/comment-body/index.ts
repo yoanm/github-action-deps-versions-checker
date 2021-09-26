@@ -17,7 +17,7 @@ import {
 import {isDiffTypeFilter} from "./utils";
 
 export const COMMENT_HEADER = '<!-- packagesVersionsChecker -->';
-export const COMMENT_COMMIT_REGEXP = '<\!\-\- commit="([^"]+)" \-\->';
+export const COMMENT_COMMIT_REGEXP = '<!-- commit="([^"]+)" -->';
 export const commentPkgTypeFactory = (packageManagerType: PackageManagerType): string => `<!-- type="${packageManagerType}" -->`;
 
 export default function createBody(packageManagerType: PackageManagerType, commit: string, packagesDiff: PackageVersionDiff[]): string {
