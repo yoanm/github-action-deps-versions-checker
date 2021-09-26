@@ -61,7 +61,7 @@ class GithubPushBehavior {
     }
     shouldCreateDiff() {
         return __awaiter(this, void 0, void 0, function* () {
-            logger_1.default.debug('Checking if lock file has been updated on PR ...');
+            logger_1.default.debug(`Checking if lock file has been updated between ${this.baseCommitSha.substr(0, 7)} and ${this.headCommitSha.substr(0, 7)} ...`);
             const lockFile = yield this.githubFileManager.getFileBetween(this.packageManager.getLockFilename(), this.baseCommitSha, this.headCommitSha, ['modified', 'added', 'removed']);
             if (lockFile === undefined) {
                 logger_1.default.info(this.packageManager.getLockFilename() + ' not updated on that PR !');

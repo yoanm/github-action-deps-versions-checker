@@ -73,7 +73,7 @@ export class GithubPushBehavior implements Behavior {
     }
 
     protected  async shouldCreateDiff(): Promise<boolean> {
-        logger.debug('Checking if lock file has been updated on PR ...');
+        logger.debug(`Checking if lock file has been updated between ${this.baseCommitSha.substr(0,7)} and ${this.headCommitSha.substr(0,7)} ...`);
         const lockFile: File | undefined = await this.githubFileManager.getFileBetween(
             this.packageManager.getLockFilename(),
             this.baseCommitSha,
