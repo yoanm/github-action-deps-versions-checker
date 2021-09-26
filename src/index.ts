@@ -16,10 +16,6 @@ async function run(): Promise<void> {
       required: true,
       trimWhitespace: true,
     }) as PackageManagerType;
-    const contextType = getInput("context", {
-      required: true,
-      trimWhitespace: true,
-    });
     const postResults = getBooleanInput("post-results", {
       required: true,
       trimWhitespace: true,
@@ -29,8 +25,10 @@ async function run(): Promise<void> {
       trimWhitespace: true,
     });
 
+    console.log(JSON.stringify(context));
+
     const behavior = behaviorFactory(
-      contextType,
+      context.eventName,
       repositoryData,
       context.payload,
       packageManagerType,

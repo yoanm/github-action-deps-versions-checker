@@ -6,15 +6,15 @@ import logger from "./logger";
 import Composer from "./PackageManager/Composer";
 
 export function behaviorFactory(
-    contextType: string,
+    event_name: string,
     repositoryData: PayloadRepository,
     webHookPayload: WebhookPayload,
     packageManagerType: PackageManagerType,
     postResults: boolean,
     force: boolean,
 ): Behavior {
-  switch (contextType) {
-    case 'PR':
+  switch (event_name) {
+    case 'pull_request':
       logger.debug('Using PR behavior!');
       if (webHookPayload.pull_request === undefined) {
         throw new Error('Pull Request context is undefined !');
@@ -29,7 +29,7 @@ export function behaviorFactory(
       );
   }
 
-  throw new Error('Context type "'+contextType+'" is not supported !');
+  throw new Error('Context type "'+event_name+'" is not supported !');
 }
 
 export function packageManagerFactory(packageManagerType: PackageManagerType): Composer {
