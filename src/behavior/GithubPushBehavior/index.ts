@@ -61,6 +61,7 @@ export class GithubPushBehavior implements Behavior {
         return [];
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public async manageDiffNotification(packagesDiff: PackageVersionDiff[]): Promise<void> {
         return;
         /*
@@ -82,7 +83,7 @@ export class GithubPushBehavior implements Behavior {
         );
 
         if (lockFile === undefined) {
-            logger.info(this.packageManager.getLockFilename() + ' not updated on that PR !');
+            logger.info(this.packageManager.getLockFilename() + ' not updated on between base and head commits !');
         }
 
         return lockFile !== undefined;
