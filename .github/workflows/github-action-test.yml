@@ -11,7 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: node bin/configure.js
+      - run: node bin/configure.js # Mandatory as `pre` execution is not supported for local action
       - uses: ./
         with:
-          milliseconds: 1000
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          manager: composer
