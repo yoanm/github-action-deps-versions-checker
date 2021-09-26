@@ -4,7 +4,7 @@ import {PackageManagerType} from "PackageManager";
 import {GithubPRBehavior} from "./behavior/GithubPRBehavior";
 import logger from "./logger";
 import Composer from "./PackageManager/Composer";
-import {GithubPushBehavior} from "./behavior/GithubPushBehavior";
+import {GithubPushTagBehavior} from "./behavior/GithubPushTagBehavior";
 
 export function behaviorFactory(
     event_name: string,
@@ -30,14 +30,19 @@ export function behaviorFactory(
       );
     case 'push':
       logger.debug(`Using push behavior for ref ${webHookPayload.ref}`);
-      if (webHookPayload.before === undefined || webHookPayload.after === undefined) {
-        throw new Error('before and after commit must exist !');
+      const tagMatch = webHookPayload.ref?.match(/^refs\/tags\/(v?\d+(?:\.\d+)?(?:\.\d+)?)$/);
+      if (!tagMatch || tagMatch[0]?.length <= 0 || webHookPayload.sha?.length <= 0) {
+        throw new Error('Only semver tags with a commit associated are managed !');
       }
-      return new GithubPushBehavior(
+
+      if (webHookPayload.created !== true) {
+        throw new Error('Only newly created tags are managed');
+      }
+
+      return new GithubPushTagBehavior(
           repositoryData.owner.login,
           repositoryData.name,
-          webHookPayload.before,
-          webHookPayload.after,
+          webHookPayload.sha,
           packageManagerType,
           postResults,
           force,
@@ -57,3 +62,48 @@ export function packageManagerFactory(packageManagerType: PackageManagerType): C
   throw new Error(`Package manager type "${packageManagerType}" is not supported !`);
 }
 
+export const escapeRegex = (regex: string): string => regex.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+
+export function listPossiblePreviousSemver(release: string): string[];
+export function listPossiblePreviousSemver(release: string, asRegex: false): string[];
+export function listPossiblePreviousSemver(release: string, asRegex: true): RegExp[];
+
+export function listPossiblePreviousSemver(tag: string, asRegex: true | false = false): (string|RegExp)[] {
+
+  const matches = tag.match(/(v?)(\d+)(?:\.(\d+))?(?:\.(\d+))?$/);
+
+  if (matches && matches[1]?.length) {
+    const header = matches[0].trim();
+    const major = parseInt(matches[1]);
+    const minor = matches[2]?.length > 0 ? parseInt(matches[2]) :  undefined;
+    const patch = matches[3]?.length > 0 ? parseInt(matches[3]) :  undefined;
+    const tmpList: string[][] = [
+      [], // vX.Y.Z versions
+      [], // vX.Y versions
+      [], // vX versions
+    ];
+
+    if (patch && (patch - 1) >= 0) {
+      tmpList[0].push(`${header}${major}.${minor}.${patch - 1}`);
+    }
+
+    if (minor && (minor - 1) >= 0) {
+      tmpList[0].push(`${header}${major}.${minor - 1}.0`);
+      tmpList[1].push(`${header}${major}.${minor - 1}`);
+    }
+
+    if ((major - 1) >= 0) {
+      tmpList[0].push(`${header}${major - 1}.0.0`);
+      tmpList[1].push(`${header}${major - 1}.0`);
+      tmpList[2].push(`${header}${major - 1}`);
+    }
+
+    if (asRegex) {
+      return tmpList.flat().map(item => new RegExp(`/^${escapeRegex(item)}/`));
+    }
+
+    return tmpList.flat();
+  }
+
+  return [];
+}

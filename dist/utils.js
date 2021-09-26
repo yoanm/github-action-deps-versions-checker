@@ -3,12 +3,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.packageManagerFactory = exports.behaviorFactory = void 0;
+exports.listPossiblePreviousSemver = exports.escapeRegex = exports.packageManagerFactory = exports.behaviorFactory = void 0;
 const GithubPRBehavior_1 = require("./behavior/GithubPRBehavior");
 const logger_1 = __importDefault(require("./logger"));
 const Composer_1 = __importDefault(require("./PackageManager/Composer"));
-const GithubPushBehavior_1 = require("./behavior/GithubPushBehavior");
+const GithubPushTagBehavior_1 = require("./behavior/GithubPushTagBehavior");
 function behaviorFactory(event_name, repositoryData, webHookPayload, packageManagerType, postResults, force) {
+    var _a, _b, _c;
     switch (event_name) {
         case 'pull_request':
             logger_1.default.debug(`Using PR behavior for PR #${webHookPayload.number}`);
@@ -18,10 +19,14 @@ function behaviorFactory(event_name, repositoryData, webHookPayload, packageMana
             return new GithubPRBehavior_1.GithubPRBehavior(repositoryData.owner.login, repositoryData.name, webHookPayload.pull_request, packageManagerType, postResults, force);
         case 'push':
             logger_1.default.debug(`Using push behavior for ref ${webHookPayload.ref}`);
-            if (webHookPayload.before === undefined || webHookPayload.after === undefined) {
-                throw new Error('before and after commit must exist !');
+            const tagMatch = (_a = webHookPayload.ref) === null || _a === void 0 ? void 0 : _a.match(/^refs\/tags\/(v?\d+(?:\.\d+)?(?:\.\d+)?)$/);
+            if (!tagMatch || ((_b = tagMatch[0]) === null || _b === void 0 ? void 0 : _b.length) <= 0 || ((_c = webHookPayload.sha) === null || _c === void 0 ? void 0 : _c.length) <= 0) {
+                throw new Error('Only semver tags with a commit associated are managed !');
             }
-            return new GithubPushBehavior_1.GithubPushBehavior(repositoryData.owner.login, repositoryData.name, webHookPayload.before, webHookPayload.after, packageManagerType, postResults, force);
+            if (webHookPayload.created !== true) {
+                throw new Error('Only newly created tags are managed');
+            }
+            return new GithubPushTagBehavior_1.GithubPushTagBehavior(repositoryData.owner.login, repositoryData.name, webHookPayload.sha, packageManagerType, postResults, force);
     }
     throw new Error('Context type "' + event_name + '" is not supported !');
 }
@@ -35,3 +40,38 @@ function packageManagerFactory(packageManagerType) {
     throw new Error(`Package manager type "${packageManagerType}" is not supported !`);
 }
 exports.packageManagerFactory = packageManagerFactory;
+const escapeRegex = (regex) => regex.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+exports.escapeRegex = escapeRegex;
+function listPossiblePreviousSemver(tag, asRegex = false) {
+    var _a, _b, _c;
+    const matches = tag.match(/(v?)(\d+)(?:\.(\d+))?(?:\.(\d+))?$/);
+    if (matches && ((_a = matches[1]) === null || _a === void 0 ? void 0 : _a.length)) {
+        const header = matches[0].trim();
+        const major = parseInt(matches[1]);
+        const minor = ((_b = matches[2]) === null || _b === void 0 ? void 0 : _b.length) > 0 ? parseInt(matches[2]) : undefined;
+        const patch = ((_c = matches[3]) === null || _c === void 0 ? void 0 : _c.length) > 0 ? parseInt(matches[3]) : undefined;
+        const tmpList = [
+            [],
+            [],
+            [], // vX versions
+        ];
+        if (patch && (patch - 1) >= 0) {
+            tmpList[0].push(`${header}${major}.${minor}.${patch - 1}`);
+        }
+        if (minor && (minor - 1) >= 0) {
+            tmpList[0].push(`${header}${major}.${minor - 1}.0`);
+            tmpList[1].push(`${header}${major}.${minor - 1}`);
+        }
+        if ((major - 1) >= 0) {
+            tmpList[0].push(`${header}${major - 1}.0.0`);
+            tmpList[1].push(`${header}${major - 1}.0`);
+            tmpList[2].push(`${header}${major - 1}`);
+        }
+        if (asRegex) {
+            return tmpList.flat().map(item => new RegExp(`/^${(0, exports.escapeRegex)(item)}/`));
+        }
+        return tmpList.flat();
+    }
+    return [];
+}
+exports.listPossiblePreviousSemver = listPossiblePreviousSemver;

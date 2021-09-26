@@ -19,16 +19,28 @@ class PackageVersionDiffListCreator {
     createPackageVersionList() {
         return __awaiter(this, void 0, void 0, function* () {
             const [previousLockFileContent, currentLockFileContent, previousRequirementFileContent, currentRequirementFileContent] = yield Promise.all([
-                this.githubFileManager.getFileContentAt(this.packageManager.getLockFilename(), this.baseCommitSha),
+                this.baseCommitSha
+                    ? this.githubFileManager.getFileContentAt(this.packageManager.getLockFilename(), this.baseCommitSha)
+                    : undefined,
                 this.githubFileManager.getFileContentAt(this.packageManager.getLockFilename(), this.headCommitSha),
-                this.githubFileManager.getFileContentAt(this.packageManager.getRequirementFilename(), this.baseCommitSha),
+                this.baseCommitSha
+                    ? this.githubFileManager.getFileContentAt(this.packageManager.getRequirementFilename(), this.baseCommitSha)
+                    : undefined,
                 this.githubFileManager.getFileContentAt(this.packageManager.getRequirementFilename(), this.headCommitSha),
             ]);
             const [previousLockFile, currentLockFile, previousRequirementFile, currentRequirementFile] = yield Promise.all([
-                previousLockFileContent ? this.packageManager.loadLockFile(previousLockFileContent) : undefined,
-                currentLockFileContent ? this.packageManager.loadLockFile(currentLockFileContent) : undefined,
-                previousRequirementFileContent ? this.packageManager.loadRequirementFile(previousRequirementFileContent) : undefined,
-                currentRequirementFileContent ? this.packageManager.loadRequirementFile(currentRequirementFileContent) : undefined,
+                previousLockFileContent
+                    ? this.packageManager.loadLockFile(previousLockFileContent)
+                    : undefined,
+                currentLockFileContent
+                    ? this.packageManager.loadLockFile(currentLockFileContent)
+                    : undefined,
+                previousRequirementFileContent
+                    ? this.packageManager.loadRequirementFile(previousRequirementFileContent)
+                    : undefined,
+                currentRequirementFileContent
+                    ? this.packageManager.loadRequirementFile(currentRequirementFileContent)
+                    : undefined,
             ]);
             const list = yield this.createPackageVersionsDiff(previousLockFile, currentLockFile, previousRequirementFile, currentRequirementFile);
             // Order by name, isRootRequirement and isRootDevRequirement

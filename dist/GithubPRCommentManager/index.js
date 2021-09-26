@@ -35,6 +35,7 @@ exports.GithubPRCommentManager = void 0;
 const comment_body_1 = __importStar(require("../comment-body"));
 const pulls_1 = require("../github-api/pulls");
 const logger_1 = __importDefault(require("../logger"));
+const utils_1 = require("../utils");
 class GithubPRCommentManager {
     constructor(repositoryOwner, repositoryName, prId, packageManagerType, postResults) {
         this.previousComment = null;
@@ -52,7 +53,7 @@ class GithubPRCommentManager {
                 if (this.postResults) {
                     logger_1.default.debug('Loading previous comment ...');
                     const comment = yield (0, pulls_1.getLastCommentMatching)(this.repositoryOwner, this.repositoryName, this.prId, new RegExp('^'
-                        + comment_body_1.COMMENT_HEADER.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
+                        + (0, utils_1.escapeRegex)(comment_body_1.COMMENT_HEADER)
                         + (0, comment_body_1.commentPkgTypeFactory)(this.packageManagerType)));
                     const match = (_a = comment === null || comment === void 0 ? void 0 : comment.body) === null || _a === void 0 ? void 0 : _a.match(new RegExp(comment_body_1.COMMENT_COMMIT_REGEXP));
                     if (comment && match) {

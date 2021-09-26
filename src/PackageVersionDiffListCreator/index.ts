@@ -15,10 +15,10 @@ export default class PackageVersionDiffListCreator<
 > {
     private readonly packageManager: PackageManager;
     private readonly githubFileManager: GithubFileManager;
-    private readonly baseCommitSha: string;
+    private readonly baseCommitSha: string | undefined;
     private readonly headCommitSha: string;
 
-    constructor(packageManager: PackageManager, githubFileManager: GithubFileManager, baseCommitSha: string, headCommitSha: string) {
+    constructor(packageManager: PackageManager, githubFileManager: GithubFileManager, baseCommitSha: string | undefined, headCommitSha: string) {
         this.packageManager = packageManager;
         this.githubFileManager = githubFileManager;
         this.baseCommitSha = baseCommitSha;
@@ -28,17 +28,29 @@ export default class PackageVersionDiffListCreator<
 
     public async createPackageVersionList(): Promise<PackageVersionDiff[]> {
         const [previousLockFileContent, currentLockFileContent, previousRequirementFileContent, currentRequirementFileContent] = await Promise.all([
-            this.githubFileManager.getFileContentAt(this.packageManager.getLockFilename(), this.baseCommitSha),
+            this.baseCommitSha
+                ? this.githubFileManager.getFileContentAt(this.packageManager.getLockFilename(), this.baseCommitSha)
+                : undefined,
             this.githubFileManager.getFileContentAt(this.packageManager.getLockFilename(), this.headCommitSha),
-            this.githubFileManager.getFileContentAt(this.packageManager.getRequirementFilename(), this.baseCommitSha),
+            this.baseCommitSha
+                ? this.githubFileManager.getFileContentAt(this.packageManager.getRequirementFilename(), this.baseCommitSha)
+                : undefined,
             this.githubFileManager.getFileContentAt(this.packageManager.getRequirementFilename(), this.headCommitSha),
         ]);
 
         const [previousLockFile, currentLockFile, previousRequirementFile, currentRequirementFile] = await Promise.all([
-            previousLockFileContent ? this.packageManager.loadLockFile(previousLockFileContent) : undefined,
-            currentLockFileContent ? this.packageManager.loadLockFile(currentLockFileContent) : undefined,
-            previousRequirementFileContent ? this.packageManager.loadRequirementFile(previousRequirementFileContent) : undefined,
-            currentRequirementFileContent ? this.packageManager.loadRequirementFile(currentRequirementFileContent) : undefined,
+            previousLockFileContent
+                ? this.packageManager.loadLockFile(previousLockFileContent)
+                : undefined,
+            currentLockFileContent
+                ? this.packageManager.loadLockFile(currentLockFileContent)
+                : undefined,
+            previousRequirementFileContent
+                ? this.packageManager.loadRequirementFile(previousRequirementFileContent)
+                : undefined,
+            currentRequirementFileContent
+                ? this.packageManager.loadRequirementFile(currentRequirementFileContent)
+                : undefined,
         ]);
 
         const list = await this.createPackageVersionsDiff(previousLockFile, currentLockFile, previousRequirementFile, currentRequirementFile);

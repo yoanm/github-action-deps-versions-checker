@@ -8,4 +8,6 @@ declare module "GithubApi" {
     export type File = Endpoints['GET /repos/{owner}/{repo}/pulls/{pull_number}/files']['response']['data'][number];
 
     export type Comment = Endpoints['GET /repos/{owner}/{repo}/issues/{issue_number}/comments']['response']['data'][number];
+    export type Release = Endpoints['GET /repos/{owner}/{repo}/releases']['response']['data'][number];
+    export type Tag = Endpoints['GET /repos/{owner}/{repo}/git/tags/{tag_sha}']['response']['data'];
 }

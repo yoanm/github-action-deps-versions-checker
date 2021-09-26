@@ -4,6 +4,7 @@ import {PackageVersionDiff} from "PackageVersionDiffListCreator";
 import createBody, {COMMENT_COMMIT_REGEXP, COMMENT_HEADER, commentPkgTypeFactory} from "../comment-body";
 import {createComment, deleteComment, getLastCommentMatching} from "../github-api/pulls";
 import logger from "../logger";
+import {escapeRegex} from "../utils";
 
 export class GithubPRCommentManager {
     private readonly repositoryOwner: string;
@@ -38,7 +39,7 @@ export class GithubPRCommentManager {
                     this.prId,
                     new RegExp(
                         '^'
-                        + COMMENT_HEADER.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
+                        + escapeRegex(COMMENT_HEADER)
                         + commentPkgTypeFactory(this.packageManagerType)
                     ),
                 );
