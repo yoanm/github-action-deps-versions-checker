@@ -3,13 +3,13 @@ branding:
   icon: 'package'
   color: 'orange'
 description: |
-  In case lock file is updated, action will output versions differences as PR comment
+  In case lock file is updated, action will output versions differences as comment
 inputs:
   gh-token:
     required: true
     description: |
-      Github token used to fetch PR data from github API.
-      See action description for minimal permission requirements
+      Github token used to fetch data from github API.
+      See Readme for minimal permission requirements
   manager:
     required: true
     description: 'Which package manager to assess (Available: \"composer\")'
