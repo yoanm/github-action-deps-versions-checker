@@ -47,10 +47,6 @@ function run() {
                 required: true,
                 trimWhitespace: true,
             });
-            const contextType = (0, core_1.getInput)("context", {
-                required: true,
-                trimWhitespace: true,
-            });
             const postResults = (0, core_1.getBooleanInput)("post-results", {
                 required: true,
                 trimWhitespace: true,
@@ -59,7 +55,8 @@ function run() {
                 required: true,
                 trimWhitespace: true,
             });
-            const behavior = (0, utils_1.behaviorFactory)(contextType, repositoryData, github_1.context.payload, packageManagerType, postResults, force);
+            console.log(JSON.stringify(github_1.context));
+            const behavior = (0, utils_1.behaviorFactory)(github_1.context.eventName, repositoryData, github_1.context.payload, packageManagerType, postResults, force);
             const packagesDiff = yield behavior.execute();
             core.setOutput("diff", packagesDiff);
         }
