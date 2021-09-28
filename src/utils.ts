@@ -46,7 +46,7 @@ export function behaviorFactory(
       return new GithubPushTagBehavior(
           repositoryData.owner.login,
           repositoryData.name,
-          context.payload.sha,
+          context.sha,
           packageManagerType,
           postResults,
           force,

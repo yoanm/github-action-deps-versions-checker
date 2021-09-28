@@ -29,7 +29,7 @@ function behaviorFactory(context, repositoryData, packageManagerType, postResult
             if (((_c = context.payload.sha) === null || _c === void 0 ? void 0 : _c.length) <= 0) {
                 throw new Error('Tag must have a commit attached !');
             }
-            return new GithubPushTagBehavior_1.GithubPushTagBehavior(repositoryData.owner.login, repositoryData.name, context.payload.sha, packageManagerType, postResults, force);
+            return new GithubPushTagBehavior_1.GithubPushTagBehavior(repositoryData.owner.login, repositoryData.name, context.sha, packageManagerType, postResults, force);
     }
     throw new Error('Context type "' + context.eventName + '" is not supported !');
 }
