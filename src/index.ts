@@ -28,9 +28,8 @@ async function run(): Promise<void> {
     console.log(JSON.stringify(context));
 
     const behavior = behaviorFactory(
-      context.eventName,
+      context,
       repositoryData,
-      context.payload,
       packageManagerType,
       postResults,
       force

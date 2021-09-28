@@ -56,7 +56,7 @@ function run() {
                 trimWhitespace: true,
             });
             console.log(JSON.stringify(github_1.context));
-            const behavior = (0, utils_1.behaviorFactory)(github_1.context.eventName, repositoryData, github_1.context.payload, packageManagerType, postResults, force);
+            const behavior = (0, utils_1.behaviorFactory)(github_1.context, repositoryData, packageManagerType, postResults, force);
             const packagesDiff = yield behavior.execute();
             core.setOutput("diff", packagesDiff);
         }

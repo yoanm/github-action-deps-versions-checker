@@ -1,4 +1,3 @@
-import {WebhookPayload} from "@actions/github/lib/interfaces";
 import {Behavior} from "Behavior";
 import {File} from "GithubApi";
 import {LockFile, LockPackage, PackageManagerType, RequirementFile} from "PackageManager";
@@ -9,6 +8,7 @@ import logger from "../../logger";
 import PackageManager from "../../PackageManager";
 import PackageVersionDiffListCreator from "../../PackageVersionDiffListCreator";
 import {packageManagerFactory} from "../../utils";
+import {PullRequestPayload} from "GithubAction";
 
 export class GithubPRBehavior implements Behavior {
     private readonly prId: number;
@@ -22,7 +22,7 @@ export class GithubPRBehavior implements Behavior {
     constructor(
         repositoryOwner: string,
         repositoryName: string,
-        payload: NonNullable<WebhookPayload['pull_request']>,
+        payload: PullRequestPayload,
         packageManagerType: PackageManagerType,
         postResults: boolean,
         force: boolean,

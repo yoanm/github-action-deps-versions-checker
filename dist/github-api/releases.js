@@ -17,11 +17,25 @@ const index_1 = __importDefault(require("./index"));
 const request_error_1 = require("@octokit/request-error");
 function create(ownerName, repoName, tag, body) {
     return __awaiter(this, void 0, void 0, function* () {
+        const { data } = yield index_1.default.rest.repos.createRelease({
+            owner: ownerName,
+            repo: repoName,
+            body,
+            tag_name: tag,
+        });
+        return data;
     });
 }
 exports.create = create;
 function update(ownerName, repoName, releaseId, body) {
     return __awaiter(this, void 0, void 0, function* () {
+        const { data } = yield index_1.default.rest.repos.updateRelease({
+            owner: ownerName,
+            repo: repoName,
+            release_id: releaseId,
+            body,
+        });
+        return data;
     });
 }
 exports.update = update;

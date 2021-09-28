@@ -1,59 +1,59 @@
-import {PayloadRepository, WebhookPayload} from "@actions/github/lib/interfaces";
+import {PayloadRepository} from "@actions/github/lib/interfaces";
 import {Behavior} from "Behavior";
 import {PackageManagerType} from "PackageManager";
 import {GithubPRBehavior} from "./behavior/GithubPRBehavior";
 import logger from "./logger";
 import Composer from "./PackageManager/Composer";
 import {GithubPushTagBehavior} from "./behavior/GithubPushTagBehavior";
+import {Context} from "GithubAction";
 
 export function behaviorFactory(
-    event_name: string,
+    context: Context,
     repositoryData: PayloadRepository,
-    webHookPayload: WebhookPayload,
     packageManagerType: PackageManagerType,
     postResults: boolean,
     force: boolean,
 ): Behavior {
-  switch (event_name) {
+  switch (context.eventName) {
     case 'pull_request':
-      logger.debug(`Using PR behavior for PR #${webHookPayload.number}`);
-      if (webHookPayload.pull_request === undefined) {
+      logger.debug(`Using PR behavior for PR #${context.payload.number}`);
+      if (context.payload.pull_request === undefined) {
         throw new Error('Pull Request context is undefined !');
       }
       return new GithubPRBehavior(
           repositoryData.owner.login,
           repositoryData.name,
-          webHookPayload.pull_request,
+          context.payload.pull_request,
           packageManagerType,
           postResults,
           force,
       );
     case 'push':
-      logger.debug(`Using push behavior for ref ${webHookPayload.ref}`);
-      const tagMatch = webHookPayload.ref?.match(/^refs\/tags\/(v?\d+(?:\.\d+)?(?:\.\d+)?)$/);
+      logger.debug(`Using push behavior for ref ${context.payload.ref}`);
+      const tagMatch = context.payload.ref?.match(/^refs\/tags\/(v?\d+(?:\.\d+)?(?:\.\d+)?)$/);
       if (!tagMatch || tagMatch[0]?.length <= 0) {
         throw new Error('Only semver tags are managed !');
       }
 
-      if (webHookPayload.created !== true) {
+      if (context.payload.created !== true) {
         throw new Error('Only newly created tags are managed');
       }
 
-      if (webHookPayload.sha?.length <= 0) {
+      if (context.payload.sha?.length <= 0) {
         throw new Error('Tag must have a commit attached !');
       }
 
       return new GithubPushTagBehavior(
           repositoryData.owner.login,
           repositoryData.name,
-          webHookPayload.sha,
+          context.payload.sha,
           packageManagerType,
           postResults,
           force,
       );
   }
 
-  throw new Error('Context type "'+event_name+'" is not supported !');
+  throw new Error('Context type "'+context.eventName+'" is not supported !');
 }
 
 export function packageManagerFactory(packageManagerType: PackageManagerType): Composer {
