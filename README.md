@@ -21,7 +21,7 @@ jobs:
       pull-requests: write
     steps:
       - name: "Check composer packages versions"
-        uses: yoanm/github-action-deps-versions-checker@v1
+        uses: yoanm/github-action-deps-versions-checker@v0.4.0
         with:
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           manager: composer
@@ -46,7 +46,7 @@ jobs:
       pull-requests: read
     steps:
       - name: "Check composer packages versions"
-        uses: yoanm/github-action-deps-versions-checker@v0.1.0
+        uses: yoanm/github-action-deps-versions-checker@v0.4.0
         id: 'diff'
         with:
           gh-token: ${{ secrets.GITHUB_TOKEN }}
@@ -59,10 +59,16 @@ jobs:
 
 ## Required permissions
 
-Action requires at least following permissions:
-- `contents: read`: Used to fetch old and current package manager files
-- `pull-requests: write`: Used to know if lock file has been updated or not and manage result comment
-    - In case you set `post-results` at `false`, read access is enough (`pull-requests: read`)
+`contents: read` is always required (in order to fetch data)
+
+Based on event type and if you want to post results, see below other required permissions:
+| Event | type | Post results ? | Required permissions |
+| ---: |  :--- | :---: | :--- | 
+| PR | synchronize | ✅ | `pull-requests: write` |
+| PR | synchronize | ❌ | `pull-requests: read` |
+| PUSH | new tag | ✅ | `releases: write` |
+| PUSH | new tag | ❌ | `releases: read` |
+<!-- | PUSH | branch | ❌ |  | -->
 
 It's not mandatory to define `permissions`, but it increases your repository security. At least, be sure required permissions match current ones
 
