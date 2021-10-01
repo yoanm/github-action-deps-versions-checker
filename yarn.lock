@@ -117,13 +117,9 @@
     "@octokit/types" "^6.0.3"
     universal-user-agent "^6.0.0"
 
-"@octokit/openapi-types@^10.5.0":
-  version "10.6.0"
-  resolved "https://registry.yarnpkg.com/@octokit/openapi-types/-/openapi-types-10.6.0.tgz#13278af3cbe7bb141dc4ae02c24eaff209efadfb"
-
-"@octokit/openapi-types@^9.7.0":
-  version "9.7.0"
-  resolved "https://registry.yarnpkg.com/@octokit/openapi-types/-/openapi-types-9.7.0.tgz#9897cdefd629cd88af67b8dbe2e5fb19c63426b2"
+"@octokit/openapi-types@^10.5.0", "@octokit/openapi-types@^10.6.4":
+  version "10.6.4"
+  resolved "https://registry.yarnpkg.com/@octokit/openapi-types/-/openapi-types-10.6.4.tgz#c8b5b1f5c60ab7c62858abe2ef57bc709f426a30"
 
 "@octokit/plugin-paginate-rest@^2.13.3":
   version "2.16.5"
