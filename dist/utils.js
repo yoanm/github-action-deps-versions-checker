@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.listPossiblePreviousSemver = exports.escapeRegex = exports.packageManagerFactory = exports.behaviorFactory = void 0;
+exports.listPossiblePreviousSemverTagRef = exports.listPossiblePreviousSemverTag = exports.escapeRegex = exports.packageManagerFactory = exports.behaviorFactory = void 0;
 const GithubPRBehavior_1 = require("./behavior/GithubPRBehavior");
 const logger_1 = __importDefault(require("./logger"));
 const Composer_1 = __importDefault(require("./PackageManager/Composer"));
@@ -46,14 +46,14 @@ function packageManagerFactory(packageManagerType) {
 exports.packageManagerFactory = packageManagerFactory;
 const escapeRegex = (regex) => regex.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 exports.escapeRegex = escapeRegex;
-function listPossiblePreviousSemver(tag, asRegex = false) {
-    var _a, _b, _c;
-    const matches = tag.match(/(v?)(\d+)(?:\.(\d+))?(?:\.(\d+))?$/);
-    if (matches && ((_a = matches[1]) === null || _a === void 0 ? void 0 : _a.length)) {
-        const header = matches[0].trim();
-        const major = parseInt(matches[1]);
-        const minor = ((_b = matches[2]) === null || _b === void 0 ? void 0 : _b.length) > 0 ? parseInt(matches[2]) : undefined;
-        const patch = ((_c = matches[3]) === null || _c === void 0 ? void 0 : _c.length) > 0 ? parseInt(matches[3]) : undefined;
+function listPossiblePreviousSemverTag(tag) {
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
+    const matches = tag.match(/(?<header>v?)(?<major>\d+)(?:\.(?<minor>\d+))?(?:\.(?<patch>\d+))?$/);
+    if (matches && ((_b = (_a = matches.groups) === null || _a === void 0 ? void 0 : _a.major) === null || _b === void 0 ? void 0 : _b.length)) {
+        const header = (_d = (_c = matches.groups) === null || _c === void 0 ? void 0 : _c.header) === null || _d === void 0 ? void 0 : _d.trim();
+        const major = parseInt((_e = matches.groups) === null || _e === void 0 ? void 0 : _e.major);
+        const minor = ((_g = (_f = matches.groups) === null || _f === void 0 ? void 0 : _f.minor) === null || _g === void 0 ? void 0 : _g.length) > 0 ? parseInt((_h = matches.groups) === null || _h === void 0 ? void 0 : _h.minor) : undefined;
+        const patch = ((_k = (_j = matches.groups) === null || _j === void 0 ? void 0 : _j.patch) === null || _k === void 0 ? void 0 : _k.length) > 0 ? parseInt((_l = matches.groups) === null || _l === void 0 ? void 0 : _l.patch) : undefined;
         const tmpList = [
             [],
             [],
@@ -71,11 +71,30 @@ function listPossiblePreviousSemver(tag, asRegex = false) {
             tmpList[1].push(`${header}${major - 1}.0`);
             tmpList[2].push(`${header}${major - 1}`);
         }
-        if (asRegex) {
-            return tmpList.flat().map(item => new RegExp(`/^${(0, exports.escapeRegex)(item)}/`));
-        }
         return tmpList.flat();
     }
     return [];
 }
-exports.listPossiblePreviousSemver = listPossiblePreviousSemver;
+exports.listPossiblePreviousSemverTag = listPossiblePreviousSemverTag;
+function listPossiblePreviousSemverTagRef(tag) {
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
+    const list = [];
+    const matches = tag.match(/(?<header>v?)(?<major>\d+)(?:\.(?<minor>\d+))?(?:\.(?<patch>\d+))?$/);
+    if (matches && ((_b = (_a = matches.groups) === null || _a === void 0 ? void 0 : _a.major) === null || _b === void 0 ? void 0 : _b.length)) {
+        const header = (_d = (_c = matches.groups) === null || _c === void 0 ? void 0 : _c.header) === null || _d === void 0 ? void 0 : _d.trim();
+        const major = parseInt((_e = matches.groups) === null || _e === void 0 ? void 0 : _e.major);
+        const minor = ((_g = (_f = matches.groups) === null || _f === void 0 ? void 0 : _f.minor) === null || _g === void 0 ? void 0 : _g.length) > 0 ? parseInt((_h = matches.groups) === null || _h === void 0 ? void 0 : _h.minor) : undefined;
+        const patch = ((_k = (_j = matches.groups) === null || _j === void 0 ? void 0 : _j.patch) === null || _k === void 0 ? void 0 : _k.length) > 0 ? parseInt((_l = matches.groups) === null || _l === void 0 ? void 0 : _l.patch) : undefined;
+        if (patch && (patch - 1) >= 0) {
+            list.push(`${header}${major}.${minor}.${patch - 1}`);
+        }
+        if (minor && (minor - 1) >= 0) {
+            list.push(`${header}${major}.${minor - 1}`);
+        }
+        if ((major - 1) >= 0) {
+            list.push(`${header}${major - 1}`);
+        }
+    }
+    return list;
+}
+exports.listPossiblePreviousSemverTagRef = listPossiblePreviousSemverTagRef;

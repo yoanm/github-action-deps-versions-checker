@@ -69,19 +69,15 @@ export function packageManagerFactory(packageManagerType: PackageManagerType): C
 
 export const escapeRegex = (regex: string): string => regex.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 
-export function listPossiblePreviousSemver(release: string): string[];
-export function listPossiblePreviousSemver(release: string, asRegex: false): string[];
-export function listPossiblePreviousSemver(release: string, asRegex: true): RegExp[];
+export function listPossiblePreviousSemverTag(tag: string): string[] {
 
-export function listPossiblePreviousSemver(tag: string, asRegex: true | false = false): (string|RegExp)[] {
+  const matches = tag.match(/(?<header>v?)(?<major>\d+)(?:\.(?<minor>\d+))?(?:\.(?<patch>\d+))?$/);
 
-  const matches = tag.match(/(v?)(\d+)(?:\.(\d+))?(?:\.(\d+))?$/);
-
-  if (matches && matches[1]?.length) {
-    const header = matches[0].trim();
-    const major = parseInt(matches[1]);
-    const minor = matches[2]?.length > 0 ? parseInt(matches[2]) : undefined;
-    const patch = matches[3]?.length > 0 ? parseInt(matches[3]) : undefined;
+  if (matches && matches.groups?.major?.length) {
+    const header = matches.groups?.header?.trim();
+    const major = parseInt(matches.groups?.major);
+    const minor = matches.groups?.minor?.length > 0 ? parseInt(matches.groups?.minor) : undefined;
+    const patch = matches.groups?.patch?.length > 0 ? parseInt(matches.groups?.patch) : undefined;
     const tmpList: string[][] = [
       [], // vX.Y.Z versions
       [], // vX.Y versions
@@ -103,12 +99,34 @@ export function listPossiblePreviousSemver(tag: string, asRegex: true | false = 
       tmpList[2].push(`${header}${major - 1}`);
     }
 
-    if (asRegex) {
-      return tmpList.flat().map(item => new RegExp(`/^${escapeRegex(item)}/`));
-    }
-
     return tmpList.flat();
   }
 
   return [];
+}
+
+export function listPossiblePreviousSemverTagRef(tag: string): string[] {
+  const list: string[] = [];
+  const matches = tag.match(/(?<header>v?)(?<major>\d+)(?:\.(?<minor>\d+))?(?:\.(?<patch>\d+))?$/);
+
+  if (matches && matches.groups?.major?.length) {
+    const header = matches.groups?.header?.trim();
+    const major = parseInt(matches.groups?.major);
+    const minor = matches.groups?.minor?.length > 0 ? parseInt(matches.groups?.minor) : undefined;
+    const patch = matches.groups?.patch?.length > 0 ? parseInt(matches.groups?.patch) : undefined;
+
+    if (patch && (patch - 1) >= 0) {
+      list.push(`${header}${major}.${minor}.${patch - 1}`);
+    }
+
+    if (minor && (minor - 1) >= 0) {
+      list.push(`${header}${major}.${minor - 1}`);
+    }
+
+    if ((major - 1) >= 0) {
+      list.push(`${header}${major - 1}`);
+    }
+  }
+
+  return list;
 }

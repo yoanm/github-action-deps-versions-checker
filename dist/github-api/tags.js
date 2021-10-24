@@ -18,7 +18,7 @@ const utils_1 = require("../utils");
 const request_error_1 = require("@octokit/request-error");
 function getPreviousSemver(ownerName, repoName, tag) {
     return __awaiter(this, void 0, void 0, function* () {
-        const previousTagList = (0, utils_1.listPossiblePreviousSemver)(tag);
+        const previousTagList = (0, utils_1.listPossiblePreviousSemverTag)(tag);
         let previousTag;
         for (const attempt of previousTagList) {
             previousTag = yield get(ownerName, repoName, attempt);

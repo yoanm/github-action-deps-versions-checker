@@ -1,10 +1,10 @@
 import {Tag} from "GithubApi";
 import api from "./index";
-import {listPossiblePreviousSemver} from "../utils";
+import {listPossiblePreviousSemverTag} from "../utils";
 import {RequestError} from "@octokit/request-error";
 
 export async function getPreviousSemver(ownerName: string, repoName: string, tag: string): Promise<Tag | undefined> {
-    const previousTagList = listPossiblePreviousSemver(tag);
+    const previousTagList = listPossiblePreviousSemverTag(tag);
 
     let previousTag: Tag | undefined;
     for (const attempt of previousTagList) {
