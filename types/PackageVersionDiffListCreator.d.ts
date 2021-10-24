@@ -64,7 +64,7 @@ declare module "PackageVersionDiffListCreator" {
     ;
 
     interface BasePackageVersion {
-        requirement: string,
+        requirement: string | undefined,
         full: string,
         isDev: boolean
     }

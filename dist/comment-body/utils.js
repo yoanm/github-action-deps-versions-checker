@@ -55,6 +55,7 @@ function displayVersion(version) {
 }
 exports.displayVersion = displayVersion;
 function displayName(versionDiff) {
+    var _a;
     let modifier = '';
     if (versionDiff.isRootDevRequirement) {
         modifier = '_'; // Italic
@@ -69,12 +70,12 @@ function displayName(versionDiff) {
         if (currentRequirement !== previousRequirement) {
             requirementUpdateLabel = ` (${previousRequirement}->${currentRequirement})`;
         }
-        else {
+        else if (currentRequirement !== undefined) {
             requirementUpdateLabel = ` (${currentRequirement})`;
         }
     }
     else if ((isDiffTypeFilter('ADDED')(versionDiff) || isDiffTypeFilter('UNKNOWN')(versionDiff))
-        && versionDiff.current !== undefined) {
+        && ((_a = versionDiff.current) === null || _a === void 0 ? void 0 : _a.requirement) !== undefined) {
         requirementUpdateLabel = ` (${versionDiff.current.requirement})`;
     }
     return modifier

@@ -88,13 +88,13 @@ export function displayName(versionDiff: PackageVersionDiff): string {
         const currentRequirement = versionDiff.current.requirement;
         const previousRequirement = versionDiff.previous.requirement;
         if (currentRequirement !== previousRequirement) {
-            requirementUpdateLabel = ` (${previousRequirement}->${currentRequirement})`
-        } else {
+            requirementUpdateLabel = ` (${previousRequirement}->${currentRequirement})`;
+        } else if (currentRequirement !== undefined) {
             requirementUpdateLabel = ` (${currentRequirement})`;
         }
     } else if (
         (isDiffTypeFilter<AddedPackageDiff>('ADDED')(versionDiff) || isDiffTypeFilter<UnknownUpdatePackageDiff>('UNKNOWN')(versionDiff))
-        && versionDiff.current !== undefined
+        && versionDiff.current?.requirement !== undefined
     ) {
         requirementUpdateLabel = ` (${versionDiff.current.requirement})`;
     }
