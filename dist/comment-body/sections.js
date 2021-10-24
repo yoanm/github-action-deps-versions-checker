@@ -55,11 +55,11 @@ function createAddedAndRemovedBody(packagesDiff) {
     const addedPackageList = packagesDiff.filter((0, utils_1.isDiffTypeFilter)('ADDED'));
     const removedPackageList = packagesDiff.filter((0, utils_1.isDiffTypeFilter)('REMOVED'));
     // Can't use createDiffTableBody as there two different types, AddedPackageDiff and RemovedPackageDiff types !
-    return (0, utils_1.createDiffTableBody)([addedPackageList, removedPackageList], `${addedPackageList.length} package${addedPackageList.length > 1 ? 's' : ''} added & ${removedPackageList.length} package${removedPackageList.length > 1 ? 's' : ''} removed`, ['Name', 'Version'], [':---', ':---'], item => {
+    return (0, utils_1.createDiffTableBody)([addedPackageList, removedPackageList], `${addedPackageList.length} package${addedPackageList.length > 1 ? 's' : ''} added & ${removedPackageList.length} package${removedPackageList.length > 1 ? 's' : ''} removed`, ['Name', 'Version'], [':---:', ':---'], item => {
         if ((0, utils_1.isDiffTypeFilter)('ADDED')(item)) {
-            return ['➕', (0, utils_1.displayName)(item), (0, utils_1.displayVersion)(item.current)];
+            return [':heavy_plus_sign:', (0, utils_1.displayName)(item), (0, utils_1.displayVersion)(item.current)];
         }
-        return ['➖', (0, utils_1.displayName)(item), (0, utils_1.displayVersion)(item.previous)];
+        return [':heavy_minus_sign:', (0, utils_1.displayName)(item), (0, utils_1.displayVersion)(item.previous)];
     });
 }
 exports.createAddedAndRemovedBody = createAddedAndRemovedBody;
@@ -85,22 +85,22 @@ function createCaptionBody() {
         + '##### Version update directions\n'
         + '| Icon | Meaning |\n'
         + '| :---: | :--- |\n'
-        + '| ↗ | Upgrade |\n'
-        + '| ↘️‼ | Downgrade |\n'
-        + '| ➡️ | Unknown |\n'
-        + '| ✔ | Unchanged |\n'
-        + '| ⁉️ | Unmanaged |\n'
+        + '| :arrow_heading_up: | Upgrade |\n'
+        + '| :arrow_heading_down::bangbang: | Downgrade |\n'
+        + '| :arrow_right: | Unknown |\n'
+        + '| :heavy_check_mark: | Unchanged |\n'
+        + '| :interrobang: | Unmanaged |\n'
         + '\n'
         + '##### Versions\n'
         + '| Icon | Meaning |\n'
         + '| :---: | :--- |\n'
-        + '| {VERSION}❗| dev version (usually a branch or a ref) |\n'
+        + '| {VERSION}:exclamation:| dev version (usually a branch or a ref) |\n'
         + '\n'
         + '##### Added & removed packages\n'
         + '| Icon | Meaning |\n'
         + '| :---: | :--- |\n'
-        + '| ➕ | Added package |\n'
-        + '| ➖ | Removed package |\n'
+        + '| :heavy_plus_sign: | Added package |\n'
+        + '| :heavy_minus_sign: | Removed package |\n'
         + '\n'
         + '</details>\n'
         + '\n';

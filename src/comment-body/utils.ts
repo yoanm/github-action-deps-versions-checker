@@ -56,22 +56,22 @@ export function getDirectionIcon(version: PackageVersionDiff): string {
     if ('UPDATED' === version.update.type) {
         switch (version.update.direction) {
             case 'UP':
-                return '↗️️';
+                return ':arrow_heading_up:';
             case 'DOWN':
-                return '↘️‼️️';
+                return ':arrow_heading_down::bangbang:️️';
             case 'NONE':
-                return '✔️';
+                return ':heavy_check_mark:️';
             case 'UNKNOWN':
-                return '➡️';
+                return ':arrow_right:️';
         }
     }
 
-    return '⁉️️️️';
+    return ':interrobang:️️️';
 }
 
 export function displayVersion(version: PackageVersion): string {
     return version.full
-        + (version.isDev ? '❗' : '')
+        + (version.isDev ? ':exclamation:' : '')
     ;
 }
 

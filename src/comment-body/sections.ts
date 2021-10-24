@@ -92,13 +92,13 @@ export function createAddedAndRemovedBody(packagesDiff: (AddedPackageDiff|Remove
         [addedPackageList, removedPackageList],
         `${addedPackageList.length} package${addedPackageList.length > 1 ? 's' : ''} added & ${removedPackageList.length} package${removedPackageList.length > 1 ? 's' : ''} removed`,
         ['Name', 'Version'],
-        [':---', ':---'],
+        [':---:', ':---'],
         item => {
             if (isDiffTypeFilter<AddedPackageDiff>('ADDED')(item)) {
-                return ['➕', displayName(item), displayVersion(item.current)];
+                return [':heavy_plus_sign:', displayName(item), displayVersion(item.current)];
             }
 
-            return ['➖', displayName(item), displayVersion(item.previous)];
+            return [':heavy_minus_sign:', displayName(item), displayVersion(item.previous)];
         },
     );
 }
@@ -132,22 +132,22 @@ export function createCaptionBody(): string {
         + '##### Version update directions\n'
         + '| Icon | Meaning |\n'
         + '| :---: | :--- |\n'
-        + '| ↗ | Upgrade |\n'
-        + '| ↘️‼ | Downgrade |\n'
-        + '| ➡️ | Unknown |\n'
-        + '| ✔ | Unchanged |\n'
-        + '| ⁉️ | Unmanaged |\n'
+        + '| :arrow_heading_up: | Upgrade |\n'
+        + '| :arrow_heading_down::bangbang: | Downgrade |\n'
+        + '| :arrow_right: | Unknown |\n'
+        + '| :heavy_check_mark: | Unchanged |\n'
+        + '| :interrobang: | Unmanaged |\n'
         + '\n'
         + '##### Versions\n'
         + '| Icon | Meaning |\n'
         + '| :---: | :--- |\n'
-        + '| {VERSION}❗| dev version (usually a branch or a ref) |\n'
+        + '| {VERSION}:exclamation:| dev version (usually a branch or a ref) |\n'
         + '\n'
         + '##### Added & removed packages\n'
         + '| Icon | Meaning |\n'
         + '| :---: | :--- |\n'
-        + '| ➕ | Added package |\n'
-        + '| ➖ | Removed package |\n'
+        + '| :heavy_plus_sign: | Added package |\n'
+        + '| :heavy_minus_sign: | Removed package |\n'
         + '\n'
         + '</details>\n'
         + '\n'

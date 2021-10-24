@@ -37,21 +37,21 @@ function getDirectionIcon(version) {
     if ('UPDATED' === version.update.type) {
         switch (version.update.direction) {
             case 'UP':
-                return '↗️️';
+                return ':arrow_heading_up:';
             case 'DOWN':
-                return '↘️‼️️';
+                return ':arrow_heading_down::bangbang:️️';
             case 'NONE':
-                return '✔️';
+                return ':heavy_check_mark:️';
             case 'UNKNOWN':
-                return '➡️';
+                return ':arrow_right:️';
         }
     }
-    return '⁉️️️️';
+    return ':interrobang:️️️';
 }
 exports.getDirectionIcon = getDirectionIcon;
 function displayVersion(version) {
     return version.full
-        + (version.isDev ? '❗' : '');
+        + (version.isDev ? ':exclamation:' : '');
 }
 exports.displayVersion = displayVersion;
 function displayName(versionDiff) {
