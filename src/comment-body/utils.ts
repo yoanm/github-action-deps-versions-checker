@@ -3,7 +3,7 @@ import {
     AddedPackageDiff,
     PackageVersion,
     PackageVersionDiff,
-    RemovedPackageDiff, UnknownUpdatePackageDiff,
+    UnknownUpdatePackageDiff,
     UpdatedPackageDiff
 } from "PackageVersionDiffListCreator";
 
