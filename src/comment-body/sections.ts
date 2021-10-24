@@ -4,7 +4,14 @@ import {
     UnknownUpdatePackageDiff,
     UpdatedPackageDiff
 } from "PackageVersionDiffListCreator";
-import {createDiffTableBody, displayName, displayVersion, getDirectionIcon, isDiffTypeFilter} from "./utils";
+import {
+    createDiffTableBody,
+    displayName,
+    displayRequirement,
+    displayVersion,
+    getDirectionIcon,
+    isDiffTypeFilter
+} from "./utils";
 
 export function createRiskyUpdatesBody(packagesDiff: UpdatedPackageDiff[]): string {
     const majorUpdateList = packagesDiff.filter(item => 'MAJOR' === item.update.subType);
@@ -26,12 +33,13 @@ export function createRiskyUpdatesBody(packagesDiff: UpdatedPackageDiff[]): stri
         [majorUpdateList, unknownUpdateList, minorDowngradeList, patchDowngradeList],
         `${totalCount} risky update${totalCount > 1 ? 's' : ''}\n_Major/Unknown updates & Minor/Patch downgrades_`,
         ['Name', 'From', '  ', 'To'],
-        [':---', '---:', ':---:', '---:'],
+        [':---', '---:', ':---:', '---:', ':---:'],
         item => [
             displayName(item),
             displayVersion(item.previous),
             getDirectionIcon(item),
-            displayVersion(item.current)
+            displayVersion(item.current),
+            displayRequirement(item),
         ],
         false,
     );
@@ -48,12 +56,13 @@ export function createMinorVersionUpdatesBody(packagesDiff: UpdatedPackageDiff[]
         [list],
         `${list.length} minor version update${list.length > 1 ? 's' : ''}`,
         ['Name', 'From', '  ', 'To'],
-        [':---', '---:', ':---:', '---:'],
+        [':---', '---:', ':---:', '---:', ':---:'],
         item => [
             displayName(item),
             displayVersion(item.previous),
             getDirectionIcon(item),
-            displayVersion(item.current)
+            displayVersion(item.current),
+            displayRequirement(item),
         ],
     );
 }
@@ -69,12 +78,13 @@ export function createPatchVersionUpdatesBody(packagesDiff: UpdatedPackageDiff[]
         [list],
         `${list.length} patch version update${list.length > 1 ? 's' : ''}`,
         ['Name', 'From', '  ', 'To'],
-        [':---', '---:', ':---:', '---:'],
+        [':---', '---:', ':---:', '---:', ':---:'],
         item => [
             displayName(item),
             displayVersion(item.previous),
             getDirectionIcon(item),
-            displayVersion(item.current)
+            displayVersion(item.current),
+            displayRequirement(item),
         ],
     );
 }

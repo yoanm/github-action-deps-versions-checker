@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.displayName = exports.displayVersion = exports.getDirectionIcon = exports.createDiffTableBody = exports.isDiffTypeFilter = void 0;
+exports.displayRequirement = exports.displayName = exports.displayVersion = exports.getDirectionIcon = exports.createDiffTableBody = exports.isDiffTypeFilter = void 0;
 /**
  * Will return a function used to retrieve only T type objects
  */
@@ -84,3 +84,22 @@ function displayName(versionDiff) {
         + modifier;
 }
 exports.displayName = displayName;
+function displayRequirement(versionDiff) {
+    var _a;
+    if (isDiffTypeFilter('UPDATED')(versionDiff)) {
+        const currentRequirement = versionDiff.current.requirement;
+        const previousRequirement = versionDiff.previous.requirement;
+        if (currentRequirement !== previousRequirement) {
+            return `${previousRequirement} -> ${currentRequirement}`;
+        }
+        else if (currentRequirement !== undefined) {
+            return `${currentRequirement}`;
+        }
+    }
+    else if ((isDiffTypeFilter('ADDED')(versionDiff) || isDiffTypeFilter('UNKNOWN')(versionDiff))
+        && ((_a = versionDiff.current) === null || _a === void 0 ? void 0 : _a.requirement) !== undefined) {
+        return `${versionDiff.current.requirement}`;
+    }
+    return '';
+}
+exports.displayRequirement = displayRequirement;

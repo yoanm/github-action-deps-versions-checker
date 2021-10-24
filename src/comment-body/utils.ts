@@ -104,3 +104,21 @@ export function displayName(versionDiff: PackageVersionDiff): string {
         + requirementUpdateLabel
         + modifier;
 }
+export function displayRequirement(versionDiff: PackageVersionDiff): string {
+    if (isDiffTypeFilter<UpdatedPackageDiff>('UPDATED')(versionDiff)) {
+        const currentRequirement = versionDiff.current.requirement;
+        const previousRequirement = versionDiff.previous.requirement;
+        if (currentRequirement !== previousRequirement) {
+            return `${previousRequirement} -> ${currentRequirement}`;
+        } else if (currentRequirement !== undefined) {
+            return `${currentRequirement}`;
+        }
+    } else if (
+        (isDiffTypeFilter<AddedPackageDiff>('ADDED')(versionDiff) || isDiffTypeFilter<UnknownUpdatePackageDiff>('UNKNOWN')(versionDiff))
+        && versionDiff.current?.requirement !== undefined
+    ) {
+        return `${versionDiff.current.requirement}`;
+    }
+
+    return '';
+}
