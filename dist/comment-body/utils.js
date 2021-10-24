@@ -55,7 +55,6 @@ function displayVersion(version) {
 }
 exports.displayVersion = displayVersion;
 function displayName(versionDiff) {
-    var _a, _b;
     let modifier = '';
     if (versionDiff.isRootDevRequirement) {
         modifier = '_'; // Italic
@@ -63,11 +62,24 @@ function displayName(versionDiff) {
     else if (versionDiff.isRootRequirement) {
         modifier = '**'; // Bold
     }
-    const currentRequirement = (_a = versionDiff.current) === null || _a === void 0 ? void 0 : _a.requirement;
-    const previousRequirement = (_b = versionDiff.previous) === null || _b === void 0 ? void 0 : _b.requirement;
+    let requirementUpdateLabel = '';
+    if (isDiffTypeFilter('UPDATED')(versionDiff)) {
+        const currentRequirement = versionDiff.current.requirement;
+        const previousRequirement = versionDiff.previous.requirement;
+        if (currentRequirement !== previousRequirement) {
+            requirementUpdateLabel = ` (${previousRequirement}->${currentRequirement})`;
+        }
+        else {
+            requirementUpdateLabel = ` (${currentRequirement})`;
+        }
+    }
+    else if ((isDiffTypeFilter('ADDED')(versionDiff) || isDiffTypeFilter('UNKNOWN')(versionDiff))
+        && versionDiff.current !== undefined) {
+        requirementUpdateLabel = ` (${versionDiff.current.requirement})`;
+    }
     return modifier
         + (versionDiff.extra.sourceLink !== undefined ? '[' + versionDiff.name + '](' + versionDiff.extra.sourceLink + ')' : versionDiff.name)
-        + (currentRequirement !== previousRequirement ? ` (${previousRequirement}->${currentRequirement})` : '')
+        + requirementUpdateLabel
         + modifier;
 }
 exports.displayName = displayName;
