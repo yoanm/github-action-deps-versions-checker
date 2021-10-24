@@ -23,7 +23,7 @@ export async function getPreviousSemverTagRef(ownerName: string, repoName: strin
 
     let previousTagRef: Ref | undefined;
     for (const attempt of previousTagList) {
-        logger.debug(`Try loading ref for tag before "${tag}" - try $"{attempt}"`);
+        logger.debug(`Try loading ref for tag before "${tag}" - try "${attempt}"`);
         previousTagRef = await getRef(ownerName, repoName, `tags/${attempt}`);
         if (previousTagRef) {
             break;

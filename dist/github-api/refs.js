@@ -37,7 +37,7 @@ function getPreviousSemverTagRef(ownerName, repoName, tag) {
         const previousTagList = (0, utils_1.listPossiblePreviousSemver)(tag);
         let previousTagRef;
         for (const attempt of previousTagList) {
-            logger_1.default.debug(`Try loading ref for tag before "${tag}" - try $"{attempt}"`);
+            logger_1.default.debug(`Try loading ref for tag before "${tag}" - try "${attempt}"`);
             previousTagRef = yield getRef(ownerName, repoName, `tags/${attempt}`);
             if (previousTagRef) {
                 break;
