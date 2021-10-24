@@ -32,14 +32,14 @@ export function createRiskyUpdatesBody(packagesDiff: UpdatedPackageDiff[]): stri
     return createDiffTableBody<UpdatedPackageDiff>(
         [majorUpdateList, unknownUpdateList, minorDowngradeList, patchDowngradeList],
         `${totalCount} risky update${totalCount > 1 ? 's' : ''}\n_Major/Unknown updates & Minor/Patch downgrades_`,
-        ['Name', 'From', '  ', 'To'],
+        ['Name', 'Requirement', 'From', '  ', 'To'],
         [':---', '---:', ':---:', '---:', ':---:'],
         item => [
             displayName(item),
+            displayRequirement(item),
             displayVersion(item.previous),
             getDirectionIcon(item),
             displayVersion(item.current),
-            displayRequirement(item),
         ],
         false,
     );
@@ -55,14 +55,14 @@ export function createMinorVersionUpdatesBody(packagesDiff: UpdatedPackageDiff[]
     return createDiffTableBody<UpdatedPackageDiff>(
         [list],
         `${list.length} minor version update${list.length > 1 ? 's' : ''}`,
-        ['Name', 'From', '  ', 'To'],
+        ['Name', 'Requirement', 'From', '  ', 'To'],
         [':---', '---:', ':---:', '---:', ':---:'],
         item => [
             displayName(item),
+            displayRequirement(item),
             displayVersion(item.previous),
             getDirectionIcon(item),
             displayVersion(item.current),
-            displayRequirement(item),
         ],
     );
 }
@@ -77,14 +77,14 @@ export function createPatchVersionUpdatesBody(packagesDiff: UpdatedPackageDiff[]
     return createDiffTableBody<UpdatedPackageDiff>(
         [list],
         `${list.length} patch version update${list.length > 1 ? 's' : ''}`,
-        ['Name', 'From', '  ', 'To'],
+        ['Name', 'Requirement', 'From', '  ', 'To'],
         [':---', '---:', ':---:', '---:', ':---:'],
         item => [
             displayName(item),
+            displayRequirement(item),
             displayVersion(item.previous),
             getDirectionIcon(item),
             displayVersion(item.current),
-            displayRequirement(item),
         ],
     );
 }

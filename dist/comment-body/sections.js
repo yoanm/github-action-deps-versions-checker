@@ -14,12 +14,12 @@ function createRiskyUpdatesBody(packagesDiff) {
     if (0 === totalCount) {
         return '';
     }
-    return (0, utils_1.createDiffTableBody)([majorUpdateList, unknownUpdateList, minorDowngradeList, patchDowngradeList], `${totalCount} risky update${totalCount > 1 ? 's' : ''}\n_Major/Unknown updates & Minor/Patch downgrades_`, ['Name', 'From', '  ', 'To'], [':---', '---:', ':---:', '---:', ':---:'], item => [
+    return (0, utils_1.createDiffTableBody)([majorUpdateList, unknownUpdateList, minorDowngradeList, patchDowngradeList], `${totalCount} risky update${totalCount > 1 ? 's' : ''}\n_Major/Unknown updates & Minor/Patch downgrades_`, ['Name', 'Requirement', 'From', '  ', 'To'], [':---', '---:', ':---:', '---:', ':---:'], item => [
         (0, utils_1.displayName)(item),
+        (0, utils_1.displayRequirement)(item),
         (0, utils_1.displayVersion)(item.previous),
         (0, utils_1.getDirectionIcon)(item),
         (0, utils_1.displayVersion)(item.current),
-        (0, utils_1.displayRequirement)(item),
     ], false);
 }
 exports.createRiskyUpdatesBody = createRiskyUpdatesBody;
@@ -28,12 +28,12 @@ function createMinorVersionUpdatesBody(packagesDiff) {
     if (0 === list.length) {
         return '';
     }
-    return (0, utils_1.createDiffTableBody)([list], `${list.length} minor version update${list.length > 1 ? 's' : ''}`, ['Name', 'From', '  ', 'To'], [':---', '---:', ':---:', '---:', ':---:'], item => [
+    return (0, utils_1.createDiffTableBody)([list], `${list.length} minor version update${list.length > 1 ? 's' : ''}`, ['Name', 'Requirement', 'From', '  ', 'To'], [':---', '---:', ':---:', '---:', ':---:'], item => [
         (0, utils_1.displayName)(item),
+        (0, utils_1.displayRequirement)(item),
         (0, utils_1.displayVersion)(item.previous),
         (0, utils_1.getDirectionIcon)(item),
         (0, utils_1.displayVersion)(item.current),
-        (0, utils_1.displayRequirement)(item),
     ]);
 }
 exports.createMinorVersionUpdatesBody = createMinorVersionUpdatesBody;
@@ -42,12 +42,12 @@ function createPatchVersionUpdatesBody(packagesDiff) {
     if (0 === list.length) {
         return '';
     }
-    return (0, utils_1.createDiffTableBody)([list], `${list.length} patch version update${list.length > 1 ? 's' : ''}`, ['Name', 'From', '  ', 'To'], [':---', '---:', ':---:', '---:', ':---:'], item => [
+    return (0, utils_1.createDiffTableBody)([list], `${list.length} patch version update${list.length > 1 ? 's' : ''}`, ['Name', 'Requirement', 'From', '  ', 'To'], [':---', '---:', ':---:', '---:', ':---:'], item => [
         (0, utils_1.displayName)(item),
+        (0, utils_1.displayRequirement)(item),
         (0, utils_1.displayVersion)(item.previous),
         (0, utils_1.getDirectionIcon)(item),
         (0, utils_1.displayVersion)(item.current),
-        (0, utils_1.displayRequirement)(item),
     ]);
 }
 exports.createPatchVersionUpdatesBody = createPatchVersionUpdatesBody;
