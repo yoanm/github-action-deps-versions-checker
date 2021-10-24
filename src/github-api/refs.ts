@@ -30,6 +30,7 @@ export async function getPreviousSemverTagRef(ownerName: string, repoName: strin
     let previousTagRef: Ref | undefined;
     for (const attempt of previousTagList) {
         logger.debug(`Try loading ref for tag before "${tag}" - try "${attempt}"`);
+        // TODO - implements pagination (for repo with a lot of tags)
         const previousTagRefs = await getMatchingRefs(ownerName, repoName, `tags/${attempt}`);
         if (previousTagRefs && previousTagRefs.length) {
             // Start from bottom

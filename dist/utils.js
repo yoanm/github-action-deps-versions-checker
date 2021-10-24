@@ -85,14 +85,37 @@ function listPossiblePreviousSemverTagRef(tag) {
         const major = parseInt((_e = matches.groups) === null || _e === void 0 ? void 0 : _e.major);
         const minor = ((_g = (_f = matches.groups) === null || _f === void 0 ? void 0 : _f.minor) === null || _g === void 0 ? void 0 : _g.length) > 0 ? parseInt((_h = matches.groups) === null || _h === void 0 ? void 0 : _h.minor) : undefined;
         const patch = ((_k = (_j = matches.groups) === null || _j === void 0 ? void 0 : _j.patch) === null || _k === void 0 ? void 0 : _k.length) > 0 ? parseInt((_l = matches.groups) === null || _l === void 0 ? void 0 : _l.patch) : undefined;
-        if (patch && (patch - 1) >= 0) {
-            list.push(`${header}${major}.${minor}.${patch - 1}`);
+        const appendMinor = () => {
+            if (minor) {
+                if ((minor - 1) >= 0) {
+                    list.push(`${header}${major}.${minor - 1}`);
+                }
+                if (minor > 0) {
+                    list.push(`${header}${major}`);
+                }
+            }
+        };
+        const appendMajor = () => {
+            if ((major - 1) >= 0) {
+                list.push(`${header}${major - 1}`);
+            }
+        };
+        if (patch) {
+            if ((patch - 1) >= 0) {
+                list.push(`${header}${major}.${minor}.${patch - 1}`);
+            }
+            if (patch > 0) {
+                list.push(`${header}${major}.${minor}`);
+            }
+            appendMinor();
+            appendMajor();
         }
-        if (minor && (minor - 1) >= 0) {
-            list.push(`${header}${major}.${minor - 1}`);
+        else if (minor) {
+            appendMinor();
+            appendMajor();
         }
-        if ((major - 1) >= 0) {
-            list.push(`${header}${major - 1}`);
+        else if ((major - 1) >= 0) {
+            appendMajor();
         }
     }
     return list;

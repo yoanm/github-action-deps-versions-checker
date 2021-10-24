@@ -114,17 +114,36 @@ export function listPossiblePreviousSemverTagRef(tag: string): string[] {
     const major = parseInt(matches.groups?.major);
     const minor = matches.groups?.minor?.length > 0 ? parseInt(matches.groups?.minor) : undefined;
     const patch = matches.groups?.patch?.length > 0 ? parseInt(matches.groups?.patch) : undefined;
+    const appendMinor = (): void => {
+      if (minor) {
+        if ((minor - 1) >= 0) {
+          list.push(`${header}${major}.${minor - 1}`);
+        }
+        if (minor > 0) {
+          list.push(`${header}${major}`);
+        }
+      }
+    };
+    const appendMajor = (): void => {
+      if ((major - 1) >= 0) {
+        list.push(`${header}${major - 1}`);
+      }
+    };
 
-    if (patch && (patch - 1) >= 0) {
-      list.push(`${header}${major}.${minor}.${patch - 1}`);
-    }
-
-    if (minor && (minor - 1) >= 0) {
-      list.push(`${header}${major}.${minor - 1}`);
-    }
-
-    if ((major - 1) >= 0) {
-      list.push(`${header}${major - 1}`);
+    if (patch) {
+      if ((patch - 1) >= 0) {
+        list.push(`${header}${major}.${minor}.${patch - 1}`);
+      }
+      if (patch > 0) {
+        list.push(`${header}${major}.${minor}`);
+      }
+      appendMinor();
+      appendMajor();
+    } else if (minor) {
+      appendMinor();
+      appendMajor();
+    } else if ((major - 1) >= 0) {
+      appendMajor();
     }
   }
 

@@ -82,7 +82,7 @@ class GithubPushTagBehavior {
             if (this.currentTagRef === null) {
                 logger_1.default.debug(`Loading current ref for "tags/${this.tagName}" ...`);
                 const tagRef = yield (0, refs_1.getRef)(this.repositoryOwner, this.repositoryName, `tags/${this.tagName}`);
-                logger_1.default.debug(`Ref: "${JSON.stringify(tagRef)}"`);
+                logger_1.default.debug(`Current ref: "${JSON.stringify(tagRef)}"`);
                 if (tagRef === undefined) {
                     throw Error('Unable to load current tag information !');
                 }
@@ -96,7 +96,7 @@ class GithubPushTagBehavior {
             if (this.previousTagRef === null) {
                 logger_1.default.debug(`Loading previous ref for tag before ${this.tagName} ...`);
                 this.previousTagRef = yield (0, refs_1.getPreviousSemverTagRef)(this.repositoryOwner, this.repositoryName, this.tagName);
-                logger_1.default.debug(`Ref: "${JSON.stringify(this.previousTagRef)}"`);
+                logger_1.default.debug(`previous ref: "${JSON.stringify(this.previousTagRef)}"`);
             }
             return this.previousTagRef;
         });
