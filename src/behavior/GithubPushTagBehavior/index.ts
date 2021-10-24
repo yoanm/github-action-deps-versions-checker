@@ -1,5 +1,5 @@
 import {Behavior} from "Behavior";
-import {Tag} from "GithubApi";
+import {Ref} from "GithubApi";
 import {LockFile, LockPackage, PackageManagerType, RequirementFile} from "PackageManager";
 import {PackageVersionDiff} from "PackageVersionDiffListCreator";
 import {GithubFileManager} from "../../GithubFileManager";
@@ -8,28 +8,29 @@ import PackageManager from "../../PackageManager";
 import PackageVersionDiffListCreator from "../../PackageVersionDiffListCreator";
 import {packageManagerFactory} from "../../utils";
 import {GithubReleaseCommentManager} from "../../GithubReleaseCommentManager";
-import {get as getTag, getPreviousSemver as getPreviousTag} from "../../github-api/tags";
+import {getPreviousSemver as getPreviousTag} from "../../github-api/tags";
+import {getPreviousSemverTagRef, getRef} from "../../github-api/refs";
 
 export class GithubPushTagBehavior implements Behavior {
-    private readonly tagSha: string;
+    private readonly tagName: string;
     private readonly force: boolean;
     private readonly repositoryOwner: string;
     private readonly repositoryName: string;
     private readonly packageManager: PackageManager<RequirementFile, LockFile, LockPackage>;
     private readonly githubFileManager: GithubFileManager;
     private readonly githubCommentManager: GithubReleaseCommentManager;
-    private previousTag: Tag | undefined | null = null;
-    private currentTag: Tag | null = null;
+    private previousTagRef: Ref | undefined | null = null;
+    private currentTagRef: Ref | null = null;
 
     constructor(
         repositoryOwner: string,
         repositoryName: string,
-        tagSha: string,
+        tagName: string,
         packageManagerType: PackageManagerType,
         postResults: boolean,
         force: boolean,
     ) {
-        this.tagSha = tagSha;
+        this.tagName = tagName;
         this.force = force;
         this.repositoryOwner = repositoryOwner;
         this.repositoryName = repositoryName;
@@ -38,7 +39,7 @@ export class GithubPushTagBehavior implements Behavior {
         this.githubCommentManager = new GithubReleaseCommentManager(
             repositoryOwner,
             repositoryName,
-            tagSha,
+            tagName,
             packageManagerType,
             postResults
         );
@@ -48,18 +49,21 @@ export class GithubPushTagBehavior implements Behavior {
         logger.debug('Creating diff ...');
         if (await this.shouldCreateDiff()) {
             logger.info(this.packageManager.getLockFilename() + ' updated ! Gathering data ...');
-            const previousTag = await this.getPrevious();
-            if (previousTag === undefined) {
+            const [currentTagRef, previousTagRef] = await Promise.all([
+                this.getCurrentTagRef(),
+                this.getPreviousTagRef()
+            ]);
+            if (previousTagRef === undefined) {
                 throw new Error('GithubPushTagBehavior requires a previous tag !');
             }
             const packageVersionDiffListCreator = new PackageVersionDiffListCreator(
                 this.packageManager,
                 this.githubFileManager,
-                previousTag.object.sha,
-                this.tagSha
+                previousTagRef.object.sha,
+                currentTagRef.object.sha
             );
 
-            logger.debug('Creating diff ...');
+            logger.debug(`Creating diff between ${previousTagRef.object.sha.substr(0, 7)} and ${currentTagRef.object.sha.substr(0, 7)} ...`);
             const packagesDiff = await packageVersionDiffListCreator.createPackageVersionList();
 
             await this.manageDiffNotification(packagesDiff);
@@ -72,7 +76,7 @@ export class GithubPushTagBehavior implements Behavior {
 
     public async manageDiffNotification(packagesDiff: PackageVersionDiff[]): Promise<void> {
         if (packagesDiff.length) {
-            return this.githubCommentManager.create(this.tagSha, packagesDiff);
+            return this.githubCommentManager.create(this.tagName, packagesDiff);
         }
 
         return this.githubCommentManager.deletePreviousIfExisting();
@@ -80,17 +84,20 @@ export class GithubPushTagBehavior implements Behavior {
 
     protected  async shouldCreateDiff(): Promise<boolean> {
         logger.debug(`Checking if lock file has been updated ...`);
-        const previousTag = await this.getPrevious();
-        if (previousTag) {
+        const [currentTagRef, previousTagRef] = await Promise.all([
+            this.getCurrentTagRef(),
+            this.getPreviousTagRef()
+        ]);
+        if (previousTagRef) {
             const lockFile = await this.githubFileManager.getFileBetween(
                 this.packageManager.getLockFilename(),
-                previousTag.object.sha,
-                this.tagSha,
+                previousTagRef.object.sha,
+                currentTagRef.object.sha,
                 ['modified', 'added', 'removed']
             );
 
             if (lockFile === undefined) {
-                logger.info(`${this.packageManager.getLockFilename()} not updated on between ${previousTag.object.sha.substr(0, 7)} and ${this.tagSha.substr(0, 7)} ...`);
+                logger.info(`${this.packageManager.getLockFilename()} not updated on between ${previousTagRef.object.sha.substr(0, 7)} and ${currentTagRef.object.sha.substr(0, 7)} ...`);
             }
 
             return lockFile !== undefined;
@@ -101,30 +108,25 @@ export class GithubPushTagBehavior implements Behavior {
 
 
 
-    private async getCurrent(): Promise<Tag> {
-        if (this.currentTag === null) {
+    private async getCurrentTagRef(): Promise<Ref> {
+        if (this.currentTagRef === null) {
             logger.debug('Loading current tag ...');
-            const tag = await getTag(this.repositoryOwner, this.repositoryName, this.tagSha);
-            if (tag === undefined) {
+            const tagRefs = await getRef(this.repositoryOwner, this.repositoryName, this.tagName);
+            if (tagRefs === undefined) {
                 throw Error('Unable to load current tag information !');
             }
-            this.currentTag = tag;
+            this.currentTagRef = tagRefs;
         }
 
-        return this.currentTag;
+        return this.currentTagRef;
     }
 
-    private async getPrevious(): Promise<Tag | undefined> {
-        if (this.previousTag === null) {
+    private async getPreviousTagRef(): Promise<Ref | undefined> {
+        if (this.previousTagRef === null) {
             logger.debug('Loading previous tag ...');
-            this.previousTag = undefined;
-            const currentTag = await this.getCurrent();
-            if (currentTag) {
-                logger.debug(`Loading tag before ${currentTag.tag}...`);
-                this.previousTag = await getPreviousTag(this.repositoryOwner, this.repositoryName, currentTag.tag);
-            }
+            this.previousTagRef = await getPreviousSemverTagRef(this.repositoryOwner, this.repositoryName, this.tagName);
         }
 
-        return this.previousTag;
+        return this.previousTagRef;
     }
 }

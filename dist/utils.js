@@ -19,14 +19,15 @@ function behaviorFactory(context, repositoryData, packageManagerType, postResult
             return new GithubPRBehavior_1.GithubPRBehavior(repositoryData.owner.login, repositoryData.name, context.payload.pull_request, packageManagerType, postResults, force);
         case 'push':
             logger_1.default.debug(`Using push behavior for ref ${context.payload.ref}`);
-            const tagMatch = (_a = context.payload.ref) === null || _a === void 0 ? void 0 : _a.match(/^refs\/tags\/(v?\d+(?:\.\d+)?(?:\.\d+)?)$/);
-            if (!tagMatch || ((_b = tagMatch[0]) === null || _b === void 0 ? void 0 : _b.length) <= 0) {
+            const tagMatch = (_a = context.payload.ref) === null || _a === void 0 ? void 0 : _a.match(/^refs\/tags\/(?<tag>v?\d+(?:\.\d+)?(?:\.\d+)?)$/);
+            console.log({ tagMatch });
+            if (!tagMatch || ((_b = tagMatch['tag']) === null || _b === void 0 ? void 0 : _b.length) <= 0) {
                 throw new Error('Only semver tags are managed !');
             }
             if (context.payload.created !== true) {
                 throw new Error('Only newly created tags are managed');
             }
-            if (((_c = context.payload.sha) === null || _c === void 0 ? void 0 : _c.length) <= 0) {
+            if (((_c = context.sha) === null || _c === void 0 ? void 0 : _c.length) <= 0) {
                 throw new Error('Tag must have a commit attached !');
             }
             return new GithubPushTagBehavior_1.GithubPushTagBehavior(repositoryData.owner.login, repositoryData.name, context.sha, packageManagerType, postResults, force);

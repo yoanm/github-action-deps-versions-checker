@@ -10,4 +10,5 @@ declare module "GithubApi" {
     export type Comment = Endpoints['GET /repos/{owner}/{repo}/issues/{issue_number}/comments']['response']['data'][number];
     export type Release = Endpoints['GET /repos/{owner}/{repo}/releases']['response']['data'][number];
     export type Tag = Endpoints['GET /repos/{owner}/{repo}/git/tags/{tag_sha}']['response']['data'];
+    export type Ref = Endpoints['GET /repos/{owner}/{repo}/git/matching-refs/{ref}']['response']['data'][0];
 }

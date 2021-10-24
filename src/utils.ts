@@ -30,8 +30,9 @@ export function behaviorFactory(
       );
     case 'push':
       logger.debug(`Using push behavior for ref ${context.payload.ref}`);
-      const tagMatch = context.payload.ref?.match(/^refs\/tags\/(v?\d+(?:\.\d+)?(?:\.\d+)?)$/);
-      if (!tagMatch || tagMatch[0]?.length <= 0) {
+      const tagMatch = context.payload.ref?.match(/^refs\/tags\/(?<tag>v?\d+(?:\.\d+)?(?:\.\d+)?)$/);
+      console.log({tagMatch});
+      if (!tagMatch || tagMatch['tag']?.length <= 0) {
         throw new Error('Only semver tags are managed !');
       }
 
@@ -39,7 +40,7 @@ export function behaviorFactory(
         throw new Error('Only newly created tags are managed');
       }
 
-      if (context.payload.sha?.length <= 0) {
+      if (context.sha?.length <= 0) {
         throw new Error('Tag must have a commit attached !');
       }
 
@@ -79,8 +80,8 @@ export function listPossiblePreviousSemver(tag: string, asRegex: true | false = 
   if (matches && matches[1]?.length) {
     const header = matches[0].trim();
     const major = parseInt(matches[1]);
-    const minor = matches[2]?.length > 0 ? parseInt(matches[2]) :  undefined;
-    const patch = matches[3]?.length > 0 ? parseInt(matches[3]) :  undefined;
+    const minor = matches[2]?.length > 0 ? parseInt(matches[2]) : undefined;
+    const patch = matches[3]?.length > 0 ? parseInt(matches[3]) : undefined;
     const tmpList: string[][] = [
       [], // vX.Y.Z versions
       [], // vX.Y versions
