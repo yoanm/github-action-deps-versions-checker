@@ -83,25 +83,9 @@ export function displayName(versionDiff: PackageVersionDiff): string {
     } else if (versionDiff.isRootRequirement) {
         modifier = '**'; // Bold
     }
-    let requirementUpdateLabel = '';
-    if (isDiffTypeFilter<UpdatedPackageDiff>('UPDATED')(versionDiff)) {
-        const currentRequirement = versionDiff.current.requirement;
-        const previousRequirement = versionDiff.previous.requirement;
-        if (currentRequirement !== previousRequirement) {
-            requirementUpdateLabel = ` (${previousRequirement}->${currentRequirement})`;
-        } else if (currentRequirement !== undefined) {
-            requirementUpdateLabel = ` (${currentRequirement})`;
-        }
-    } else if (
-        (isDiffTypeFilter<AddedPackageDiff>('ADDED')(versionDiff) || isDiffTypeFilter<UnknownUpdatePackageDiff>('UNKNOWN')(versionDiff))
-        && versionDiff.current?.requirement !== undefined
-    ) {
-        requirementUpdateLabel = ` (${versionDiff.current.requirement})`;
-    }
 
     return modifier
         + (versionDiff.extra.sourceLink !== undefined ? '['+versionDiff.name+']('+versionDiff.extra.sourceLink+')' : versionDiff.name)
-        + requirementUpdateLabel
         + modifier;
 }
 export function displayRequirement(versionDiff: PackageVersionDiff): string {
