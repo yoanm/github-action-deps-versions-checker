@@ -6,12 +6,7 @@ import logger from "../logger";
 
 export async function  getRef(ownerName: string, repoName: string, ref: string): Promise<Ref | undefined> {
     try {
-        //
-        const { data } =  await api.rest.git.getRef({
-            owner: ownerName,
-            repo: repoName,
-            ref
-        });
+        const { data } =  await api.rest.git.getRef({owner: ownerName, repo: repoName, ref});
 
         return data;
     } catch (e) {

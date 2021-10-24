@@ -8,7 +8,6 @@ import PackageManager from "../../PackageManager";
 import PackageVersionDiffListCreator from "../../PackageVersionDiffListCreator";
 import {packageManagerFactory} from "../../utils";
 import {GithubReleaseCommentManager} from "../../GithubReleaseCommentManager";
-import {getPreviousSemver as getPreviousTag} from "../../github-api/tags";
 import {getPreviousSemverTagRef, getRef} from "../../github-api/refs";
 
 export class GithubPushTagBehavior implements Behavior {

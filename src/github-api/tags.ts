@@ -19,11 +19,7 @@ export async function getPreviousSemver(ownerName: string, repoName: string, tag
 
 export async function  get(ownerName: string, repoName: string, tagSha: string): Promise<Tag | undefined> {
     try {
-        const { data } =  await api.rest.git.getTag({
-            owner: ownerName,
-            repo: repoName,
-            tag_sha: tagSha
-        });
+        const { data } =  await api.rest.git.getTag({owner: ownerName, repo: repoName, tag_sha: tagSha});
 
         return data;
     } catch (e) {
