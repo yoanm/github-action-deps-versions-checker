@@ -33,11 +33,7 @@ exports.getPreviousSemver = getPreviousSemver;
 function get(ownerName, repoName, tagSha) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { data } = yield index_1.default.rest.git.getTag({
-                owner: ownerName,
-                repo: repoName,
-                tag_sha: tagSha
-            });
+            const { data } = yield index_1.default.rest.git.getTag({ owner: ownerName, repo: repoName, tag_sha: tagSha });
             return data;
         }
         catch (e) {

@@ -20,12 +20,7 @@ const logger_1 = __importDefault(require("../logger"));
 function getRef(ownerName, repoName, ref) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            //
-            const { data } = yield index_1.default.rest.git.getRef({
-                owner: ownerName,
-                repo: repoName,
-                ref
-            });
+            const { data } = yield index_1.default.rest.git.getRef({ owner: ownerName, repo: repoName, ref });
             return data;
         }
         catch (e) {
