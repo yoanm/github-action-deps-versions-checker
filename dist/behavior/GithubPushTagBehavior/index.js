@@ -88,11 +88,12 @@ class GithubPushTagBehavior {
                     throw Error('Unable to load current tag information !');
                 }
                 if (tagRef.object.type === 'tag') {
+                    // Retrieve the commit sha attached to the tag
                     const tag = yield (0, tags_1.getTag)(this.repositoryOwner, this.repositoryName, tagRef.object.sha);
                     if (tag === undefined) {
                         throw new Error(`Unable to retrieve current tag commit sha for "${tagRef.ref}/${tagRef.object.type}/${tagRef.object.sha}"`);
                     }
-                    this.currentTagCommitSha = tag.sha;
+                    this.currentTagCommitSha = tag.object.sha;
                 }
                 else if (tagRef.object.type === 'commit') {
                     this.currentTagCommitSha = tagRef.object.sha;
@@ -100,6 +101,7 @@ class GithubPushTagBehavior {
                 else {
                     throw new Error(`Unable to manage current tag ref of type "${tagRef.object.type}"`);
                 }
+                logger_1.default.debug(`Current tag commit sha: "${this.currentTagCommitSha}"`);
             }
             return this.currentTagCommitSha;
         });
@@ -115,11 +117,12 @@ class GithubPushTagBehavior {
                 }
                 else {
                     if (tagRef.object.type === 'tag') {
+                        // Retrieve the commit sha attached to the tag
                         const tag = yield (0, tags_1.getTag)(this.repositoryOwner, this.repositoryName, tagRef.object.sha);
                         if (tag === undefined) {
                             throw new Error(`Unable to retrieve previous tag commit sha for "${tagRef.ref}/${tagRef.object.type}/${tagRef.object.sha}"`);
                         }
-                        this.previousTagRefCommitSha = tag.sha;
+                        this.previousTagRefCommitSha = tag.object.sha;
                     }
                     else if (tagRef.object.type === 'commit') {
                         this.previousTagRefCommitSha = tagRef.object.sha;
@@ -128,6 +131,7 @@ class GithubPushTagBehavior {
                         throw new Error(`Unable to manage previous tag ref of type "${tagRef.object.type}"`);
                     }
                 }
+                logger_1.default.debug(`Previous tag commit sha: "${this.previousTagRefCommitSha}"`);
             }
             return this.previousTagRefCommitSha;
         });
