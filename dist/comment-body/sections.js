@@ -14,7 +14,7 @@ function createRiskyUpdatesBody(packagesDiff) {
     if (0 === totalCount) {
         return '';
     }
-    return (0, utils_1.createDiffTableBody)([majorUpdateList, unknownUpdateList, minorDowngradeList, patchDowngradeList], `${totalCount} risky update${totalCount > 1 ? 's' : ''}`, ['Name', 'From', '  ', 'To'], [':---', '---:', ':---:', '---:'], item => [
+    return (0, utils_1.createDiffTableBody)([majorUpdateList, unknownUpdateList, minorDowngradeList, patchDowngradeList], `${totalCount} risky update${totalCount > 1 ? 's' : ''}\n_Major/Unknown updates & Minor/Patch downgrades_`, ['Name', 'From', '  ', 'To'], [':---', '---:', ':---:', '---:'], item => [
         (0, utils_1.displayName)(item),
         (0, utils_1.displayVersion)(item.previous),
         (0, utils_1.getDirectionIcon)(item),

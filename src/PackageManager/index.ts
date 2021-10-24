@@ -35,6 +35,6 @@ export default abstract class PackageManager<
     public abstract loadLockFile(content: string): Promise<LockFile>;
     public abstract loadRequirementFile(content: string): Promise<RequirementFile>;
     public abstract extractLockPackageList(lockFile: LockFile): Promise<PackageList<LockPackage>>;
-    public abstract extractPackageVersion(lockPackage: LockPackage): Promise<PackageVersion>;
+    public abstract extractPackageVersion(lockPackage: LockPackage, file: RequirementFile): Promise<PackageVersion>;
     public abstract getPackageInfos(lockPackage: LockPackage, file: RequirementFile): Promise<PackageInfos>;
 }

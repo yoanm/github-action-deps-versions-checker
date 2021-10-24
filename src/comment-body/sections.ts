@@ -24,7 +24,7 @@ export function createRiskyUpdatesBody(packagesDiff: UpdatedPackageDiff[]): stri
 
     return createDiffTableBody<UpdatedPackageDiff>(
         [majorUpdateList, unknownUpdateList, minorDowngradeList, patchDowngradeList],
-        `${totalCount} risky update${totalCount > 1 ? 's' : ''}`,
+        `${totalCount} risky update${totalCount > 1 ? 's' : ''}\n_Major/Unknown updates & Minor/Patch downgrades_`,
         ['Name', 'From', '  ', 'To'],
         [':---', '---:', ':---:', '---:'],
         item => [

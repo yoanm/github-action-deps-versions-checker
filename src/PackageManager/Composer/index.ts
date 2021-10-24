@@ -43,12 +43,14 @@ export default class Composer extends PackageManager<
         );
     }
 
-    public async extractPackageVersion(lockPackage: MetaComposerLockPackage): Promise<PackageVersion> {
+    public async extractPackageVersion(lockPackage: MetaComposerLockPackage, file: ComposerFile): Promise<PackageVersion> {
+        const requirement = (file.require?.[lockPackage.name] || file['require-dev']?.[lockPackage.name]) as string;
         if (/^v?\d+\.\d+\.\d+/.test(lockPackage.version)) {
             const match = this.sanitizeTag(lockPackage.version)
                 .match(/^(\d+)\.(\d+)\.(\d+)(.*)?/) as RegExpMatchArray;
             // TagPackageVersion
             return {
+                requirement,
                 full: lockPackage.version,
                 isDev: false,
                 type: 'TAG',
@@ -62,6 +64,7 @@ export default class Composer extends PackageManager<
         // CommitPackageVersion
         return {
             // Append the commit ref (only the first 7 chars (=short ref))
+            requirement,
             full: lockPackage.version+'#'+lockPackage.dist.reference.substr(0, 7),
             isDev: true, // Commit version are always dev version (else it's a tag)
             type: 'COMMIT',

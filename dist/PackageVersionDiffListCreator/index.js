@@ -97,8 +97,8 @@ class PackageVersionDiffListCreator {
                 throw new Error('At least a previous or current requirement file has to be provided');
             }
             const [previousVersionData, currentVersionData] = yield Promise.all([
-                previousLockPackage ? this.packageManager.extractPackageVersion(previousLockPackage) : undefined,
-                currentLockPackage ? this.packageManager.extractPackageVersion(currentLockPackage) : undefined,
+                previousLockPackage ? this.packageManager.extractPackageVersion(previousLockPackage, previousRequirementFile) : undefined,
+                currentLockPackage ? this.packageManager.extractPackageVersion(currentLockPackage, currentRequirementFile) : undefined,
             ]);
             const updateType = this.getUpdateType(previousVersionData, currentVersionData);
             const isRemoval = currentLockPackage === undefined;

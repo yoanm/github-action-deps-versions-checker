@@ -37,13 +37,16 @@ class Composer extends index_1.default {
             return (lockFile.packages || []).reduce(reduceFn(false), (lockFile['packages-dev'] || []).reduce(reduceFn(true), {}));
         });
     }
-    extractPackageVersion(lockPackage) {
+    extractPackageVersion(lockPackage, file) {
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
+            const requirement = (((_a = file.require) === null || _a === void 0 ? void 0 : _a[lockPackage.name]) || ((_b = file['require-dev']) === null || _b === void 0 ? void 0 : _b[lockPackage.name]));
             if (/^v?\d+\.\d+\.\d+/.test(lockPackage.version)) {
                 const match = this.sanitizeTag(lockPackage.version)
                     .match(/^(\d+)\.(\d+)\.(\d+)(.*)?/);
                 // TagPackageVersion
                 return {
+                    requirement,
                     full: lockPackage.version,
                     isDev: false,
                     type: 'TAG',
@@ -56,6 +59,7 @@ class Composer extends index_1.default {
             // CommitPackageVersion
             return {
                 // Append the commit ref (only the first 7 chars (=short ref))
+                requirement,
                 full: lockPackage.version + '#' + lockPackage.dist.reference.substr(0, 7),
                 isDev: true,
                 type: 'COMMIT',

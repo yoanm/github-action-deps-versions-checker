@@ -1,5 +1,5 @@
 import {TableRowDataProvider} from "CommentBody";
-import {PackageVersion, PackageVersionDiff} from "PackageVersionDiffListCreator";
+import {AddedPackageDiff, PackageVersion, PackageVersionDiff, RemovedPackageDiff} from "PackageVersionDiffListCreator";
 
 /**
  * Will return a function used to retrieve only T type objects
@@ -77,8 +77,11 @@ export function displayName(versionDiff: PackageVersionDiff): string {
     } else if (versionDiff.isRootRequirement) {
         modifier = '**'; // Bold
     }
+    const currentRequirement = (versionDiff as AddedPackageDiff).current?.requirement;
+    const previousRequirement = (versionDiff as RemovedPackageDiff).previous?.requirement;
 
     return modifier
         + (versionDiff.extra.sourceLink !== undefined ? '['+versionDiff.name+']('+versionDiff.extra.sourceLink+')' : versionDiff.name)
+        + (currentRequirement !== previousRequirement ? ` (${previousRequirement}->${currentRequirement})` : '')
         + modifier;
 }

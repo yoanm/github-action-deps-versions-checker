@@ -146,8 +146,8 @@ export default class PackageVersionDiffListCreator<
         }
 
         const [previousVersionData, currentVersionData] = await Promise.all([
-            previousLockPackage ? this.packageManager.extractPackageVersion(previousLockPackage) : undefined,
-            currentLockPackage ? this.packageManager.extractPackageVersion(currentLockPackage) : undefined,
+            previousLockPackage ? this.packageManager.extractPackageVersion(previousLockPackage, previousRequirementFile) : undefined,
+            currentLockPackage ? this.packageManager.extractPackageVersion(currentLockPackage, currentRequirementFile) : undefined,
         ]);
         const updateType: UpdateType = this.getUpdateType(previousVersionData, currentVersionData);
 
