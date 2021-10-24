@@ -9,7 +9,7 @@ const logger_1 = __importDefault(require("./logger"));
 const Composer_1 = __importDefault(require("./PackageManager/Composer"));
 const GithubPushTagBehavior_1 = require("./behavior/GithubPushTagBehavior");
 function behaviorFactory(context, repositoryData, packageManagerType, postResults, force) {
-    var _a, _b, _c;
+    var _a, _b, _c, _d;
     switch (context.eventName) {
         case 'pull_request':
             logger_1.default.debug(`Using PR behavior for PR #${context.payload.number}`);
@@ -21,16 +21,16 @@ function behaviorFactory(context, repositoryData, packageManagerType, postResult
             logger_1.default.debug(`Using push behavior for ref ${context.payload.ref}`);
             const tagMatch = (_a = context.payload.ref) === null || _a === void 0 ? void 0 : _a.match(/^refs\/tags\/(?<tag>v?\d+(?:\.\d+)?(?:\.\d+)?)$/);
             console.log({ tagMatch });
-            if (!tagMatch || ((_b = tagMatch['tag']) === null || _b === void 0 ? void 0 : _b.length) <= 0) {
+            if (!tagMatch || ((_c = (_b = tagMatch.groups) === null || _b === void 0 ? void 0 : _b.tag) === null || _c === void 0 ? void 0 : _c.length) == 0) {
                 throw new Error('Only semver tags are managed !');
             }
             if (context.payload.created !== true) {
                 throw new Error('Only newly created tags are managed');
             }
-            if (((_c = context.sha) === null || _c === void 0 ? void 0 : _c.length) <= 0) {
+            if (((_d = context.sha) === null || _d === void 0 ? void 0 : _d.length) <= 0) {
                 throw new Error('Tag must have a commit attached !');
             }
-            return new GithubPushTagBehavior_1.GithubPushTagBehavior(repositoryData.owner.login, repositoryData.name, tagMatch['tag'], packageManagerType, postResults, force);
+            return new GithubPushTagBehavior_1.GithubPushTagBehavior(repositoryData.owner.login, repositoryData.name, tagMatch.groups.tag, packageManagerType, postResults, force);
     }
     throw new Error('Context type "' + context.eventName + '" is not supported !');
 }

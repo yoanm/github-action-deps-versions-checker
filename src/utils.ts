@@ -32,7 +32,7 @@ export function behaviorFactory(
       logger.debug(`Using push behavior for ref ${context.payload.ref}`);
       const tagMatch = context.payload.ref?.match(/^refs\/tags\/(?<tag>v?\d+(?:\.\d+)?(?:\.\d+)?)$/);
       console.log({tagMatch});
-      if (!tagMatch || tagMatch['tag']?.length <= 0) {
+      if (!tagMatch || tagMatch.groups?.tag?.length == 0) {
         throw new Error('Only semver tags are managed !');
       }
 
@@ -47,7 +47,7 @@ export function behaviorFactory(
       return new GithubPushTagBehavior(
           repositoryData.owner.login,
           repositoryData.name,
-          tagMatch['tag'],
+          tagMatch.groups.tag,
           packageManagerType,
           postResults,
           force,
