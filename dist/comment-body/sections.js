@@ -14,7 +14,7 @@ function createRiskyUpdatesBody(packagesDiff) {
     if (0 === totalCount) {
         return '';
     }
-    return (0, utils_1.createDiffTableBody)([majorUpdateList, unknownUpdateList, minorDowngradeList, patchDowngradeList], `${totalCount} risky update${totalCount > 1 ? 's' : ''}\n_Major/Unknown updates & Minor/Patch downgrades_`, ['Name', 'Requirement', 'From', '  ', 'To'], [':---', '---:', ':---:', '---:', ':---:'], item => [
+    return (0, utils_1.createDiffTableBody)([majorUpdateList, unknownUpdateList, minorDowngradeList, patchDowngradeList], `${totalCount} risky update${totalCount > 1 ? 's' : ''}\n_Major/Unknown updates & Minor/Patch downgrades_`, ['Name', 'Requirement', 'From', '  ', 'To'], [':---', ':---:', '---:', ':---:', ':---'], item => [
         (0, utils_1.displayName)(item),
         (0, utils_1.displayRequirement)(item),
         (0, utils_1.displayVersion)(item.previous),
@@ -28,7 +28,7 @@ function createMinorVersionUpdatesBody(packagesDiff) {
     if (0 === list.length) {
         return '';
     }
-    return (0, utils_1.createDiffTableBody)([list], `${list.length} minor version update${list.length > 1 ? 's' : ''}`, ['Name', 'Requirement', 'From', '  ', 'To'], [':---', '---:', ':---:', '---:', ':---:'], item => [
+    return (0, utils_1.createDiffTableBody)([list], `${list.length} minor version update${list.length > 1 ? 's' : ''}`, ['Name', 'Requirement', 'From', '  ', 'To'], [':---', ':---:', '---:', ':---:', ':---'], item => [
         (0, utils_1.displayName)(item),
         (0, utils_1.displayRequirement)(item),
         (0, utils_1.displayVersion)(item.previous),
@@ -42,7 +42,7 @@ function createPatchVersionUpdatesBody(packagesDiff) {
     if (0 === list.length) {
         return '';
     }
-    return (0, utils_1.createDiffTableBody)([list], `${list.length} patch version update${list.length > 1 ? 's' : ''}`, ['Name', 'Requirement', 'From', '  ', 'To'], [':---', '---:', ':---:', '---:', ':---:'], item => [
+    return (0, utils_1.createDiffTableBody)([list], `${list.length} patch version update${list.length > 1 ? 's' : ''}`, ['Name', 'Requirement', 'From', '  ', 'To'], [':---', ':---:', '---:', ':---:', ':---'], item => [
         (0, utils_1.displayName)(item),
         (0, utils_1.displayRequirement)(item),
         (0, utils_1.displayVersion)(item.previous),

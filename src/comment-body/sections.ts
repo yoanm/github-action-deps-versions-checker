@@ -33,7 +33,7 @@ export function createRiskyUpdatesBody(packagesDiff: UpdatedPackageDiff[]): stri
         [majorUpdateList, unknownUpdateList, minorDowngradeList, patchDowngradeList],
         `${totalCount} risky update${totalCount > 1 ? 's' : ''}\n_Major/Unknown updates & Minor/Patch downgrades_`,
         ['Name', 'Requirement', 'From', '  ', 'To'],
-        [':---', '---:', ':---:', '---:', ':---:'],
+        [':---', ':---:', '---:', ':---:', ':---'],
         item => [
             displayName(item),
             displayRequirement(item),
@@ -56,7 +56,7 @@ export function createMinorVersionUpdatesBody(packagesDiff: UpdatedPackageDiff[]
         [list],
         `${list.length} minor version update${list.length > 1 ? 's' : ''}`,
         ['Name', 'Requirement', 'From', '  ', 'To'],
-        [':---', '---:', ':---:', '---:', ':---:'],
+        [':---', ':---:', '---:', ':---:', ':---'],
         item => [
             displayName(item),
             displayRequirement(item),
@@ -78,7 +78,7 @@ export function createPatchVersionUpdatesBody(packagesDiff: UpdatedPackageDiff[]
         [list],
         `${list.length} patch version update${list.length > 1 ? 's' : ''}`,
         ['Name', 'Requirement', 'From', '  ', 'To'],
-        [':---', '---:', ':---:', '---:', ':---:'],
+        [':---', ':---:', '---:', ':---:', ':---'],
         item => [
             displayName(item),
             displayRequirement(item),
