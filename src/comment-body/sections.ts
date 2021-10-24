@@ -9,15 +9,21 @@ import {createDiffTableBody, displayName, displayVersion, getDirectionIcon, isDi
 export function createRiskyUpdatesBody(packagesDiff: UpdatedPackageDiff[]): string {
     const majorUpdateList = packagesDiff.filter(item => 'MAJOR' === item.update.subType);
     const unknownUpdateList = packagesDiff.filter(item => 'UNKNOWN' === item.update.subType);
+    const minorDowngradeList = packagesDiff.filter(item => 'MINOR' === item.update.subType && item.update.direction === 'DOWN');
+    const patchDowngradeList = packagesDiff.filter(item => 'PATCH' === item.update.subType && item.update.direction === 'DOWN');
 
-    const totalCount: number = majorUpdateList.length + unknownUpdateList.length;
+    const totalCount: number = majorUpdateList.length
+        + unknownUpdateList.length
+        + minorDowngradeList.length
+        + patchDowngradeList.length
+    ;
 
     if (0 === totalCount) {
         return '';
     }
 
     return createDiffTableBody<UpdatedPackageDiff>(
-        [majorUpdateList, unknownUpdateList],
+        [majorUpdateList, unknownUpdateList, minorDowngradeList, patchDowngradeList],
         `${totalCount} risky update${totalCount > 1 ? 's' : ''}`,
         ['Name', 'From', '  ', 'To'],
         [':---', '---:', ':---:', '---:'],
@@ -32,7 +38,7 @@ export function createRiskyUpdatesBody(packagesDiff: UpdatedPackageDiff[]): stri
 }
 
 export function createMinorVersionUpdatesBody(packagesDiff: UpdatedPackageDiff[]): string {
-    const list = packagesDiff.filter(item => 'MINOR' === item.update.subType);
+    const list = packagesDiff.filter(item => 'MINOR' === item.update.subType && item.update.direction !== 'DOWN');
 
     if (0 === list.length) {
         return '';
@@ -53,7 +59,7 @@ export function createMinorVersionUpdatesBody(packagesDiff: UpdatedPackageDiff[]
 }
 
 export function createPatchVersionUpdatesBody(packagesDiff: UpdatedPackageDiff[]): string {
-    const list = packagesDiff.filter(item => 'PATCH' === item.update.subType);
+    const list = packagesDiff.filter(item => 'PATCH' === item.update.subType && item.update.direction !== 'DOWN');
 
     if (0 === list.length) {
         return '';

@@ -5,11 +5,16 @@ const utils_1 = require("./utils");
 function createRiskyUpdatesBody(packagesDiff) {
     const majorUpdateList = packagesDiff.filter(item => 'MAJOR' === item.update.subType);
     const unknownUpdateList = packagesDiff.filter(item => 'UNKNOWN' === item.update.subType);
-    const totalCount = majorUpdateList.length + unknownUpdateList.length;
+    const minorDowngradeList = packagesDiff.filter(item => 'MINOR' === item.update.subType && item.update.direction === 'DOWN');
+    const patchDowngradeList = packagesDiff.filter(item => 'PATCH' === item.update.subType && item.update.direction === 'DOWN');
+    const totalCount = majorUpdateList.length
+        + unknownUpdateList.length
+        + minorDowngradeList.length
+        + patchDowngradeList.length;
     if (0 === totalCount) {
         return '';
     }
-    return (0, utils_1.createDiffTableBody)([majorUpdateList, unknownUpdateList], `${totalCount} risky update${totalCount > 1 ? 's' : ''}`, ['Name', 'From', '  ', 'To'], [':---', '---:', ':---:', '---:'], item => [
+    return (0, utils_1.createDiffTableBody)([majorUpdateList, unknownUpdateList, minorDowngradeList, patchDowngradeList], `${totalCount} risky update${totalCount > 1 ? 's' : ''}`, ['Name', 'From', '  ', 'To'], [':---', '---:', ':---:', '---:'], item => [
         (0, utils_1.displayName)(item),
         (0, utils_1.displayVersion)(item.previous),
         (0, utils_1.getDirectionIcon)(item),
@@ -18,7 +23,7 @@ function createRiskyUpdatesBody(packagesDiff) {
 }
 exports.createRiskyUpdatesBody = createRiskyUpdatesBody;
 function createMinorVersionUpdatesBody(packagesDiff) {
-    const list = packagesDiff.filter(item => 'MINOR' === item.update.subType);
+    const list = packagesDiff.filter(item => 'MINOR' === item.update.subType && item.update.direction !== 'DOWN');
     if (0 === list.length) {
         return '';
     }
@@ -31,7 +36,7 @@ function createMinorVersionUpdatesBody(packagesDiff) {
 }
 exports.createMinorVersionUpdatesBody = createMinorVersionUpdatesBody;
 function createPatchVersionUpdatesBody(packagesDiff) {
-    const list = packagesDiff.filter(item => 'PATCH' === item.update.subType);
+    const list = packagesDiff.filter(item => 'PATCH' === item.update.subType && item.update.direction !== 'DOWN');
     if (0 === list.length) {
         return '';
     }
