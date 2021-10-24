@@ -12,10 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.get = void 0;
+exports.getTag = void 0;
 const index_1 = __importDefault(require("./index"));
 const request_error_1 = require("@octokit/request-error");
-function get(ownerName, repoName, tagSha) {
+function getTag(ownerName, repoName, tagSha) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { data } = yield index_1.default.rest.git.getTag({ owner: ownerName, repo: repoName, tag_sha: tagSha });
@@ -29,4 +29,4 @@ function get(ownerName, repoName, tagSha) {
         }
     });
 }
-exports.get = get;
+exports.getTag = getTag;

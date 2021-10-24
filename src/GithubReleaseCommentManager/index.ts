@@ -3,7 +3,6 @@ import {PackageVersionDiff} from "PackageVersionDiffListCreator";
 import createBody from "../comment-body";
 import {create as createRelease, getByTag as getReleaseByTag, update as updateRelease} from "../github-api/releases";
 import logger from "../logger";
-import {get as getTag} from "../github-api/tags";
 
 export class GithubReleaseCommentManager {
     private readonly repositoryOwner: string;
