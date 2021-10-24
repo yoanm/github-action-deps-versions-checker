@@ -69,42 +69,6 @@ export function packageManagerFactory(packageManagerType: PackageManagerType): C
 
 export const escapeRegex = (regex: string): string => regex.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 
-export function listPossiblePreviousSemverTag(tag: string): string[] {
-
-  const matches = tag.match(/(?<header>v?)(?<major>\d+)(?:\.(?<minor>\d+))?(?:\.(?<patch>\d+))?$/);
-
-  if (matches && matches.groups?.major?.length) {
-    const header = matches.groups?.header?.trim();
-    const major = parseInt(matches.groups?.major);
-    const minor = matches.groups?.minor?.length > 0 ? parseInt(matches.groups?.minor) : undefined;
-    const patch = matches.groups?.patch?.length > 0 ? parseInt(matches.groups?.patch) : undefined;
-    const tmpList: string[][] = [
-      [], // vX.Y.Z versions
-      [], // vX.Y versions
-      [], // vX versions
-    ];
-
-    if (patch && (patch - 1) >= 0) {
-      tmpList[0].push(`${header}${major}.${minor}.${patch - 1}`);
-    }
-
-    if (minor && (minor - 1) >= 0) {
-      tmpList[0].push(`${header}${major}.${minor - 1}.0`);
-      tmpList[1].push(`${header}${major}.${minor - 1}`);
-    }
-
-    if ((major - 1) >= 0) {
-      tmpList[0].push(`${header}${major - 1}.0.0`);
-      tmpList[1].push(`${header}${major - 1}.0`);
-      tmpList[2].push(`${header}${major - 1}`);
-    }
-
-    return tmpList.flat();
-  }
-
-  return [];
-}
-
 export function listPossiblePreviousSemverTagRef(tag: string): string[] {
   const list: string[] = [];
   const matches = tag.match(/(?<header>v?)(?<major>\d+)(?:\.(?<minor>\d+))?(?:\.(?<patch>\d+))?$/);

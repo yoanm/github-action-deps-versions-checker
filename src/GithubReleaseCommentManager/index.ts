@@ -8,20 +8,20 @@ import {get as getTag} from "../github-api/tags";
 export class GithubReleaseCommentManager {
     private readonly repositoryOwner: string;
     private readonly repositoryName: string;
-    private readonly tagSha: string;
+    private readonly tagName: string;
     private readonly packageManagerType: PackageManagerType;
     private readonly postResults: boolean;
 
     constructor(
         repositoryOwner: string,
         repositoryName: string,
-        tagSha: string,
+        tagName: string,
         packageManagerType: PackageManagerType,
         postResults: boolean,
     ) {
         this.repositoryOwner = repositoryOwner;
         this.repositoryName = repositoryName;
-        this.tagSha = tagSha;
+        this.tagName = tagName;
         this.packageManagerType = packageManagerType;
         this.postResults = postResults;
     }
@@ -34,33 +34,15 @@ export class GithubReleaseCommentManager {
             return;
         }
 
-        const tag = await getTag(this.repositoryOwner, this.repositoryName, this.tagSha);
-        if (!tag) {
-            throw new Error('Unable to retrieve the current tag !');
-        }
-        const release = tag
-            ? await getReleaseByTag(this.repositoryOwner, this.repositoryName, tag.tag)
-            : undefined
-        ;
+        const release = await getReleaseByTag(this.repositoryOwner, this.repositoryName, this.tagName);
         const commentBody = createBody(this.packageManagerType, commitSha, packagesDiff);
 
         if (!release) {
             // create the release
-            await createRelease(this.repositoryOwner, this.repositoryName, tag.tag, commentBody);
+            await createRelease(this.repositoryOwner, this.repositoryName, this.tagName, commentBody);
         } else {
-            if (release.body) {
-                // Remove first line of each bodies as they contains commit information (and so can't never match)
-                const previousBodyToCompare = release.body.substring(release.body.indexOf("\n") + 1);
-                const newBodyToCompare = commentBody.substring(commentBody.indexOf("\n") + 1);
-                if (previousBodyToCompare === newBodyToCompare) {
-                    logger.info('Same comment as before, nothing to do. Bye !');
-
-                    return;
-                }
-            }
-
+            // Append infos to existing release
             logger.debug('Posting comment ...');
-
             await updateRelease(
                 this.repositoryOwner,
                 this.repositoryName,
