@@ -10,7 +10,7 @@ exports.commentPkgTypeFactory = commentPkgTypeFactory;
 function createBody(packageManagerType, commit, packagesDiff) {
     const updatedPackageDiffList = packagesDiff.filter((0, utils_1.isDiffTypeFilter)('UPDATED'));
     return `${exports.COMMENT_HEADER}${(0, exports.commentPkgTypeFactory)(packageManagerType)}<!-- commit="${commit}" --> \n`
-        + `# 🔎 ${getPackageManagerName(packageManagerType)} packages versions checker 🔍 \n`
+        + `### 🔎 ${getPackageManagerName(packageManagerType)} packages versions checker 🔍 \n`
         + '\n'
         + (0, sections_1.createRiskyUpdatesBody)(updatedPackageDiffList)
         + (0, sections_1.createMinorVersionUpdatesBody)(updatedPackageDiffList)

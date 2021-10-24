@@ -15,10 +15,19 @@ export function createDiffTableBody<T extends PackageVersionDiff>(
     header: string,
     columnList: string[],
     separatorList: string[],
-    rowDataProvider: TableRowDataProvider<T>
+    rowDataProvider: TableRowDataProvider<T>,
+    detailsPanel = true
 ): string {
-    return '## ' + header + '\n'
-        + '| ' + columnList.join(' | ') + ' |\n'
+    let body: string;
+    if (detailsPanel) {
+        body = '<details>\n'
+            + ' <summary>' + header + '</summary>\n'
+            + '\n'
+        ;
+    } else {
+        body = '#### ' + header + '\n';
+    }
+    body += '| ' + columnList.join(' | ') + ' |\n'
         + '| ' + separatorList.join(' | ') + ' |\n'
         + packageDiffListList.map(
             (packageDiffList) => packageDiffList.map(
@@ -28,6 +37,13 @@ export function createDiffTableBody<T extends PackageVersionDiff>(
             .filter(item => item.length > 0) // Remove empty line (from empty list)
             .join('\n') + '\n'
         + '\n';
+    if (detailsPanel) {
+        body += '</details>\n'
+            + '\n'
+        ;
+    }
+
+    return body;
 }
 
 export function getDirectionIcon(version: PackageVersionDiff): string {

@@ -24,7 +24,7 @@ export default function createBody(packageManagerType: PackageManagerType, commi
     const updatedPackageDiffList = packagesDiff.filter(isDiffTypeFilter<UpdatedPackageDiff>('UPDATED'));
 
     return `${COMMENT_HEADER}${commentPkgTypeFactory(packageManagerType)}<!-- commit="${commit}" --> \n`
-        +`# 🔎 ${getPackageManagerName(packageManagerType)} packages versions checker 🔍 \n`
+        +`### 🔎 ${getPackageManagerName(packageManagerType)} packages versions checker 🔍 \n`
         + '\n'
         + createRiskyUpdatesBody(updatedPackageDiffList)
         + createMinorVersionUpdatesBody(updatedPackageDiffList)

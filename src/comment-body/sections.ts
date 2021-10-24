@@ -27,6 +27,7 @@ export function createRiskyUpdatesBody(packagesDiff: UpdatedPackageDiff[]): stri
             getDirectionIcon(item),
             displayVersion(item.current)
         ],
+        false,
     );
 }
 
@@ -116,13 +117,13 @@ export function createCaptionBody(): string {
         + '<details>\n'
         + ' <summary>Caption</summary>\n'
         + '\n'
-        + '### Root dependencies\n'
+        + '##### Root dependencies\n'
         + '|   | Meaning |\n'
         + '| :---: | :--- |\n'
         + '| **Bold** | Root dependency |\n'
         + '| _Italic_ | Root dev dependency |'
         + '\n'
-        + '### Version update directions\n'
+        + '##### Version update directions\n'
         + '| Icon | Meaning |\n'
         + '| :---: | :--- |\n'
         + '| ↗ | Upgrade |\n'
@@ -131,12 +132,12 @@ export function createCaptionBody(): string {
         + '| ✔ | Unchanged |\n'
         + '| ⁉️ | Unmanaged |\n'
         + '\n'
-        + '### Versions\n'
+        + '##### Versions\n'
         + '| Icon | Meaning |\n'
         + '| :---: | :--- |\n'
         + '| {VERSION}❗| dev version (usually a branch or a ref) |\n'
         + '\n'
-        + '### Added & removed packages\n'
+        + '##### Added & removed packages\n'
         + '| Icon | Meaning |\n'
         + '| :---: | :--- |\n'
         + '| ➕ | Added package |\n'

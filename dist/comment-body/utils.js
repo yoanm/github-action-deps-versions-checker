@@ -10,14 +10,27 @@ function isDiffTypeFilter(updateType) {
     };
 }
 exports.isDiffTypeFilter = isDiffTypeFilter;
-function createDiffTableBody(packageDiffListList, header, columnList, separatorList, rowDataProvider) {
-    return '## ' + header + '\n'
-        + '| ' + columnList.join(' | ') + ' |\n'
+function createDiffTableBody(packageDiffListList, header, columnList, separatorList, rowDataProvider, detailsPanel = true) {
+    let body;
+    if (detailsPanel) {
+        body = '<details>\n'
+            + ' <summary>' + header + '</summary>\n'
+            + '\n';
+    }
+    else {
+        body = '#### ' + header + '\n';
+    }
+    body += '| ' + columnList.join(' | ') + ' |\n'
         + '| ' + separatorList.join(' | ') + ' |\n'
         + packageDiffListList.map((packageDiffList) => packageDiffList.map((item) => '| ' + rowDataProvider(item).join(' | ') + ' |').join('\n'))
             .filter(item => item.length > 0) // Remove empty line (from empty list)
             .join('\n') + '\n'
         + '\n';
+    if (detailsPanel) {
+        body += '</details>\n'
+            + '\n';
+    }
+    return body;
 }
 exports.createDiffTableBody = createDiffTableBody;
 function getDirectionIcon(version) {

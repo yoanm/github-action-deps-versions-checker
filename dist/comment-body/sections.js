@@ -14,7 +14,7 @@ function createRiskyUpdatesBody(packagesDiff) {
         (0, utils_1.displayVersion)(item.previous),
         (0, utils_1.getDirectionIcon)(item),
         (0, utils_1.displayVersion)(item.current)
-    ]);
+    ], false);
 }
 exports.createRiskyUpdatesBody = createRiskyUpdatesBody;
 function createMinorVersionUpdatesBody(packagesDiff) {
@@ -71,13 +71,13 @@ function createCaptionBody() {
         + '<details>\n'
         + ' <summary>Caption</summary>\n'
         + '\n'
-        + '### Root dependencies\n'
+        + '##### Root dependencies\n'
         + '|   | Meaning |\n'
         + '| :---: | :--- |\n'
         + '| **Bold** | Root dependency |\n'
         + '| _Italic_ | Root dev dependency |'
         + '\n'
-        + '### Version update directions\n'
+        + '##### Version update directions\n'
         + '| Icon | Meaning |\n'
         + '| :---: | :--- |\n'
         + '| ↗ | Upgrade |\n'
@@ -86,12 +86,12 @@ function createCaptionBody() {
         + '| ✔ | Unchanged |\n'
         + '| ⁉️ | Unmanaged |\n'
         + '\n'
-        + '### Versions\n'
+        + '##### Versions\n'
         + '| Icon | Meaning |\n'
         + '| :---: | :--- |\n'
         + '| {VERSION}❗| dev version (usually a branch or a ref) |\n'
         + '\n'
-        + '### Added & removed packages\n'
+        + '##### Added & removed packages\n'
         + '| Icon | Meaning |\n'
         + '| :---: | :--- |\n'
         + '| ➕ | Added package |\n'
