@@ -58,11 +58,11 @@ function createAddedAndRemovedBody(packagesDiff) {
     const addedPackageList = packagesDiff.filter((0, utils_1.isDiffTypeFilter)('ADDED'));
     const removedPackageList = packagesDiff.filter((0, utils_1.isDiffTypeFilter)('REMOVED'));
     // Can't use createDiffTableBody as there two different types, AddedPackageDiff and RemovedPackageDiff types !
-    return (0, utils_1.createDiffTableBody)([addedPackageList, removedPackageList], `${addedPackageList.length} package${addedPackageList.length > 1 ? 's' : ''} added & ${removedPackageList.length} package${removedPackageList.length > 1 ? 's' : ''} removed`, ['Name', 'Version'], [':---:', ':---'], item => {
+    return (0, utils_1.createDiffTableBody)([addedPackageList, removedPackageList], `${addedPackageList.length} package${addedPackageList.length > 1 ? 's' : ''} added & ${removedPackageList.length} package${removedPackageList.length > 1 ? 's' : ''} removed`, ['Name', 'Version', 'Requirement'], [':---:', ':---', ':---:'], item => {
         if ((0, utils_1.isDiffTypeFilter)('ADDED')(item)) {
-            return [':heavy_plus_sign:', (0, utils_1.displayName)(item), (0, utils_1.displayVersion)(item.current)];
+            return [':heavy_plus_sign:', (0, utils_1.displayName)(item), (0, utils_1.displayVersion)(item.current), (0, utils_1.displayRequirement)(item)];
         }
-        return [':heavy_minus_sign:', (0, utils_1.displayName)(item), (0, utils_1.displayVersion)(item.previous)];
+        return [':heavy_minus_sign:', (0, utils_1.displayName)(item), (0, utils_1.displayVersion)(item.previous), ''];
     });
 }
 exports.createAddedAndRemovedBody = createAddedAndRemovedBody;

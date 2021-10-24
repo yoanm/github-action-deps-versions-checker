@@ -101,14 +101,14 @@ export function createAddedAndRemovedBody(packagesDiff: (AddedPackageDiff|Remove
     return createDiffTableBody<AddedPackageDiff|RemovedPackageDiff>(
         [addedPackageList, removedPackageList],
         `${addedPackageList.length} package${addedPackageList.length > 1 ? 's' : ''} added & ${removedPackageList.length} package${removedPackageList.length > 1 ? 's' : ''} removed`,
-        ['Name', 'Version'],
-        [':---:', ':---'],
+        ['Name', 'Version', 'Requirement'],
+        [':---:', ':---', ':---:'],
         item => {
             if (isDiffTypeFilter<AddedPackageDiff>('ADDED')(item)) {
-                return [':heavy_plus_sign:', displayName(item), displayVersion(item.current)];
+                return [':heavy_plus_sign:', displayName(item), displayVersion(item.current), displayRequirement(item)];
             }
 
-            return [':heavy_minus_sign:', displayName(item), displayVersion(item.previous)];
+            return [':heavy_minus_sign:', displayName(item), displayVersion(item.previous), ''];
         },
     );
 }
