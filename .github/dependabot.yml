@@ -5,5 +5,7 @@ updates:
     # Look for `package.json` and `lock` files in the `root` directory
     directory: '/'
     # Check the npm registry for updates every day (weekdays)
+    target-branch: "feature/dependabot-updates"
+    open-pull-requests-limit: 10
     schedule:
       interval: 'monthly'
