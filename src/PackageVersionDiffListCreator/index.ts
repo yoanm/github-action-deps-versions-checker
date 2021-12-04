@@ -1,4 +1,4 @@
-import {LockFile, LockPackage, RequirementFile} from "PackageManager";
+import {LockFile, LockPackage, PackageList, RequirementFile} from "PackageManager";
 import {
     PackageVersion,
     PackageVersionDiff,
@@ -80,8 +80,8 @@ export default class PackageVersionDiffListCreator<
         const promiseList: Promise<PackageVersionDiff>[] = [];
 
         const [previousLockPackageList, currentLockPackageList] = await Promise.all([
-            previousLockFile ? this.packageManager.extractLockPackageList(previousLockFile) : {},
-            currentLockFile ? this.packageManager.extractLockPackageList(currentLockFile) : {},
+            previousLockFile ? this.packageManager.extractLockPackageList(previousLockFile) : {} as PackageList<LockPackage>,
+            currentLockFile ? this.packageManager.extractLockPackageList(currentLockFile) : {} as PackageList<LockPackage>,
         ]);
 
         // Loop over current to find Added / Updated + all other packages
