@@ -2,23 +2,27 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createCaptionBody = exports.createUnknownBody = exports.createAddedAndRemovedBody = exports.createPatchVersionUpdatesBody = exports.createMinorVersionUpdatesBody = exports.createRiskyUpdatesBody = void 0;
 const utils_1 = require("./utils");
+function sortByPkgName(list) {
+    return list.sort((a, b) => a.name.localeCompare(b.name));
+}
 function createRiskyUpdatesBody(packagesDiff) {
-    const majorUpdateList = packagesDiff.filter(item => 'MAJOR' === item.update.subType);
-    const unknownUpdateList = packagesDiff.filter(item => 'UNKNOWN' === item.update.subType);
-    const totalCount = majorUpdateList.length + unknownUpdateList.length;
+    const majorUpdateList = sortByPkgName(packagesDiff.filter(item => 'MAJOR' === item.update.subType));
+    const unknownUpdateList = sortByPkgName(packagesDiff.filter(item => 'UPDATED' === item.update.type && 'UNKNOWN' === item.update.subType));
+    const riskyAddedList = sortByPkgName(packagesDiff.filter(item => 'ADDED' === item.update.type && item.current.isDev));
+    const totalCount = majorUpdateList.length + unknownUpdateList.length + riskyAddedList.length;
     if (0 === totalCount) {
         return '';
     }
-    return (0, utils_1.createDiffTableBody)([majorUpdateList, unknownUpdateList], `${totalCount} risky update${totalCount > 1 ? 's' : ''}`, ['Name', 'From', '  ', 'To'], [':---', '---:', ':---:', '---:'], item => [
+    return (0, utils_1.createDiffTableBody)([majorUpdateList, unknownUpdateList, riskyAddedList], `${totalCount} risky update${totalCount > 1 ? 's' : ''}`, ['Name', 'From', '  ', 'To'], [':---', '---:', ':---:', '---:'], item => [
         (0, utils_1.displayName)(item),
-        (0, utils_1.displayVersion)(item.previous),
+        (0, utils_1.isDiffTypeFilter)('ADDED')(item) ? '' : (0, utils_1.displayVersion)(item.previous),
         (0, utils_1.getDirectionIcon)(item),
         (0, utils_1.displayVersion)(item.current)
     ]);
 }
 exports.createRiskyUpdatesBody = createRiskyUpdatesBody;
 function createMinorVersionUpdatesBody(packagesDiff) {
-    const list = packagesDiff.filter(item => 'MINOR' === item.update.subType);
+    const list = sortByPkgName(packagesDiff.filter(item => 'MINOR' === item.update.subType));
     if (0 === list.length) {
         return '';
     }
@@ -31,7 +35,7 @@ function createMinorVersionUpdatesBody(packagesDiff) {
 }
 exports.createMinorVersionUpdatesBody = createMinorVersionUpdatesBody;
 function createPatchVersionUpdatesBody(packagesDiff) {
-    const list = packagesDiff.filter(item => 'PATCH' === item.update.subType);
+    const list = sortByPkgName(packagesDiff.filter(item => 'PATCH' === item.update.subType));
     if (0 === list.length) {
         return '';
     }
@@ -47,10 +51,9 @@ function createAddedAndRemovedBody(packagesDiff) {
     if (0 === packagesDiff.length) {
         return '';
     }
-    const addedPackageList = packagesDiff.filter((0, utils_1.isDiffTypeFilter)('ADDED'));
-    const removedPackageList = packagesDiff.filter((0, utils_1.isDiffTypeFilter)('REMOVED'));
-    // Can't use createDiffTableBody as there two different types, AddedPackageDiff and RemovedPackageDiff types !
-    return (0, utils_1.createDiffTableBody)([addedPackageList, removedPackageList], `${addedPackageList.length} package${addedPackageList.length > 1 ? 's' : ''} added & ${removedPackageList.length} package${removedPackageList.length > 1 ? 's' : ''} removed`, ['Name', 'Version'], [':---', ':---'], item => {
+    const addedPackageList = sortByPkgName(packagesDiff.filter(item => (0, utils_1.isDiffTypeFilter)('ADDED')(item) && !item.current.isDev));
+    const removedPackageList = sortByPkgName(packagesDiff.filter((0, utils_1.isDiffTypeFilter)('REMOVED')));
+    return (0, utils_1.createDiffTableBody)([addedPackageList, removedPackageList], `${addedPackageList.length} package${addedPackageList.length > 1 ? 's' : ''} added & ${removedPackageList.length} package${removedPackageList.length > 1 ? 's' : ''} removed`, ['', 'Name', 'Version'], [':---:', ':---', '---:'], item => {
         if ((0, utils_1.isDiffTypeFilter)('ADDED')(item)) {
             return ['➕', (0, utils_1.displayName)(item), (0, utils_1.displayVersion)(item.current)];
         }
