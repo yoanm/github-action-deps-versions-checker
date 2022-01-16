@@ -18,11 +18,9 @@ jobs:
     steps:
       - name: "Checkout"
         uses: actions/checkout@v2
-      - name: "Install"
-        run: yarn install
-      - name: "Compile"
-        run: npm run compile
+      - name: "Build"
+        run: make build
       - name: "Detect forgotten compilation before push"
         run: test -z "$(git diff --name-only dist/)"
       - name: "Lint"
-        run: npm run lint
+        run: make lint
