@@ -8,7 +8,7 @@
 ## How to use
 
 ### Append results as PR comment
-```
+```yaml
 name: 'Append PR extra infos'
 on: 
   pull_request:
@@ -27,7 +27,7 @@ jobs:
         uses: yoanm/github-action-deps-versions-checker@v1
         with:
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-          manager: composer
+#          manager: composer # Default value
 
 ```
 
@@ -36,7 +36,7 @@ jobs:
 - `force: true` : to be sure to always have the diff
 - `post-results: false` : Not required, just in case you don't care about results comment
 
-```
+```yaml
 name: 'Append PR extra infos'
 on: 
   pull_request:
@@ -52,11 +52,11 @@ jobs:
       pull-requests: read
     steps:
       - name: "Check composer packages versions"
-        uses: yoanm/github-action-deps-versions-checker@v0.1.0
+        uses: yoanm/github-action-deps-versions-checker@v1
         id: 'diff'
         with:
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-          manager: composer
+#          manager: composer # Default value
           force: true
           post-results: false
       - name: Print diff
@@ -77,7 +77,8 @@ It's not mandatory to define `permissions`, but it increases your repository sec
 
 _Check `action.yml` file for more information about inputs_
 - `gh-token` **Required**
-- `manager` **Required**
+  - Github token used for API calls, be sure required permissions are granted 
+- `manager` **Default to `composer`**
 - `post-results` **Default to `true`**
 - `force` **Default to `false`**
 
