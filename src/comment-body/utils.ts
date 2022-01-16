@@ -42,6 +42,8 @@ export function getDirectionIcon(version: PackageVersionDiff): string {
             case 'UNKNOWN':
                 return '➡️';
         }
+    } else if ('ADDED' === version.update.type) {
+        return '➡️';
     }
 
     return '⁉️️️️';

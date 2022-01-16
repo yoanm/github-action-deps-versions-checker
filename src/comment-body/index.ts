@@ -22,15 +22,26 @@ export const commentPkgTypeFactory = (packageManagerType: PackageManagerType): s
 
 export default function createBody(packageManagerType: PackageManagerType, commit: string, packagesDiff: PackageVersionDiff[]): string {
     const updatedPackageDiffList = packagesDiff.filter(isDiffTypeFilter<UpdatedPackageDiff>('UPDATED'));
+    const addedPackageDiffList = packagesDiff.filter(isDiffTypeFilter<AddedPackageDiff>('ADDED'));
+    const riskyAddedPackageDiffList: AddedPackageDiff[] = [];
+    const harmlessAddedPackageDiffList: AddedPackageDiff[] = [];
+    for (const item of addedPackageDiffList) {
+        if (item.current.isDev) {
+            // In case package has been added with dev version, append it to risky updates
+            riskyAddedPackageDiffList.push(item);
+        } else {
+            harmlessAddedPackageDiffList.push(item);
+        }
+    }
 
     return `${COMMENT_HEADER}${commentPkgTypeFactory(packageManagerType)}<!-- commit="${commit}" --> \n`
         +`# 🔎 ${getPackageManagerName(packageManagerType)} packages versions checker 🔍 \n`
         + '\n'
-        + createRiskyUpdatesBody(updatedPackageDiffList)
+        + createRiskyUpdatesBody([...updatedPackageDiffList, ...riskyAddedPackageDiffList])
         + createMinorVersionUpdatesBody(updatedPackageDiffList)
         + createPatchVersionUpdatesBody(updatedPackageDiffList)
         + createAddedAndRemovedBody([
-            ...packagesDiff.filter(isDiffTypeFilter<AddedPackageDiff>('ADDED')),
+            ...harmlessAddedPackageDiffList,
             ...packagesDiff.filter(isDiffTypeFilter<RemovedPackageDiff>('REMOVED')),
         ])
         + createUnknownBody(packagesDiff.filter(isDiffTypeFilter<UnknownUpdatePackageDiff>('UNKNOWN')))

@@ -11,7 +11,7 @@ function createRiskyUpdatesBody(packagesDiff) {
     }
     return (0, utils_1.createDiffTableBody)([majorUpdateList, unknownUpdateList], `${totalCount} risky update${totalCount > 1 ? 's' : ''}`, ['Name', 'From', '  ', 'To'], [':---', '---:', ':---:', '---:'], item => [
         (0, utils_1.displayName)(item),
-        (0, utils_1.displayVersion)(item.previous),
+        (0, utils_1.isDiffTypeFilter)('ADDED')(item) ? '' : (0, utils_1.displayVersion)(item.previous),
         (0, utils_1.getDirectionIcon)(item),
         (0, utils_1.displayVersion)(item.current)
     ]);

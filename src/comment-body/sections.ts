@@ -6,7 +6,7 @@ import {
 } from "PackageVersionDiffListCreator";
 import {createDiffTableBody, displayName, displayVersion, getDirectionIcon, isDiffTypeFilter} from "./utils";
 
-export function createRiskyUpdatesBody(packagesDiff: UpdatedPackageDiff[]): string {
+export function createRiskyUpdatesBody(packagesDiff: (AddedPackageDiff|UpdatedPackageDiff)[]): string {
     const majorUpdateList = packagesDiff.filter(item => 'MAJOR' === item.update.subType);
     const unknownUpdateList = packagesDiff.filter(item => 'UNKNOWN' === item.update.subType);
 
@@ -16,14 +16,14 @@ export function createRiskyUpdatesBody(packagesDiff: UpdatedPackageDiff[]): stri
         return '';
     }
 
-    return createDiffTableBody<UpdatedPackageDiff>(
+    return createDiffTableBody<(AddedPackageDiff|UpdatedPackageDiff)>(
         [majorUpdateList, unknownUpdateList],
         `${totalCount} risky update${totalCount > 1 ? 's' : ''}`,
         ['Name', 'From', '  ', 'To'],
         [':---', '---:', ':---:', '---:'],
         item => [
             displayName(item),
-            displayVersion(item.previous),
+            isDiffTypeFilter<AddedPackageDiff>('ADDED')(item) ? '' : displayVersion(item.previous),
             getDirectionIcon(item),
             displayVersion(item.current)
         ],
