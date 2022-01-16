@@ -61,6 +61,10 @@ export class GithubPRBehavior implements Behavior {
             return packagesDiff;
         }
 
+
+        logger.info(this.packageManager.getLockFilename() + ' not updated on that PR !');
+        await this.githubCommentManager.deletePreviousIfExisting();
+
         return [];
     }
 
@@ -73,37 +77,15 @@ export class GithubPRBehavior implements Behavior {
     }
 
     protected  async shouldCreateDiff(): Promise<boolean> {
-        let lockFile: File | undefined;
-        const previousComment = await this.githubCommentManager.getPrevious();
-        logger.debug(`Previous comment found ? ${previousComment === undefined ? 'N' : 'Y'}`);
-
-        const isJobRestartedOnSameCommitAsPreviousComment: boolean = previousComment?.commitRef === this.headCommitSha;
-        logger.debug(`Job restarted on same commit as previous comment ? ${isJobRestartedOnSameCommitAsPreviousComment ? 'Y' : 'N'}`);
-
-        if (!this.force && previousComment !== undefined && !isJobRestartedOnSameCommitAsPreviousComment) {
-            logger.debug('Checking if lock file has been updated since last PR comment ...');
-            lockFile = await this.githubFileManager.getFileBetween(
-                this.packageManager.getLockFilename(),
-                previousComment.commitRef,
-                this.headCommitSha,
-                ['modified', 'added', 'removed']
-            );
-
-            if (lockFile === undefined) {
-                logger.info(this.packageManager.getLockFilename() + ' not updated since last comment !');
-            }
-        } else {
-            logger.debug('Checking if lock file has been updated on PR ...');
-            lockFile = await this.githubFileManager.getPRFile(
-                this.packageManager.getLockFilename(),
-                this.prId,
-                ['modified', 'added', 'removed']
-            );
-
-            if (lockFile === undefined) {
-                logger.info(this.packageManager.getLockFilename() + ' not updated on that PR !');
-            }
-        }
+        // /!\ Checking only between comment commit and latest commit may produce bad result
+        // see https://github.com/yoanm/github-action-deps-versions-checker/issues/63
+        // ==> Always check between base branch and latest commit instead
+        logger.debug('Checking if lock file has been updated on PR ...');
+        const lockFile = await this.githubFileManager.getPRFile(
+            this.packageManager.getLockFilename(),
+            this.prId,
+            ['modified', 'added', 'removed']
+        );
 
         return lockFile !== undefined;
     }
