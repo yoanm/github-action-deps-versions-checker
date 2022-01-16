@@ -84,8 +84,8 @@ export function createAddedAndRemovedBody(packagesDiff: (AddedPackageDiff|Remove
     return createDiffTableBody<AddedPackageDiff|RemovedPackageDiff>(
         [addedPackageList, removedPackageList],
         `${addedPackageList.length} package${addedPackageList.length > 1 ? 's' : ''} added & ${removedPackageList.length} package${removedPackageList.length > 1 ? 's' : ''} removed`,
-        ['Name', 'Version'],
-        [':---', ':---'],
+        ['', 'Name', 'Version'],
+        [':---:', ':---', '---:'],
         item => {
             if (isDiffTypeFilter<AddedPackageDiff>('ADDED')(item)) {
                 return ['➕', displayName(item), displayVersion(item.current)];
