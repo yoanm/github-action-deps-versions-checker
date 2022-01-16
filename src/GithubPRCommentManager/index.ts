@@ -66,6 +66,11 @@ export class GithubPRCommentManager {
         }
 
         const commentBody = createBody(this.packageManagerType, commitSha, packagesDiff);
+        if (commentBody === undefined) {
+            logger.debug('Nothing to post ! Removing previous if it exists !');
+            return this.deletePreviousIfExisting();
+        }
+
         const previousComment = await this.getPrevious();
         if (previousComment) {
             // Remove first line of each bodies as they contains commit information (and so can't never match)
