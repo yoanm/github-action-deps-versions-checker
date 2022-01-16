@@ -1,14 +1,18 @@
 import {
-    AddedPackageDiff,
+    AddedPackageDiff, PackageVersionDiff,
     RemovedPackageDiff,
     UnknownUpdatePackageDiff,
     UpdatedPackageDiff
 } from "PackageVersionDiffListCreator";
 import {createDiffTableBody, displayName, displayVersion, getDirectionIcon, isDiffTypeFilter} from "./utils";
 
+function sortByPkgName<T extends PackageVersionDiff>(list: T[]): T[] {
+    return list.sort((a, b) => a.name.localeCompare(b.name));
+}
+
 export function createRiskyUpdatesBody(packagesDiff: (AddedPackageDiff|UpdatedPackageDiff)[]): string {
-    const majorUpdateList = packagesDiff.filter(item => 'MAJOR' === item.update.subType);
-    const unknownUpdateList = packagesDiff.filter(item => 'UNKNOWN' === item.update.subType);
+    const majorUpdateList = sortByPkgName(packagesDiff.filter(item => 'MAJOR' === item.update.subType));
+    const unknownUpdateList = sortByPkgName(packagesDiff.filter(item => 'UNKNOWN' === item.update.subType));
 
     const totalCount: number = majorUpdateList.length + unknownUpdateList.length;
 
@@ -31,7 +35,7 @@ export function createRiskyUpdatesBody(packagesDiff: (AddedPackageDiff|UpdatedPa
 }
 
 export function createMinorVersionUpdatesBody(packagesDiff: UpdatedPackageDiff[]): string {
-    const list = packagesDiff.filter(item => 'MINOR' === item.update.subType);
+    const list = sortByPkgName(packagesDiff.filter(item => 'MINOR' === item.update.subType));
 
     if (0 === list.length) {
         return '';
@@ -52,7 +56,7 @@ export function createMinorVersionUpdatesBody(packagesDiff: UpdatedPackageDiff[]
 }
 
 export function createPatchVersionUpdatesBody(packagesDiff: UpdatedPackageDiff[]): string {
-    const list = packagesDiff.filter(item => 'PATCH' === item.update.subType);
+    const list = sortByPkgName(packagesDiff.filter(item => 'PATCH' === item.update.subType));
 
     if (0 === list.length) {
         return '';
@@ -77,10 +81,9 @@ export function createAddedAndRemovedBody(packagesDiff: (AddedPackageDiff|Remove
         return '';
     }
 
-    const addedPackageList = packagesDiff.filter(isDiffTypeFilter<AddedPackageDiff>('ADDED'));
-    const removedPackageList = packagesDiff.filter(isDiffTypeFilter<RemovedPackageDiff>('REMOVED'));
+    const addedPackageList = sortByPkgName(packagesDiff.filter(isDiffTypeFilter<AddedPackageDiff>('ADDED')));
+    const removedPackageList = sortByPkgName(packagesDiff.filter(isDiffTypeFilter<RemovedPackageDiff>('REMOVED')));
 
-    // Can't use createDiffTableBody as there two different types, AddedPackageDiff and RemovedPackageDiff types !
     return createDiffTableBody<AddedPackageDiff|RemovedPackageDiff>(
         [addedPackageList, removedPackageList],
         `${addedPackageList.length} package${addedPackageList.length > 1 ? 's' : ''} added & ${removedPackageList.length} package${removedPackageList.length > 1 ? 's' : ''} removed`,
