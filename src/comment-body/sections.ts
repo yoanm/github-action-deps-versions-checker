@@ -120,6 +120,7 @@ export function createCaptionBody(): string {
         + '<details>\n'
         + ' <summary>Caption</summary>\n'
         + '\n'
+        + 'Abandoned package ::skull_and_crossbones:\n'
         + '### Root dependencies\n'
         + '|   | Meaning |\n'
         + '| :---: | :--- |\n'
