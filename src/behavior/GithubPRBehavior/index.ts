@@ -1,6 +1,5 @@
 import {WebhookPayload} from "@actions/github/lib/interfaces";
 import {Behavior} from "Behavior";
-import {File} from "GithubApi";
 import {LockFile, LockPackage, PackageManagerType, RequirementFile} from "PackageManager";
 import {PackageVersionDiff} from "PackageVersionDiffListCreator";
 import {GithubFileManager} from "../../GithubFileManager";
