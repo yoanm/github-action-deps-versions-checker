@@ -53,7 +53,8 @@ function displayName(versionDiff) {
         modifier = '**'; // Bold
     }
     return modifier
-        + (versionDiff.extra.sourceLink !== undefined ? '[' + versionDiff.name + '](' + versionDiff.extra.sourceLink + ')' : versionDiff.name)
+        + (versionDiff.extra.link !== undefined ? '[' + versionDiff.name + '](' + versionDiff.extra.link + ')' : versionDiff.name)
+        + (versionDiff.isAbandoned ? ':skull_and_crossbones:' : '')
         + modifier;
 }
 exports.displayName = displayName;

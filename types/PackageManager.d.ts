@@ -12,7 +12,8 @@ declare module "PackageManager" {
     export interface PackageInfos {
         isRootRequirement: boolean,
         isRootDevRequirement: boolean,
-        sourceLink?: string,
+        isAbandoned: boolean,
+        link?: string,
     }
 
     export type PackageManagerType = 'composer'/* | 'npm' | 'yarn'*/;

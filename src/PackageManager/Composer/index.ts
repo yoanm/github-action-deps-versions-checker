@@ -28,7 +28,7 @@ export default class Composer extends PackageManager<
             acc[item.name] = {
                 ...item,
                 isDevRequirement,
-                sourceLink: item.support?.source || undefined,
+                link: item.support?.wiki || item.support?.docs || item.support?.source || item.homepage || undefined,
             };
 
             return acc;
@@ -76,7 +76,8 @@ export default class Composer extends PackageManager<
         return Promise.resolve({
             isRootRequirement: isRootRequirement,
             isRootDevRequirement: isRootRequirement && lockPackage.isDevRequirement,
-            sourceLink: lockPackage.sourceLink
+            isAbandoned: lockPackage.abandoned === true,
+            link: lockPackage.link
         });
     }
 
