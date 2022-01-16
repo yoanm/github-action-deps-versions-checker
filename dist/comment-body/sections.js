@@ -7,13 +7,13 @@ function sortByPkgName(list) {
 }
 function createRiskyUpdatesBody(packagesDiff) {
     const majorUpdateList = sortByPkgName(packagesDiff.filter(item => 'MAJOR' === item.update.subType));
-    const unknownAddedList = sortByPkgName(packagesDiff.filter(item => 'ADDED' === item.update.type && item.current.isDev));
     const unknownUpdateList = sortByPkgName(packagesDiff.filter(item => 'UPDATED' === item.update.type && 'UNKNOWN' === item.update.subType));
-    const totalCount = majorUpdateList.length + unknownUpdateList.length;
+    const riskyAddedList = sortByPkgName(packagesDiff.filter(item => 'ADDED' === item.update.type && item.current.isDev));
+    const totalCount = majorUpdateList.length + unknownUpdateList.length + riskyAddedList.length;
     if (0 === totalCount) {
         return '';
     }
-    return (0, utils_1.createDiffTableBody)([majorUpdateList, unknownUpdateList, unknownAddedList], `${totalCount} risky update${totalCount > 1 ? 's' : ''}`, ['Name', 'From', '  ', 'To'], [':---', '---:', ':---:', '---:'], item => [
+    return (0, utils_1.createDiffTableBody)([majorUpdateList, unknownUpdateList, riskyAddedList], `${totalCount} risky update${totalCount > 1 ? 's' : ''}`, ['Name', 'From', '  ', 'To'], [':---', '---:', ':---:', '---:'], item => [
         (0, utils_1.displayName)(item),
         (0, utils_1.isDiffTypeFilter)('ADDED')(item) ? '' : (0, utils_1.displayVersion)(item.previous),
         (0, utils_1.getDirectionIcon)(item),

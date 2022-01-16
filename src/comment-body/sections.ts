@@ -12,17 +12,17 @@ function sortByPkgName<T extends PackageVersionDiff>(list: T[]): T[] {
 
 export function createRiskyUpdatesBody(packagesDiff: (AddedPackageDiff|UpdatedPackageDiff)[]): string {
     const majorUpdateList = sortByPkgName(packagesDiff.filter(item => 'MAJOR' === item.update.subType));
-    const unknownAddedList = sortByPkgName(packagesDiff.filter(item => 'ADDED' === item.update.type && item.current.isDev));
     const unknownUpdateList = sortByPkgName(packagesDiff.filter(item => 'UPDATED' === item.update.type && 'UNKNOWN' === item.update.subType));
+    const riskyAddedList = sortByPkgName(packagesDiff.filter(item => 'ADDED' === item.update.type && item.current.isDev));
 
-    const totalCount: number = majorUpdateList.length + unknownUpdateList.length;
+    const totalCount: number = majorUpdateList.length + unknownUpdateList.length + riskyAddedList.length;
 
     if (0 === totalCount) {
         return '';
     }
 
     return createDiffTableBody<(AddedPackageDiff|UpdatedPackageDiff)>(
-        [majorUpdateList, unknownUpdateList, unknownAddedList],
+        [majorUpdateList, unknownUpdateList, riskyAddedList],
         `${totalCount} risky update${totalCount > 1 ? 's' : ''}`,
         ['Name', 'From', '  ', 'To'],
         [':---', '---:', ':---:', '---:'],
