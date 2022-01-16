@@ -27,4 +27,4 @@ jobs:
       - name: "Execute action for composer"
         uses: ./
         with:
-          gh-token: ${{ secrets.GITHUB_TOKEN }}r
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
