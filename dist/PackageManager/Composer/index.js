@@ -30,8 +30,8 @@ class Composer extends index_1.default {
     extractLockPackageList(lockFile) {
         return __awaiter(this, void 0, void 0, function* () {
             const reduceFn = (isDevRequirement) => (acc, item) => {
-                var _a;
-                acc[item.name] = Object.assign(Object.assign({}, item), { isDevRequirement, sourceLink: ((_a = item.support) === null || _a === void 0 ? void 0 : _a.source) || undefined });
+                var _a, _b, _c;
+                acc[item.name] = Object.assign(Object.assign({}, item), { isDevRequirement, link: ((_a = item.support) === null || _a === void 0 ? void 0 : _a.wiki) || ((_b = item.support) === null || _b === void 0 ? void 0 : _b.docs) || ((_c = item.support) === null || _c === void 0 ? void 0 : _c.source) || item.homepage || undefined });
                 return acc;
             };
             return (lockFile.packages || []).reduce(reduceFn(false), (lockFile['packages-dev'] || []).reduce(reduceFn(true), {}));
@@ -70,7 +70,8 @@ class Composer extends index_1.default {
             return Promise.resolve({
                 isRootRequirement: isRootRequirement,
                 isRootDevRequirement: isRootRequirement && lockPackage.isDevRequirement,
-                sourceLink: lockPackage.sourceLink
+                isAbandoned: lockPackage.abandoned === true,
+                link: lockPackage.link
             });
         });
     }

@@ -24,7 +24,7 @@ jobs:
       pull-requests: write
     steps:
       - name: "Check composer packages versions"
-        uses: yoanm/github-action-deps-versions-checker@v0.5.0
+        uses: yoanm/github-action-deps-versions-checker@v0.5.3
         with:
           gh-token: ${{ secrets.GITHUB_TOKEN }}
 #          manager: composer # Default value
@@ -52,7 +52,7 @@ jobs:
       pull-requests: read
     steps:
       - name: "Check composer packages versions"
-        uses: yoanm/github-action-deps-versions-checker@v0.5.0
+        uses: yoanm/github-action-deps-versions-checker@v0.5.3
         id: 'diff'
         with:
           gh-token: ${{ secrets.GITHUB_TOKEN }}
