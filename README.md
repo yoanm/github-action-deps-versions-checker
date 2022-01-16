@@ -11,7 +11,10 @@
 ```
 name: 'Append PR extra infos'
 on: 
-  pull_request: [ synchronize ]
+  pull_request:
+    types:
+      - opened
+      - synchronize
 jobs:
   main:
     name: "Composer package updates"
@@ -36,7 +39,10 @@ jobs:
 ```
 name: 'Append PR extra infos'
 on: 
-  pull_request: [ synchronize ]
+  pull_request:
+    types:
+      - opened
+      - synchronize
 jobs:
   main:
     name: "Composer package updates"
