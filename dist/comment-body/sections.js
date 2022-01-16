@@ -7,12 +7,13 @@ function sortByPkgName(list) {
 }
 function createRiskyUpdatesBody(packagesDiff) {
     const majorUpdateList = sortByPkgName(packagesDiff.filter(item => 'MAJOR' === item.update.subType));
-    const unknownUpdateList = sortByPkgName(packagesDiff.filter(item => 'UNKNOWN' === item.update.subType));
+    const unknownAddedList = sortByPkgName(packagesDiff.filter(item => 'ADDED' === item.update.type && 'UNKNOWN' === item.update.subType));
+    const unknownUpdateList = sortByPkgName(packagesDiff.filter(item => 'UPDATED' === item.update.type && 'UNKNOWN' === item.update.subType));
     const totalCount = majorUpdateList.length + unknownUpdateList.length;
     if (0 === totalCount) {
         return '';
     }
-    return (0, utils_1.createDiffTableBody)([majorUpdateList, unknownUpdateList], `${totalCount} risky update${totalCount > 1 ? 's' : ''}`, ['Name', 'From', '  ', 'To'], [':---', '---:', ':---:', '---:'], item => [
+    return (0, utils_1.createDiffTableBody)([majorUpdateList, unknownUpdateList, unknownAddedList], `${totalCount} risky update${totalCount > 1 ? 's' : ''}`, ['Name', 'From', '  ', 'To'], [':---', '---:', ':---:', '---:'], item => [
         (0, utils_1.displayName)(item),
         (0, utils_1.isDiffTypeFilter)('ADDED')(item) ? '' : (0, utils_1.displayVersion)(item.previous),
         (0, utils_1.getDirectionIcon)(item),
@@ -50,7 +51,7 @@ function createAddedAndRemovedBody(packagesDiff) {
     if (0 === packagesDiff.length) {
         return '';
     }
-    const addedPackageList = sortByPkgName(packagesDiff.filter((0, utils_1.isDiffTypeFilter)('ADDED')));
+    const addedPackageList = sortByPkgName(packagesDiff.filter(item => (0, utils_1.isDiffTypeFilter)('ADDED')(item) && !item.current.isDev));
     const removedPackageList = sortByPkgName(packagesDiff.filter((0, utils_1.isDiffTypeFilter)('REMOVED')));
     return (0, utils_1.createDiffTableBody)([addedPackageList, removedPackageList], `${addedPackageList.length} package${addedPackageList.length > 1 ? 's' : ''} added & ${removedPackageList.length} package${removedPackageList.length > 1 ? 's' : ''} removed`, ['', 'Name', 'Version'], [':---:', ':---', '---:'], item => {
         if ((0, utils_1.isDiffTypeFilter)('ADDED')(item)) {

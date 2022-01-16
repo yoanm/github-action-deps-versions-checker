@@ -12,7 +12,8 @@ function sortByPkgName<T extends PackageVersionDiff>(list: T[]): T[] {
 
 export function createRiskyUpdatesBody(packagesDiff: (AddedPackageDiff|UpdatedPackageDiff)[]): string {
     const majorUpdateList = sortByPkgName(packagesDiff.filter(item => 'MAJOR' === item.update.subType));
-    const unknownUpdateList = sortByPkgName(packagesDiff.filter(item => 'UNKNOWN' === item.update.subType));
+    const unknownAddedList = sortByPkgName(packagesDiff.filter(item => 'ADDED' === item.update.type && 'UNKNOWN' === item.update.subType));
+    const unknownUpdateList = sortByPkgName(packagesDiff.filter(item => 'UPDATED' === item.update.type && 'UNKNOWN' === item.update.subType));
 
     const totalCount: number = majorUpdateList.length + unknownUpdateList.length;
 
@@ -21,7 +22,7 @@ export function createRiskyUpdatesBody(packagesDiff: (AddedPackageDiff|UpdatedPa
     }
 
     return createDiffTableBody<(AddedPackageDiff|UpdatedPackageDiff)>(
-        [majorUpdateList, unknownUpdateList],
+        [majorUpdateList, unknownUpdateList, unknownAddedList],
         `${totalCount} risky update${totalCount > 1 ? 's' : ''}`,
         ['Name', 'From', '  ', 'To'],
         [':---', '---:', ':---:', '---:'],
@@ -81,7 +82,7 @@ export function createAddedAndRemovedBody(packagesDiff: (AddedPackageDiff|Remove
         return '';
     }
 
-    const addedPackageList = sortByPkgName(packagesDiff.filter(isDiffTypeFilter<AddedPackageDiff>('ADDED')));
+    const addedPackageList = sortByPkgName(packagesDiff.filter(item => isDiffTypeFilter<AddedPackageDiff>('ADDED')(item) && !item.current.isDev));
     const removedPackageList = sortByPkgName(packagesDiff.filter(isDiffTypeFilter<RemovedPackageDiff>('REMOVED')));
 
     return createDiffTableBody<AddedPackageDiff|RemovedPackageDiff>(

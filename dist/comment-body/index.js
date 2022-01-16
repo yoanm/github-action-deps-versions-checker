@@ -10,28 +10,26 @@ exports.commentPkgTypeFactory = commentPkgTypeFactory;
 function createBody(packageManagerType, commit, packagesDiff) {
     const updatedPackageDiffList = packagesDiff.filter((0, utils_1.isDiffTypeFilter)('UPDATED'));
     const addedPackageDiffList = packagesDiff.filter((0, utils_1.isDiffTypeFilter)('ADDED'));
-    const riskyAddedPackageDiffList = [];
-    const harmlessAddedPackageDiffList = [];
-    for (const item of addedPackageDiffList) {
-        if (item.current.isDev) {
-            // In case package has been added with dev version, append it to risky updates
-            riskyAddedPackageDiffList.push(item);
-        }
-        else {
-            harmlessAddedPackageDiffList.push(item);
-        }
+    const removedPackageDiffList = packagesDiff.filter((0, utils_1.isDiffTypeFilter)('REMOVED'));
+    const unknownPackageDiffList = packagesDiff.filter((0, utils_1.isDiffTypeFilter)('UNKNOWN'));
+    const listCount = updatedPackageDiffList.length
+        + addedPackageDiffList.length
+        + removedPackageDiffList.length
+        + unknownPackageDiffList.length;
+    if (listCount === 0) {
+        return undefined;
     }
     return `${exports.COMMENT_HEADER}${(0, exports.commentPkgTypeFactory)(packageManagerType)}<!-- commit="${commit}" --> \n`
         + `# 🔎 ${getPackageManagerName(packageManagerType)} packages versions checker 🔍 \n`
         + '\n'
-        + (0, sections_1.createRiskyUpdatesBody)([...updatedPackageDiffList, ...riskyAddedPackageDiffList])
+        + (0, sections_1.createRiskyUpdatesBody)([...updatedPackageDiffList, ...addedPackageDiffList])
         + (0, sections_1.createMinorVersionUpdatesBody)(updatedPackageDiffList)
         + (0, sections_1.createPatchVersionUpdatesBody)(updatedPackageDiffList)
         + (0, sections_1.createAddedAndRemovedBody)([
-            ...harmlessAddedPackageDiffList,
-            ...packagesDiff.filter((0, utils_1.isDiffTypeFilter)('REMOVED')),
+            ...addedPackageDiffList,
+            ...removedPackageDiffList,
         ])
-        + (0, sections_1.createUnknownBody)(packagesDiff.filter((0, utils_1.isDiffTypeFilter)('UNKNOWN')))
+        + (0, sections_1.createUnknownBody)(unknownPackageDiffList)
         + (0, sections_1.createCaptionBody)();
 }
 exports.default = createBody;
