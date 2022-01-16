@@ -33,6 +33,9 @@ function getDirectionIcon(version) {
                 return '➡️';
         }
     }
+    else if ('ADDED' === version.update.type) {
+        return '➕️';
+    }
     return '⁉️️️️';
 }
 exports.getDirectionIcon = getDirectionIcon;

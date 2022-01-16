@@ -1,29 +1,34 @@
 import {
-    AddedPackageDiff,
+    AddedPackageDiff, PackageVersionDiff,
     RemovedPackageDiff,
     UnknownUpdatePackageDiff,
     UpdatedPackageDiff
 } from "PackageVersionDiffListCreator";
 import {createDiffTableBody, displayName, displayVersion, getDirectionIcon, isDiffTypeFilter} from "./utils";
 
-export function createRiskyUpdatesBody(packagesDiff: UpdatedPackageDiff[]): string {
-    const majorUpdateList = packagesDiff.filter(item => 'MAJOR' === item.update.subType);
-    const unknownUpdateList = packagesDiff.filter(item => 'UNKNOWN' === item.update.subType);
+function sortByPkgName<T extends PackageVersionDiff>(list: T[]): T[] {
+    return list.sort((a, b) => a.name.localeCompare(b.name));
+}
 
-    const totalCount: number = majorUpdateList.length + unknownUpdateList.length;
+export function createRiskyUpdatesBody(packagesDiff: (AddedPackageDiff|UpdatedPackageDiff)[]): string {
+    const majorUpdateList = sortByPkgName(packagesDiff.filter(item => 'MAJOR' === item.update.subType));
+    const unknownUpdateList = sortByPkgName(packagesDiff.filter(item => 'UPDATED' === item.update.type && 'UNKNOWN' === item.update.subType));
+    const riskyAddedList = sortByPkgName(packagesDiff.filter(item => 'ADDED' === item.update.type && item.current.isDev));
+
+    const totalCount: number = majorUpdateList.length + unknownUpdateList.length + riskyAddedList.length;
 
     if (0 === totalCount) {
         return '';
     }
 
-    return createDiffTableBody<UpdatedPackageDiff>(
-        [majorUpdateList, unknownUpdateList],
+    return createDiffTableBody<(AddedPackageDiff|UpdatedPackageDiff)>(
+        [majorUpdateList, unknownUpdateList, riskyAddedList],
         `${totalCount} risky update${totalCount > 1 ? 's' : ''}`,
         ['Name', 'From', '  ', 'To'],
         [':---', '---:', ':---:', '---:'],
         item => [
             displayName(item),
-            displayVersion(item.previous),
+            isDiffTypeFilter<AddedPackageDiff>('ADDED')(item) ? '' : displayVersion(item.previous),
             getDirectionIcon(item),
             displayVersion(item.current)
         ],
@@ -31,7 +36,7 @@ export function createRiskyUpdatesBody(packagesDiff: UpdatedPackageDiff[]): stri
 }
 
 export function createMinorVersionUpdatesBody(packagesDiff: UpdatedPackageDiff[]): string {
-    const list = packagesDiff.filter(item => 'MINOR' === item.update.subType);
+    const list = sortByPkgName(packagesDiff.filter(item => 'MINOR' === item.update.subType));
 
     if (0 === list.length) {
         return '';
@@ -52,7 +57,7 @@ export function createMinorVersionUpdatesBody(packagesDiff: UpdatedPackageDiff[]
 }
 
 export function createPatchVersionUpdatesBody(packagesDiff: UpdatedPackageDiff[]): string {
-    const list = packagesDiff.filter(item => 'PATCH' === item.update.subType);
+    const list = sortByPkgName(packagesDiff.filter(item => 'PATCH' === item.update.subType));
 
     if (0 === list.length) {
         return '';
@@ -77,15 +82,14 @@ export function createAddedAndRemovedBody(packagesDiff: (AddedPackageDiff|Remove
         return '';
     }
 
-    const addedPackageList = packagesDiff.filter(isDiffTypeFilter<AddedPackageDiff>('ADDED'));
-    const removedPackageList = packagesDiff.filter(isDiffTypeFilter<RemovedPackageDiff>('REMOVED'));
+    const addedPackageList = sortByPkgName(packagesDiff.filter(item => isDiffTypeFilter<AddedPackageDiff>('ADDED')(item) && !item.current.isDev));
+    const removedPackageList = sortByPkgName(packagesDiff.filter(isDiffTypeFilter<RemovedPackageDiff>('REMOVED')));
 
-    // Can't use createDiffTableBody as there two different types, AddedPackageDiff and RemovedPackageDiff types !
     return createDiffTableBody<AddedPackageDiff|RemovedPackageDiff>(
         [addedPackageList, removedPackageList],
         `${addedPackageList.length} package${addedPackageList.length > 1 ? 's' : ''} added & ${removedPackageList.length} package${removedPackageList.length > 1 ? 's' : ''} removed`,
-        ['Name', 'Version'],
-        [':---', ':---'],
+        ['', 'Name', 'Version'],
+        [':---:', ':---', '---:'],
         item => {
             if (isDiffTypeFilter<AddedPackageDiff>('ADDED')(item)) {
                 return ['➕', displayName(item), displayVersion(item.current)];
