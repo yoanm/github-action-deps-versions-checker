@@ -7,7 +7,7 @@ function sortByPkgName(list) {
 }
 function createRiskyUpdatesBody(packagesDiff) {
     const majorUpdateList = sortByPkgName(packagesDiff.filter(item => 'MAJOR' === item.update.subType));
-    const unknownAddedList = sortByPkgName(packagesDiff.filter(item => 'ADDED' === item.update.type && 'UNKNOWN' === item.update.subType));
+    const unknownAddedList = sortByPkgName(packagesDiff.filter(item => 'ADDED' === item.update.type && item.current.isDev));
     const unknownUpdateList = sortByPkgName(packagesDiff.filter(item => 'UPDATED' === item.update.type && 'UNKNOWN' === item.update.subType));
     const totalCount = majorUpdateList.length + unknownUpdateList.length;
     if (0 === totalCount) {

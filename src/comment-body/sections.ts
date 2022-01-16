@@ -12,7 +12,7 @@ function sortByPkgName<T extends PackageVersionDiff>(list: T[]): T[] {
 
 export function createRiskyUpdatesBody(packagesDiff: (AddedPackageDiff|UpdatedPackageDiff)[]): string {
     const majorUpdateList = sortByPkgName(packagesDiff.filter(item => 'MAJOR' === item.update.subType));
-    const unknownAddedList = sortByPkgName(packagesDiff.filter(item => 'ADDED' === item.update.type && 'UNKNOWN' === item.update.subType));
+    const unknownAddedList = sortByPkgName(packagesDiff.filter(item => 'ADDED' === item.update.type && item.current.isDev));
     const unknownUpdateList = sortByPkgName(packagesDiff.filter(item => 'UPDATED' === item.update.type && 'UNKNOWN' === item.update.subType));
 
     const totalCount: number = majorUpdateList.length + unknownUpdateList.length;
