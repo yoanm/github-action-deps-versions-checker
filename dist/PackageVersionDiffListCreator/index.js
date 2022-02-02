@@ -97,8 +97,9 @@ class PackageVersionDiffListCreator {
                 name: packageName,
                 isRootRequirement: packageInfos.isRootRequirement,
                 isRootDevRequirement: packageInfos.isRootDevRequirement,
+                isAbandoned: packageInfos.isAbandoned,
                 extra: {
-                    sourceLink: packageInfos.sourceLink,
+                    link: packageInfos.link,
                 }
             };
             if ('UPDATED' === updateType) {

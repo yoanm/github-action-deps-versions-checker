@@ -3,8 +3,9 @@ declare module "PackageVersionDiffListCreator" {
         name: string,
         isRootRequirement: boolean,
         isRootDevRequirement: boolean,
+        isAbandoned: boolean,
         extra: {
-            sourceLink?: string,
+            link?: string,
         }
     }
 

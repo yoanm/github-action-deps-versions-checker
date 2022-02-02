@@ -20,14 +20,14 @@ jobs:
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         exempt-draft-pr: true
-        days-before-issue-stale: 30
-        days-before-pr-stale: 15
+        days-before-issue-stale: 90
+        days-before-pr-stale: 30
         stale-issue-message: 'Issue marked as staled, will be closed in 30 days'
-        stale-pr-message: 'PR marked as staled, will be closed in 15 days'
+        stale-pr-message: 'PR marked as staled, will be closed in 30 days'
         stale-issue-label: 'staled'
         stale-pr-label: 'staled'
-        days-before-issue-close: 60
-        days-before-pr-close: 30
+        days-before-issue-close: 120
+        days-before-pr-close: 60
         close-issue-message: 'Issue closed due to inactivity!'
         close-pr-message: 'PR closed due to inactivity!'
         close-issue-label: 'automatically-closed'

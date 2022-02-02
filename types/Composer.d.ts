@@ -19,12 +19,16 @@ declare module "Composer" {
         },
         support?: {
             source?: string | undefined;
-        }
+            docs?: string | undefined;
+            wiki?: string | undefined;
+        },
+        homepage?: string | undefined;
+        abandoned?: boolean | undefined;
     };
 
     export type MetaComposerLockPackage = ComposerLockPackage & {
         isDevRequirement: boolean;
-        sourceLink: string | undefined;
+        link: string | undefined;
     };
 
     export type RequirementList = {

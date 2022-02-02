@@ -145,12 +145,13 @@ export default class PackageVersionDiffListCreator<
 
         const packageInfos = await this.packageManager.getPackageInfos(lockPackage, requirementFile);
 
-        const base: Pick<PackageVersionDiff, 'name' | 'isRootDevRequirement' | 'isRootRequirement' | 'extra'> = {
+        const base: Pick<PackageVersionDiff, 'name' | 'isRootDevRequirement' | 'isRootRequirement' | 'extra' | 'isAbandoned'> = {
             name: packageName,
             isRootRequirement: packageInfos.isRootRequirement,
             isRootDevRequirement: packageInfos.isRootDevRequirement,
+            isAbandoned: packageInfos.isAbandoned,
             extra: {
-                sourceLink: packageInfos.sourceLink,
+                link: packageInfos.link,
             }
         };
 
