@@ -1,18 +1,26 @@
+.PHONY: configure
+configure:
+	. ~/.nvm/nvm.sh || true && nvm install && nvm use $(shell $(MAKE) get-action-nodejs-version)
+
 .PHONY: install
 install:
-	. ~/.nvm/nvm.sh || true && nvm install && nvm use && yarn install
+	yarn install
 
 .PHONY: build
 build: install compile
 
 .PHONY: compile
 compile:
-	npm run compile
+	rm -rf dist && node_modules/.bin/tsc
 
 .PHONY: lint
 lint:
-	npm run lint
+	node_modules/.bin/eslint .
 
 .PHONY: test
 test:
-	npm run test
+	echo "Error: no test specified"
+	exit 1
+
+get-action-nodejs-version: ## Display node version configured on action.yml
+	@grep -E "using:\s*'?node" action.yml | sed -e "s/^.*using: '*node\([0-9][0-9]\)'*.*$$/\1/"
