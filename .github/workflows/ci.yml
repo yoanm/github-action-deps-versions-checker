@@ -21,6 +21,7 @@ jobs:
       - name: Retrieve node version for the action
         id: node_version
         run: |
+          make get-action-nodejs-version
           echo "::set-output name=version::$(make get-action-nodejs-version)"
       - name: Configure NodeJs version
         uses: actions/setup-node@v2
