@@ -6,7 +6,6 @@ on:
       - edited
       - synchronize
       - reopened
-      - synchronize
 
 permissions:
   pull-requests: write

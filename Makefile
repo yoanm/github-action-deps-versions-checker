@@ -5,20 +5,13 @@ else ifneq (,$(wildcard /usr/local/lib/nvm/nvm.sh))
 NVM_PATH=/usr/local/lib/nvm/nvm.sh
 endif
 
-ifeq ($(NVM_PATH),)
-nvm_use = nvm use
-else
-# create a nvm use alias
-# @see https://devops.stackexchange.com/questions/629/how-can-i-make-use-of-bash-functions-in-a-makefile
-nvm_use = . $(NVM_PATH) || true && nvm install && nvm use
-endif
-
 .PHONY: build
 build: install compile
 
 .PHONY: install
 install:
-	$(call nvm_use, yarn install)
+	. $(NVM_PATH) || true && nvm install && nvm use
+	yarn install
 
 .PHONY: compile
 compile:
