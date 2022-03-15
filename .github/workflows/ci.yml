@@ -13,13 +13,15 @@ concurrency:
 
 jobs:
   ci-tests:
+    env:
+      NVM_DIR: ~/.nvm
     name: "CI tests"
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout"
         uses: actions/checkout@v2
       - name: "Build"
-        run: make build
+        run: source $NVM_DIR/nvm.sh && make build
       - name: "Detect forgotten compilation before push"
         run: test -z "$(git diff --name-only dist/)"
       - name: "Lint"
