@@ -13,22 +13,12 @@ concurrency:
 
 jobs:
   ci-tests:
-    env:
-      NVM_DIR: ~/.nvm
     name: "CI tests"
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout"
         uses: actions/checkout@v2
-      - name: Setup node
-        uses: actions/setup-node@v2
-        with:
-          node-version-file: '.nvmrc'
-      - name: "NVM"
-        shell: bash -l -eo pipefail {0}
-        run: source $NVM_DIR/nvm.sh && nvm use
-      - name: "Build"  # "bash -l" required for nvm (else "nvm: command not found")
-        shell: bash -l -eo pipefail {0}  
+      - name: "Build"
         run: make build
       - name: "Detect forgotten compilation before push"
         run: test -z "$(git diff --name-only dist/)"
