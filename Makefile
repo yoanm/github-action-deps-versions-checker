@@ -1,17 +1,9 @@
-# Look for nvm base directory
-ifneq (,$(wildcard ~/.nvm/nvm.sh))
-NVM_PATH=~/.nvm/nvm.sh
-else ifneq (,$(wildcard /usr/local/lib/nvm/nvm.sh))
-NVM_PATH=/usr/local/lib/nvm/nvm.sh
-endif
+.PHONY: install
+install:
+	. ~/.nvm/nvm.sh || true && nvm install && nvm use && yarn install
 
 .PHONY: build
 build: install compile
-
-.PHONY: install
-install:
-	. $(NVM_PATH) || true && nvm install && nvm use
-	yarn install
 
 .PHONY: compile
 compile:
