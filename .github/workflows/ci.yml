@@ -20,6 +20,9 @@ jobs:
     steps:
       - name: "Checkout"
         uses: actions/checkout@v2
+      - name: Set the correct Node version using nvm
+        shell: bash -l {0} 
+        run: nvm install
       - name: "Build"
         run: source $NVM_DIR/nvm.sh && make build
       - name: "Detect forgotten compilation before push"
