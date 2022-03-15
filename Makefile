@@ -3,6 +3,7 @@ build: install compile
 
 .PHONY: install
 install:
+	nvm use
 	yarn install
 
 .PHONY: compile
