@@ -19,9 +19,6 @@
     "eslint-plugin-jest": "^26.1.1",
     "typescript": "^4.6.2"
   },
-  "scripts": {
-    "test": "",
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/yoanm/github-action-deps-versions-checker.git"
