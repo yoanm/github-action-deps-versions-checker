@@ -1,6 +1,7 @@
 .PHONY: configure
 configure:
-	. ~/.nvm/nvm.sh || true && nvm install && nvm use $(shell $(MAKE) get-action-nodejs-version)
+	$(eval version = $(shell $(MAKE) get-action-nodejs-version))
+	. ~/.nvm/nvm.sh || true && nvm install $(version) && nvm use $(version)
 
 .PHONY: install
 install:
