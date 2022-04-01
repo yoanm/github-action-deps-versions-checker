@@ -6,8 +6,8 @@ on: # rebuild any PRs and main branch changes
       - synchronize
   push:
     branches: [ master ]
-    tags:
-      - v*
+#    tags:
+#      - v*
   schedule:
     - cron: '36 9 1 * *'
 
