@@ -9,7 +9,7 @@
   "version": "1.0.0",
   "main": "jest.config.js",
   "devDependencies": {
-    "@octokit/openapi-types": "^11.2.0",
+    "@octokit/openapi-types": "^12.5.0",
     "@octokit/types": "^6.34.0",
     "@octokit/webhooks-definitions": "^3.67.3",
     "@types/node": "^17.0.41",
