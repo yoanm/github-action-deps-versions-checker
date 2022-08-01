@@ -10,7 +10,7 @@
   "main": "jest.config.js",
   "devDependencies": {
     "@octokit/openapi-types": "^12.11.0",
-    "@octokit/types": "^6.34.0",
+    "@octokit/types": "^6.41.0",
     "@octokit/webhooks-definitions": "^3.67.3",
     "@types/node": "^18.6.3",
     "@typescript-eslint/parser": "^5.31.0",
