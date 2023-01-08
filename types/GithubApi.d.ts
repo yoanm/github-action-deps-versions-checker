@@ -1,11 +1,11 @@
 declare module "GithubApi" {
     import {components} from "@octokit/openapi-types";
-    import {Endpoints} from "@octokit/types";
+    import {RestEndpointMethodTypes} from "@octokit/plugin-rest-endpoint-methods";
 
-    export type Content = Endpoints['GET /repos/{owner}/{repo}/contents/{path}']['response']['data'];
+    export type Content = RestEndpointMethodTypes["repos"]["getContent"]['response']['data'];
     export type FileContent = Content & components["schemas"]["content-file"];
 
-    export type File = Endpoints['GET /repos/{owner}/{repo}/pulls/{pull_number}/files']['response']['data'][number];
+    export type File = RestEndpointMethodTypes['pulls']['listFiles']['response']['data'][number];
 
-    export type Comment = Endpoints['GET /repos/{owner}/{repo}/issues/{issue_number}/comments']['response']['data'][number];
+    export type Comment = RestEndpointMethodTypes['issues']['listComments']['response']['data'][number];
 }
