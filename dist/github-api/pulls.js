@@ -22,7 +22,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createComment = exports.deleteComment = exports.getLastCommentMatching = exports.getFile = void 0;
 const index_1 = __importDefault(require("./index"));
 function getFile(ownerName, repoName, prId, filename) {
-    var e_1, _a;
+    var _a, e_1, _b, _c;
     return __awaiter(this, void 0, void 0, function* () {
         const pageIterator = index_1.default.paginate.iterator(index_1.default.rest.pulls.listFiles, {
             owner: ownerName,
@@ -31,19 +31,26 @@ function getFile(ownerName, repoName, prId, filename) {
             per_page: 100,
         });
         try {
-            for (var pageIterator_1 = __asyncValues(pageIterator), pageIterator_1_1; pageIterator_1_1 = yield pageIterator_1.next(), !pageIterator_1_1.done;) {
-                const { data } = pageIterator_1_1.value;
-                for (const file of data) {
-                    if (file.filename === filename) {
-                        return file;
+            for (var _d = true, pageIterator_1 = __asyncValues(pageIterator), pageIterator_1_1; pageIterator_1_1 = yield pageIterator_1.next(), _a = pageIterator_1_1.done, !_a;) {
+                _c = pageIterator_1_1.value;
+                _d = false;
+                try {
+                    const { data } = _c;
+                    for (const file of data) {
+                        if (file.filename === filename) {
+                            return file;
+                        }
                     }
+                }
+                finally {
+                    _d = true;
                 }
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
         finally {
             try {
-                if (pageIterator_1_1 && !pageIterator_1_1.done && (_a = pageIterator_1.return)) yield _a.call(pageIterator_1);
+                if (!_d && !_a && (_b = pageIterator_1.return)) yield _b.call(pageIterator_1);
             }
             finally { if (e_1) throw e_1.error; }
         }
@@ -52,7 +59,7 @@ function getFile(ownerName, repoName, prId, filename) {
 }
 exports.getFile = getFile;
 function getLastCommentMatching(ownerName, repoName, pullNumber, bodyMatch) {
-    var e_2, _a;
+    var _a, e_2, _b, _c;
     return __awaiter(this, void 0, void 0, function* () {
         const pageIterator = index_1.default.paginate.iterator(index_1.default.rest.issues.listComments, {
             owner: ownerName,
@@ -60,18 +67,25 @@ function getLastCommentMatching(ownerName, repoName, pullNumber, bodyMatch) {
             issue_number: pullNumber,
         });
         try {
-            for (var pageIterator_2 = __asyncValues(pageIterator), pageIterator_2_1; pageIterator_2_1 = yield pageIterator_2.next(), !pageIterator_2_1.done;) {
-                const response = pageIterator_2_1.value;
-                const comment = response.data.find(item => item.body && bodyMatch.test(item.body));
-                if (comment !== undefined) {
-                    return comment;
+            for (var _d = true, pageIterator_2 = __asyncValues(pageIterator), pageIterator_2_1; pageIterator_2_1 = yield pageIterator_2.next(), _a = pageIterator_2_1.done, !_a;) {
+                _c = pageIterator_2_1.value;
+                _d = false;
+                try {
+                    const response = _c;
+                    const comment = response.data.find(item => item.body && bodyMatch.test(item.body));
+                    if (comment !== undefined) {
+                        return comment;
+                    }
+                }
+                finally {
+                    _d = true;
                 }
             }
         }
         catch (e_2_1) { e_2 = { error: e_2_1 }; }
         finally {
             try {
-                if (pageIterator_2_1 && !pageIterator_2_1.done && (_a = pageIterator_2.return)) yield _a.call(pageIterator_2);
+                if (!_d && !_a && (_b = pageIterator_2.return)) yield _b.call(pageIterator_2);
             }
             finally { if (e_2) throw e_2.error; }
         }
