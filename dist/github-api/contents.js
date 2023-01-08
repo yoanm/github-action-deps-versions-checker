@@ -57,8 +57,8 @@ function getFile(ownerName, repoName, path, commitHash) {
 }
 exports.getFile = getFile;
 function getFileBetween(ownerName, repoName, baseSha, headSha, filename) {
-    var e_1, _a;
-    var _b;
+    var _a, e_1, _b, _c;
+    var _d;
     return __awaiter(this, void 0, void 0, function* () {
         const pageIterator = index_1.default.paginate.iterator(index_1.default.rest.repos.compareCommitsWithBasehead, {
             owner: ownerName,
@@ -67,18 +67,25 @@ function getFileBetween(ownerName, repoName, baseSha, headSha, filename) {
             per_page: 100,
         });
         try {
-            for (var pageIterator_1 = __asyncValues(pageIterator), pageIterator_1_1; pageIterator_1_1 = yield pageIterator_1.next(), !pageIterator_1_1.done;) {
-                const response = pageIterator_1_1.value;
-                const file = ((_b = response.data.files) === null || _b === void 0 ? void 0 : _b.find(item => item.filename === filename)) || undefined;
-                if (file !== undefined) {
-                    return file;
+            for (var _e = true, pageIterator_1 = __asyncValues(pageIterator), pageIterator_1_1; pageIterator_1_1 = yield pageIterator_1.next(), _a = pageIterator_1_1.done, !_a;) {
+                _c = pageIterator_1_1.value;
+                _e = false;
+                try {
+                    const response = _c;
+                    const file = ((_d = response.data.files) === null || _d === void 0 ? void 0 : _d.find(item => item.filename === filename)) || undefined;
+                    if (file !== undefined) {
+                        return file;
+                    }
+                }
+                finally {
+                    _e = true;
                 }
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
         finally {
             try {
-                if (pageIterator_1_1 && !pageIterator_1_1.done && (_a = pageIterator_1.return)) yield _a.call(pageIterator_1);
+                if (!_e && !_a && (_b = pageIterator_1.return)) yield _b.call(pageIterator_1);
             }
             finally { if (e_1) throw e_1.error; }
         }
