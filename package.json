@@ -35,7 +35,7 @@
   },
   "homepage": "https://github.com/yoanm/github-action-deps-versions-checker#readme",
   "engines": {
-    "node": "16"
+    "node": "18"
   },
   "directories": {
     "test": "tests"

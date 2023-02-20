@@ -26,6 +26,6 @@ outputs:
   diff:
     description: "List of packages with version differences. See PackageVersionDiff type for more information"
 runs:
-  using: 'node16'
+  using: 'node18'
   pre: 'bin/configure.js'
   main: 'dist/index.js'
