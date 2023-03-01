@@ -13,7 +13,7 @@
     "@octokit/openapi-types": "^14.0.0",
     "@octokit/types": "^8.0.0",
     "@octokit/webhooks-definitions": "^3.67.3",
-    "@types/node": "^18.11.18",
+    "@types/node": "^18.14.2",
     "@typescript-eslint/parser": "^5.50.0",
     "eslint": "^8.35.0",
     "eslint-plugin-github": "^4.6.1",
