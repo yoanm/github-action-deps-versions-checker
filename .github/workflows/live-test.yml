@@ -31,8 +31,6 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '${{ steps.node_version.outputs.version }}'
-      - name: "Configure action"
-        run: node bin/configure.js # Mandatory as `pre` execution is not supported for local action
       - name: "Execute action for composer"
         uses: ./
         with:

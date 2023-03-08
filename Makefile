@@ -14,6 +14,10 @@ build: install compile
 compile:
 	rm -rf dist && node_modules/.bin/tsc
 
+.PHONY: package
+package:
+	npm run package
+
 .PHONY: lint
 lint:
 	node_modules/.bin/eslint .

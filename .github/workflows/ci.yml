@@ -22,13 +22,13 @@ jobs:
         id: node_version
         run: |
           make get-action-nodejs-version
-          echo "::set-output name=version::$(make get-action-nodejs-version)"
+          echo "version=$(make get-action-nodejs-version)" >> $GITHUB_OUTPUT
       - name: Configure NodeJs version
         uses: actions/setup-node@v3
         with:
           node-version: '${{ steps.node_version.outputs.version }}'
-      - name: "Build"
-        run: make build
+      - name: "Build "
+        run: make build && make package
       - name: "Detect forgotten compilation before push"
         run: test -z "$(git diff --name-only dist/)"
       - name: "Lint"
