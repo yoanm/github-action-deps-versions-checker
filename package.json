@@ -8,21 +8,23 @@
   },
   "description": "Github action to check deps versions",
   "version": "1.0.0",
-  "main": "dist/main.js",
+  "main": "dist/index.js",
   "scripts": {
-    "package": "ncc build --source-map --license LICENSE"
+    "compile": "rm -rf dist && tsc --newLine crlf",
+    "lint": "eslint .",
+    "package": "ncc build ./src/index.ts -o ./dist --license LICENSE"
   },
   "devDependencies": {
-    "@octokit/openapi-types": "^14.0.0",
-    "@octokit/types": "^8.0.0",
+    "@octokit/openapi-types": "^16.0.0",
+    "@octokit/types": "^9.0.0",
     "@octokit/webhooks-definitions": "^3.67.3",
-    "@types/node": "^18.11.18",
-    "@typescript-eslint/parser": "^5.48.0",
-    "@vercel/ncc": "^0.31.1",
-    "eslint": "^8.31.0",
-    "eslint-plugin-github": "^4.6.0",
+    "@types/node": "^18.14.2",
+    "@typescript-eslint/parser": "^5.54.0",
+    "@vercel/ncc": "^0.36.1",
+    "eslint": "^8.35.0",
+    "eslint-plugin-github": "^4.6.1",
     "eslint-plugin-jest": "^27.2.1",
-    "typescript": "^4.9.4"
+    "typescript": "^4.9.5"
   },
   "repository": {
     "type": "git",

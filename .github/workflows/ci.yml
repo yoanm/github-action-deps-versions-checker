@@ -28,8 +28,14 @@ jobs:
         with:
           node-version: '${{ steps.node_version.outputs.version }}'
       - name: "Build "
-        run: make build && make package
+        run: make build
       - name: "Detect forgotten compilation before push"
-        run: test -z "$(git diff --name-only dist/)"
+        run: |
+          echo "###############################"
+          git diff --name-only dist/
+          echo "###############################"
+          git diff -a -p dist/
+          echo "###############################"
+          test -z "$(git diff --name-only dist/)"
       - name: "Lint"
         run: make lint
