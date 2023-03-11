@@ -8,11 +8,11 @@
   },
   "description": "Github action to check deps versions",
   "version": "1.0.0",
-  "main": "dist/main.js",
+  "main": "dist/index.js",
   "scripts": {
-    "compile": "rm -rf dist && tsc --newLine lf",
+    "compile": "rm -rf dist && tsc --newLine crlf",
     "lint": "eslint .",
-    "package": "ncc build --no-cache --source-map --license LICENSE"
+    "package": "ncc build ./src/index.ts -o ./dist --license LICENSE"
   },
   "devDependencies": {
     "@octokit/openapi-types": "^16.0.0",

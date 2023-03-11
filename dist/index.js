@@ -1,1305 +1,5 @@
-require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
+/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
-
-/***/ 5878:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.GithubFileManager = void 0;
-const contents_1 = __nccwpck_require__(2562);
-const pulls_1 = __nccwpck_require__(6311);
-class GithubFileManager {
-    constructor(repositoryOwner, repositoryName) {
-        this.repositoryOwner = repositoryOwner;
-        this.repositoryName = repositoryName;
-    }
-    getPRFile(filename, prNumber, fileStatusFilter = undefined) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const file = yield (0, pulls_1.getFile)(this.repositoryOwner, this.repositoryName, prNumber, filename);
-            if (!file || !fileStatusFilter) {
-                return file;
-            }
-            return (yield this.filterFiles(filename, [file], fileStatusFilter)).pop();
-        });
-    }
-    getFileBetween(filename, baseSha, headSha, fileStatusFilter = undefined) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const file = yield (0, contents_1.getFileBetween)(this.repositoryOwner, this.repositoryName, baseSha, headSha, filename);
-            if (!file || !fileStatusFilter) {
-                return file;
-            }
-            return (yield this.filterFiles(filename, [file], fileStatusFilter)).pop();
-        });
-    }
-    filterFiles(filename, fileList, fileStatusFilter = undefined) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const result = [];
-            for (const file of fileList) {
-                if (filename === file.filename && fileStatusFilter ? fileStatusFilter.includes(file.status) : true) {
-                    result.push(file);
-                }
-            }
-            return result;
-        });
-    }
-    getFileContentAt(filename, commitSha) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const data = yield (0, contents_1.getFile)(this.repositoryOwner, this.repositoryName, filename, commitSha);
-            if (data === undefined) {
-                return undefined;
-            }
-            if (data.encoding !== 'base64') {
-                throw new Error(`Expected base64 encoded file but received "${data.encoding}" !`);
-            }
-            return this.base64ContentToUTF8(data.content);
-        });
-    }
-    base64ContentToUTF8(content) {
-        return Buffer.from(content, 'base64')
-            .toString('utf-8');
-    }
-}
-exports.GithubFileManager = GithubFileManager;
-
-
-/***/ }),
-
-/***/ 488:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.GithubPRCommentManager = void 0;
-const comment_body_1 = __importStar(__nccwpck_require__(7007));
-const pulls_1 = __nccwpck_require__(6311);
-const logger_1 = __importDefault(__nccwpck_require__(8231));
-class GithubPRCommentManager {
-    constructor(repositoryOwner, repositoryName, prId, packageManagerType, postResults) {
-        this.previousComment = null;
-        this.repositoryOwner = repositoryOwner;
-        this.repositoryName = repositoryName;
-        this.prId = prId;
-        this.packageManagerType = packageManagerType;
-        this.postResults = postResults;
-    }
-    getPrevious() {
-        var _a;
-        return __awaiter(this, void 0, void 0, function* () {
-            if (this.previousComment === null) {
-                this.previousComment = undefined;
-                if (this.postResults) {
-                    logger_1.default.debug('Loading previous comment ...');
-                    const comment = yield (0, pulls_1.getLastCommentMatching)(this.repositoryOwner, this.repositoryName, this.prId, new RegExp('^'
-                        + comment_body_1.COMMENT_HEADER.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
-                        + (0, comment_body_1.commentPkgTypeFactory)(this.packageManagerType)));
-                    const match = (_a = comment === null || comment === void 0 ? void 0 : comment.body) === null || _a === void 0 ? void 0 : _a.match(new RegExp(comment_body_1.COMMENT_COMMIT_REGEXP));
-                    if (comment && match) {
-                        this.previousComment = Object.assign(Object.assign({}, comment), { commitRef: match[1] });
-                    }
-                }
-            }
-            return this.previousComment;
-        });
-    }
-    createNewIfNeeded(commitSha, packagesDiff) {
-        var _a, _b;
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!this.postResults) {
-                return;
-            }
-            const commentBody = (0, comment_body_1.default)(this.packageManagerType, commitSha, packagesDiff);
-            if (commentBody === undefined) {
-                logger_1.default.debug('Nothing to post ! Removing previous if it exists !');
-                return this.deletePreviousIfExisting();
-            }
-            const previousComment = yield this.getPrevious();
-            if (previousComment) {
-                // Remove first line of each bodies as they contains commit information (and so can't never match)
-                const previousBodyToCompare = (_a = previousComment.body) === null || _a === void 0 ? void 0 : _a.substring(((_b = previousComment.body) === null || _b === void 0 ? void 0 : _b.indexOf("\n")) + 1);
-                const newBodyToCompare = commentBody.substring(commentBody.indexOf("\n") + 1);
-                if (previousBodyToCompare === newBodyToCompare) {
-                    // Avoid deleting comment and then create the exact same one
-                    logger_1.default.info('Same comment as before, nothing to do. Bye !');
-                    return;
-                }
-            }
-            yield this.deletePreviousIfExisting();
-            logger_1.default.debug('Posting comment ...');
-            return (0, pulls_1.createComment)(this.repositoryOwner, this.repositoryName, this.prId, commentBody);
-        });
-    }
-    deletePreviousIfExisting() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const previousComment = yield this.getPrevious();
-            if (previousComment) {
-                logger_1.default.info('Removing previous comment ...');
-                return (0, pulls_1.deleteComment)(this.repositoryOwner, this.repositoryName, previousComment.id);
-            }
-        });
-    }
-}
-exports.GithubPRCommentManager = GithubPRCommentManager;
-
-
-/***/ }),
-
-/***/ 9800:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const index_1 = __importDefault(__nccwpck_require__(92));
-class Composer extends index_1.default {
-    constructor() {
-        super('composer.json', 'composer.lock');
-    }
-    loadLockFile(content) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return JSON.parse(content);
-        });
-    }
-    loadRequirementFile(content) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return JSON.parse(content);
-        });
-    }
-    extractLockPackageList(lockFile) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const reduceFn = (isDevRequirement) => (acc, item) => {
-                var _a, _b, _c;
-                acc[item.name] = Object.assign(Object.assign({}, item), { isDevRequirement, link: ((_a = item.support) === null || _a === void 0 ? void 0 : _a.wiki) || ((_b = item.support) === null || _b === void 0 ? void 0 : _b.docs) || ((_c = item.support) === null || _c === void 0 ? void 0 : _c.source) || item.homepage || undefined });
-                return acc;
-            };
-            return (lockFile.packages || []).reduce(reduceFn(false), (lockFile['packages-dev'] || []).reduce(reduceFn(true), {}));
-        });
-    }
-    extractPackageVersion(lockPackage) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (/^v?\d+\.\d+\.\d+/.test(lockPackage.version)) {
-                const match = this.sanitizeTag(lockPackage.version)
-                    .match(/^(\d+)\.(\d+)\.(\d+)(.*)?/);
-                // TagPackageVersion
-                return {
-                    full: lockPackage.version,
-                    isDev: false,
-                    type: 'TAG',
-                    major: match[1] && match[1].length ? match[1] : null,
-                    minor: match[2] && match[2].length ? match[2] : null,
-                    patch: match[3] && match[3].length ? match[3] : null,
-                    extra: match[4] && match[4].length ? match[4] : null,
-                };
-            }
-            // CommitPackageVersion
-            return {
-                // Append the commit ref (only the first 7 chars (=short ref))
-                full: lockPackage.version + '#' + lockPackage.dist.reference.substr(0, 7),
-                isDev: true,
-                type: 'COMMIT',
-                commit: lockPackage.dist.reference
-            };
-        });
-    }
-    getPackageInfos(lockPackage, requirementFile) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const rootRequirements = requirementFile[lockPackage.isDevRequirement ? 'require-dev' : 'require'] || {};
-            const isRootRequirement = undefined !== rootRequirements[lockPackage.name];
-            return Promise.resolve({
-                isRootRequirement: isRootRequirement,
-                isRootDevRequirement: isRootRequirement && lockPackage.isDevRequirement,
-                isAbandoned: lockPackage.abandoned === true,
-                link: lockPackage.link
-            });
-        });
-    }
-    sanitizeTag(version) {
-        return 'v' === version.charAt(0)
-            ? version.substr(1) // Remove 'v' prefix if it exists
-            : version;
-    }
-}
-exports["default"] = Composer;
-
-
-/***/ }),
-
-/***/ 92:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-class PackageManager {
-    constructor(requirementFilename, lockFilename) {
-        this.requirementFilename = requirementFilename;
-        this.lockFilename = lockFilename;
-    }
-    getRequirementFilename() {
-        return this.requirementFilename;
-    }
-    getLockFilename() {
-        return this.lockFilename;
-    }
-}
-exports["default"] = PackageManager;
-
-
-/***/ }),
-
-/***/ 2791:
-/***/ (function(__unused_webpack_module, exports) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-class PackageVersionDiffListCreator {
-    constructor(packageManager, githubFileManager, baseCommitSha, headCommitSha) {
-        this.packageManager = packageManager;
-        this.githubFileManager = githubFileManager;
-        this.baseCommitSha = baseCommitSha;
-        this.headCommitSha = headCommitSha;
-    }
-    createPackageVersionList() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const [previousLockFileContent, currentLockFileContent, previousRequirementFileContent, currentRequirementFileContent] = yield Promise.all([
-                this.githubFileManager.getFileContentAt(this.packageManager.getLockFilename(), this.baseCommitSha),
-                this.githubFileManager.getFileContentAt(this.packageManager.getLockFilename(), this.headCommitSha),
-                this.githubFileManager.getFileContentAt(this.packageManager.getRequirementFilename(), this.baseCommitSha),
-                this.githubFileManager.getFileContentAt(this.packageManager.getRequirementFilename(), this.headCommitSha),
-            ]);
-            const [previousLockFile, currentLockFile, previousRequirementFile, currentRequirementFile] = yield Promise.all([
-                previousLockFileContent ? this.packageManager.loadLockFile(previousLockFileContent) : undefined,
-                currentLockFileContent ? this.packageManager.loadLockFile(currentLockFileContent) : undefined,
-                previousRequirementFileContent ? this.packageManager.loadRequirementFile(previousRequirementFileContent) : undefined,
-                currentRequirementFileContent ? this.packageManager.loadRequirementFile(currentRequirementFileContent) : undefined,
-            ]);
-            const list = yield this.createPackageVersionsDiff(previousLockFile, currentLockFile, previousRequirementFile, currentRequirementFile);
-            // Order by name, isRootRequirement and isRootDevRequirement
-            // Output => list with root non dev requirements first, then root dev requirements, then others. All sorted by their name
-            list.sort((a, b) => {
-                if (a.isRootRequirement && b.isRootRequirement) {
-                    // If both root requirements, sort by dev version vs non dev version
-                    if (a.isRootDevRequirement && b.isRootDevRequirement) {
-                        // If both dev version, sort by name
-                        return (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0);
-                    }
-                    return (!a.isRootDevRequirement && b.isRootDevRequirement) ? 1 : ((a.isRootDevRequirement && !b.isRootDevRequirement) ? -1 : 0);
-                }
-                return (!a.isRootRequirement && b.isRootRequirement) ? 1 : ((a.isRootRequirement && !b.isRootRequirement) ? -1 : 0);
-            });
-            return list;
-        });
-    }
-    createPackageVersionsDiff(previousLockFile, currentLockFile, previousRequirementFile, currentRequirementFile) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (previousLockFile === undefined && currentLockFile === undefined) {
-                throw new Error('At least a previous or current lock file has to be provided');
-            }
-            if (previousRequirementFile === undefined && currentRequirementFile === undefined) {
-                throw new Error('At least a previous or current requirement file has to be provided');
-            }
-            const packageProcessedList = {};
-            const promiseList = [];
-            const [previousLockPackageList, currentLockPackageList] = yield Promise.all([
-                previousLockFile ? this.packageManager.extractLockPackageList(previousLockFile) : {},
-                currentLockFile ? this.packageManager.extractLockPackageList(currentLockFile) : {},
-            ]);
-            // Loop over current to find Added / Updated + all other packages
-            Object.keys(currentLockPackageList).forEach(packageName => {
-                packageProcessedList[packageName] = true;
-                promiseList.push(this.createPackageDiff(packageName, previousLockPackageList ? previousLockPackageList[packageName] : undefined, currentLockPackageList[packageName], previousRequirementFile, currentRequirementFile));
-            });
-            // Loop over previous (skipping already processed packages) to find Removed packages
-            Object.keys(previousLockPackageList).forEach(packageName => {
-                if (!packageProcessedList[packageName]) {
-                    packageProcessedList[packageName] = true;
-                    promiseList.push(this.createPackageDiff(packageName, previousLockPackageList[packageName], currentLockPackageList ? currentLockPackageList[packageName] : undefined, previousRequirementFile, currentRequirementFile));
-                }
-            });
-            return Promise.all(promiseList);
-        });
-    }
-    createPackageDiff(packageName, previousLockPackage, currentLockPackage, previousRequirementFile, currentRequirementFile) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (previousLockPackage === undefined && currentLockPackage === undefined) {
-                throw new Error('At least a previous or current lock package has to be provided');
-            }
-            if (previousRequirementFile === undefined && currentRequirementFile === undefined) {
-                throw new Error('At least a previous or current requirement file has to be provided');
-            }
-            const [previousVersionData, currentVersionData] = yield Promise.all([
-                previousLockPackage ? this.packageManager.extractPackageVersion(previousLockPackage) : undefined,
-                currentLockPackage ? this.packageManager.extractPackageVersion(currentLockPackage) : undefined,
-            ]);
-            const updateType = this.getUpdateType(previousVersionData, currentVersionData);
-            const isRemoval = currentLockPackage === undefined;
-            const lockPackage = isRemoval ? previousLockPackage : currentLockPackage;
-            const requirementFile = isRemoval ? previousRequirementFile : currentRequirementFile;
-            const packageInfos = yield this.packageManager.getPackageInfos(lockPackage, requirementFile);
-            const base = {
-                name: packageName,
-                isRootRequirement: packageInfos.isRootRequirement,
-                isRootDevRequirement: packageInfos.isRootDevRequirement,
-                isAbandoned: packageInfos.isAbandoned,
-                extra: {
-                    link: packageInfos.link,
-                }
-            };
-            if ('UPDATED' === updateType) {
-                if (!previousVersionData || !currentVersionData) {
-                    throw new Error('UPDATED require previous and current package versions');
-                }
-                // UpdatedPackageDiff
-                return Object.assign(Object.assign({}, base), { update: {
-                        type: updateType,
-                        subType: this.getUpdateSubType(updateType, previousVersionData, currentVersionData),
-                        direction: this.getUpdateDirection(updateType, previousVersionData, currentVersionData)
-                    }, previous: previousVersionData, current: currentVersionData });
-            }
-            const defaultUpdateData = {
-                type: updateType,
-                subType: 'UNKNOWN',
-                direction: 'UNKNOWN',
-            };
-            if ('ADDED' === defaultUpdateData.type) {
-                if (!currentVersionData) {
-                    throw new Error('ADDED require current package version');
-                }
-                // AddedPackageDiff
-                return Object.assign(Object.assign({}, base), { update: defaultUpdateData, current: currentVersionData });
-            }
-            if ('REMOVED' === defaultUpdateData.type) {
-                if (!previousVersionData) {
-                    throw new Error('REMOVED require previous package version');
-                }
-                // RemovedPackageDiff
-                return Object.assign(Object.assign({}, base), { update: defaultUpdateData, previous: previousVersionData });
-            }
-            if ('NONE' === defaultUpdateData.type) {
-                if (!previousVersionData || !currentVersionData) {
-                    throw new Error('NONE require previous and current package versions');
-                }
-                // NoUpdatePackageDiff
-                return Object.assign(Object.assign({}, base), { update: defaultUpdateData, previous: previousVersionData, current: currentVersionData });
-            }
-            // UnknownUpdatePackageDiff
-            return Object.assign(Object.assign({}, base), { update: defaultUpdateData, previous: previousVersionData, current: currentVersionData });
-        });
-    }
-    getUpdateDirection(updateType, previous, current) {
-        if ('NONE' === updateType || 'UNKNOWN' === updateType) {
-            return updateType;
-        }
-        if (undefined === previous || undefined === current || 'TAG' !== previous.type || 'TAG' !== current.type) {
-            return 'UNKNOWN';
-        }
-        let before;
-        let after;
-        if (previous.major !== current.major) {
-            before = previous.major;
-            after = current.major;
-        }
-        else if (previous.minor !== current.minor) {
-            before = previous.minor;
-            after = current.minor;
-        }
-        else if (previous.patch !== current.patch) {
-            before = previous.patch;
-            after = current.patch;
-        }
-        else {
-            return 'NONE';
-        }
-        if (!before || !after) {
-            return 'UNKNOWN';
-        }
-        else {
-            return parseInt(before) > parseInt(after)
-                ? 'DOWN'
-                : 'UP';
-        }
-    }
-    getUpdateType(previous, current) {
-        if (!previous && current) {
-            return 'ADDED';
-        }
-        else if (previous && !current) {
-            return 'REMOVED';
-        }
-        else if (!previous || !current) {
-            return 'UNKNOWN';
-        }
-        else if (previous.full === current.full) {
-            return 'NONE';
-        }
-        return 'UPDATED';
-    }
-    getUpdateSubType(updateType, previous, current) {
-        if ('NONE' === updateType || 'UNKNOWN' === updateType) {
-            return updateType;
-        }
-        else if (!previous || !current) {
-            return 'UNKNOWN';
-        }
-        if ('TAG' !== previous.type || 'TAG' !== current.type) {
-            return 'UNKNOWN'; // Not doable to know the sub type in that case as we can only parse tags !
-        }
-        else if (previous.major !== current.major) {
-            return 'MAJOR';
-        }
-        else if (previous.minor !== current.minor) {
-            return 'MINOR';
-        }
-        else if (previous.patch !== current.patch) {
-            return 'PATCH';
-        }
-        return 'UNKNOWN';
-    }
-}
-exports["default"] = PackageVersionDiffListCreator;
-
-
-/***/ }),
-
-/***/ 7225:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.GithubPRBehavior = void 0;
-const GithubFileManager_1 = __nccwpck_require__(5878);
-const GithubPRCommentManager_1 = __nccwpck_require__(488);
-const logger_1 = __importDefault(__nccwpck_require__(8231));
-const PackageVersionDiffListCreator_1 = __importDefault(__nccwpck_require__(2791));
-const utils_1 = __nccwpck_require__(4729);
-class GithubPRBehavior {
-    constructor(repositoryOwner, repositoryName, payload, packageManagerType, postResults, force) {
-        this.prId = payload.number;
-        this.baseCommitSha = payload.base.sha;
-        this.headCommitSha = payload.head.sha;
-        this.force = force;
-        this.packageManager = (0, utils_1.packageManagerFactory)(packageManagerType);
-        this.githubFileManager = new GithubFileManager_1.GithubFileManager(repositoryOwner, repositoryName);
-        this.githubCommentManager = new GithubPRCommentManager_1.GithubPRCommentManager(repositoryOwner, repositoryName, this.prId, packageManagerType, postResults);
-    }
-    execute() {
-        return __awaiter(this, void 0, void 0, function* () {
-            logger_1.default.debug('Creating diff ...');
-            if (yield this.shouldCreateDiff()) {
-                logger_1.default.info(this.packageManager.getLockFilename() + ' updated ! Gathering data ...');
-                const packageVersionDiffListCreator = new PackageVersionDiffListCreator_1.default(this.packageManager, this.githubFileManager, this.baseCommitSha, this.headCommitSha);
-                logger_1.default.debug('Creating diff ...');
-                const packagesDiff = yield packageVersionDiffListCreator.createPackageVersionList();
-                yield this.manageDiffNotification(packagesDiff);
-                return packagesDiff;
-            }
-            logger_1.default.info(this.packageManager.getLockFilename() + ' not updated on that PR !');
-            yield this.githubCommentManager.deletePreviousIfExisting();
-            return [];
-        });
-    }
-    manageDiffNotification(packagesDiff) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (packagesDiff.length) {
-                return this.githubCommentManager.createNewIfNeeded(this.headCommitSha, packagesDiff);
-            }
-            return this.githubCommentManager.deletePreviousIfExisting();
-        });
-    }
-    shouldCreateDiff() {
-        return __awaiter(this, void 0, void 0, function* () {
-            // /!\ Checking only between comment commit and latest commit may produce bad result
-            // see https://github.com/yoanm/github-action-deps-versions-checker/issues/63
-            // ==> Always check between base branch and latest commit instead
-            logger_1.default.debug('Checking if lock file has been updated on PR ...');
-            const lockFile = yield this.githubFileManager.getPRFile(this.packageManager.getLockFilename(), this.prId, ['modified', 'added', 'removed']);
-            return lockFile !== undefined;
-        });
-    }
-}
-exports.GithubPRBehavior = GithubPRBehavior;
-
-
-/***/ }),
-
-/***/ 6560:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.GithubPushBehavior = void 0;
-const GithubFileManager_1 = __nccwpck_require__(5878);
-const logger_1 = __importDefault(__nccwpck_require__(8231));
-const PackageVersionDiffListCreator_1 = __importDefault(__nccwpck_require__(2791));
-const utils_1 = __nccwpck_require__(4729);
-class GithubPushBehavior {
-    //private readonly githubCommentManager: GithubPRCommentManager;
-    constructor(repositoryOwner, repositoryName, baseCommitSha, headCommitSha, packageManagerType, postResults, force) {
-        this.baseCommitSha = baseCommitSha;
-        this.headCommitSha = headCommitSha;
-        this.force = force;
-        this.packageManager = (0, utils_1.packageManagerFactory)(packageManagerType);
-        this.githubFileManager = new GithubFileManager_1.GithubFileManager(repositoryOwner, repositoryName);
-        /*this.githubCommentManager = new GithubPRCommentManager(
-            repositoryOwner,
-            repositoryName,
-            this.prId,
-            packageManagerType,
-            postResults
-        );*/
-    }
-    execute() {
-        return __awaiter(this, void 0, void 0, function* () {
-            logger_1.default.debug('Creating diff ...');
-            if (yield this.shouldCreateDiff()) {
-                logger_1.default.info(this.packageManager.getLockFilename() + ' updated ! Gathering data ...');
-                const packageVersionDiffListCreator = new PackageVersionDiffListCreator_1.default(this.packageManager, this.githubFileManager, this.baseCommitSha, this.headCommitSha);
-                logger_1.default.debug('Creating diff ...');
-                const packagesDiff = yield packageVersionDiffListCreator.createPackageVersionList();
-                yield this.manageDiffNotification(packagesDiff);
-                return packagesDiff;
-            }
-            return [];
-        });
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    manageDiffNotification(packagesDiff) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return;
-            /*
-            if (packagesDiff.length) {
-                return this.githubCommentManager.createNewIfNeeded(this.headCommitSha, packagesDiff);
-            }
-    
-            return this.githubCommentManager.deletePreviousIfExisting();
-             */
-        });
-    }
-    shouldCreateDiff() {
-        return __awaiter(this, void 0, void 0, function* () {
-            logger_1.default.debug(`Checking if lock file has been updated between ${this.baseCommitSha.substr(0, 7)} and ${this.headCommitSha.substr(0, 7)} ...`);
-            const lockFile = yield this.githubFileManager.getFileBetween(this.packageManager.getLockFilename(), this.baseCommitSha, this.headCommitSha, ['modified', 'added', 'removed']);
-            if (lockFile === undefined) {
-                logger_1.default.info(`${this.packageManager.getLockFilename()} not updated on between ${this.baseCommitSha.substr(0, 7)} and ${this.headCommitSha.substr(0, 7)} ...`);
-            }
-            return lockFile !== undefined;
-        });
-    }
-}
-exports.GithubPushBehavior = GithubPushBehavior;
-
-
-/***/ }),
-
-/***/ 7007:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.commentPkgTypeFactory = exports.COMMENT_COMMIT_REGEXP = exports.COMMENT_HEADER = void 0;
-const sections_1 = __nccwpck_require__(7976);
-const utils_1 = __nccwpck_require__(9376);
-exports.COMMENT_HEADER = '<!-- packagesVersionsChecker -->';
-exports.COMMENT_COMMIT_REGEXP = '<!-- commit="([^"]+)" -->';
-const commentPkgTypeFactory = (packageManagerType) => `<!-- type="${packageManagerType}" -->`;
-exports.commentPkgTypeFactory = commentPkgTypeFactory;
-function createBody(packageManagerType, commit, packagesDiff) {
-    const updatedPackageDiffList = packagesDiff.filter((0, utils_1.isDiffTypeFilter)('UPDATED'));
-    const addedPackageDiffList = packagesDiff.filter((0, utils_1.isDiffTypeFilter)('ADDED'));
-    const removedPackageDiffList = packagesDiff.filter((0, utils_1.isDiffTypeFilter)('REMOVED'));
-    const unknownPackageDiffList = packagesDiff.filter((0, utils_1.isDiffTypeFilter)('UNKNOWN'));
-    const listCount = updatedPackageDiffList.length
-        + addedPackageDiffList.length
-        + removedPackageDiffList.length
-        + unknownPackageDiffList.length;
-    if (listCount === 0) {
-        return undefined;
-    }
-    return `${exports.COMMENT_HEADER}${(0, exports.commentPkgTypeFactory)(packageManagerType)}<!-- commit="${commit}" --> \n`
-        + `# 🔎 ${getPackageManagerName(packageManagerType)} packages versions checker 🔍 \n`
-        + '\n'
-        + (0, sections_1.createRiskyUpdatesBody)([...updatedPackageDiffList, ...addedPackageDiffList])
-        + (0, sections_1.createMinorVersionUpdatesBody)(updatedPackageDiffList)
-        + (0, sections_1.createPatchVersionUpdatesBody)(updatedPackageDiffList)
-        + (0, sections_1.createAddedAndRemovedBody)([
-            ...addedPackageDiffList,
-            ...removedPackageDiffList,
-        ])
-        + (0, sections_1.createUnknownBody)(unknownPackageDiffList)
-        + (0, sections_1.createCaptionBody)();
-}
-exports["default"] = createBody;
-function getPackageManagerName(packageManagerType) {
-    switch (packageManagerType) {
-        case 'composer':
-            return 'Composer';
-    }
-    return '';
-}
-
-
-/***/ }),
-
-/***/ 7976:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.createCaptionBody = exports.createUnknownBody = exports.createAddedAndRemovedBody = exports.createPatchVersionUpdatesBody = exports.createMinorVersionUpdatesBody = exports.createRiskyUpdatesBody = void 0;
-const utils_1 = __nccwpck_require__(9376);
-function sortByPkgName(list) {
-    return list.sort((a, b) => a.name.localeCompare(b.name));
-}
-function createRiskyUpdatesBody(packagesDiff) {
-    const majorUpdateList = sortByPkgName(packagesDiff.filter(item => 'MAJOR' === item.update.subType));
-    const unknownUpdateList = sortByPkgName(packagesDiff.filter(item => 'UPDATED' === item.update.type && 'UNKNOWN' === item.update.subType));
-    const riskyAddedList = sortByPkgName(packagesDiff.filter(item => 'ADDED' === item.update.type && item.current.isDev));
-    const totalCount = majorUpdateList.length + unknownUpdateList.length + riskyAddedList.length;
-    if (0 === totalCount) {
-        return '';
-    }
-    return (0, utils_1.createDiffTableBody)([majorUpdateList, unknownUpdateList, riskyAddedList], `${totalCount} risky update${totalCount > 1 ? 's' : ''}`, ['Name', 'From', '  ', 'To'], [':---', '---:', ':---:', '---:'], item => [
-        (0, utils_1.displayName)(item),
-        (0, utils_1.isDiffTypeFilter)('ADDED')(item) ? '' : (0, utils_1.displayVersion)(item.previous),
-        (0, utils_1.getDirectionIcon)(item),
-        (0, utils_1.displayVersion)(item.current)
-    ]);
-}
-exports.createRiskyUpdatesBody = createRiskyUpdatesBody;
-function createMinorVersionUpdatesBody(packagesDiff) {
-    const list = sortByPkgName(packagesDiff.filter(item => 'MINOR' === item.update.subType));
-    if (0 === list.length) {
-        return '';
-    }
-    return (0, utils_1.createDiffTableBody)([list], `${list.length} minor version update${list.length > 1 ? 's' : ''}`, ['Name', 'From', '  ', 'To'], [':---', '---:', ':---:', '---:'], item => [
-        (0, utils_1.displayName)(item),
-        (0, utils_1.displayVersion)(item.previous),
-        (0, utils_1.getDirectionIcon)(item),
-        (0, utils_1.displayVersion)(item.current)
-    ]);
-}
-exports.createMinorVersionUpdatesBody = createMinorVersionUpdatesBody;
-function createPatchVersionUpdatesBody(packagesDiff) {
-    const list = sortByPkgName(packagesDiff.filter(item => 'PATCH' === item.update.subType));
-    if (0 === list.length) {
-        return '';
-    }
-    return (0, utils_1.createDiffTableBody)([list], `${list.length} patch version update${list.length > 1 ? 's' : ''}`, ['Name', 'From', '  ', 'To'], [':---', '---:', ':---:', '---:'], item => [
-        (0, utils_1.displayName)(item),
-        (0, utils_1.displayVersion)(item.previous),
-        (0, utils_1.getDirectionIcon)(item),
-        (0, utils_1.displayVersion)(item.current)
-    ]);
-}
-exports.createPatchVersionUpdatesBody = createPatchVersionUpdatesBody;
-function createAddedAndRemovedBody(packagesDiff) {
-    if (0 === packagesDiff.length) {
-        return '';
-    }
-    const addedPackageList = sortByPkgName(packagesDiff.filter(item => (0, utils_1.isDiffTypeFilter)('ADDED')(item) && !item.current.isDev));
-    const removedPackageList = sortByPkgName(packagesDiff.filter((0, utils_1.isDiffTypeFilter)('REMOVED')));
-    return (0, utils_1.createDiffTableBody)([addedPackageList, removedPackageList], `${addedPackageList.length} package${addedPackageList.length > 1 ? 's' : ''} added & ${removedPackageList.length} package${removedPackageList.length > 1 ? 's' : ''} removed`, ['', 'Name', 'Version'], [':---:', ':---', '---:'], item => {
-        if ((0, utils_1.isDiffTypeFilter)('ADDED')(item)) {
-            return ['➕', (0, utils_1.displayName)(item), (0, utils_1.displayVersion)(item.current)];
-        }
-        return ['➖', (0, utils_1.displayName)(item), (0, utils_1.displayVersion)(item.previous)];
-    });
-}
-exports.createAddedAndRemovedBody = createAddedAndRemovedBody;
-function createUnknownBody(packagesDiff) {
-    if (0 === packagesDiff.length) {
-        return '';
-    }
-    return (0, utils_1.createDiffTableBody)([packagesDiff], `${packagesDiff.length} unknown operation${packagesDiff.length > 1 ? 's' : ''}`, ['Name'], [':---'], item => [(0, utils_1.displayName)(item)]);
-}
-exports.createUnknownBody = createUnknownBody;
-function createCaptionBody() {
-    return '\n'
-        + '\n'
-        + '<details>\n'
-        + ' <summary>Caption</summary>\n'
-        + '\n'
-        + 'Abandoned package ::skull_and_crossbones:\n'
-        + '### Root dependencies\n'
-        + '|   | Meaning |\n'
-        + '| :---: | :--- |\n'
-        + '| **Bold** | Root dependency |\n'
-        + '| _Italic_ | Root dev dependency |'
-        + '\n'
-        + '### Version update directions\n'
-        + '| Icon | Meaning |\n'
-        + '| :---: | :--- |\n'
-        + '| ↗ | Upgrade |\n'
-        + '| ↘️‼ | Downgrade |\n'
-        + '| ➡️ | Unknown |\n'
-        + '| ✔ | Unchanged |\n'
-        + '| ⁉️ | Unmanaged |\n'
-        + '\n'
-        + '### Versions\n'
-        + '| Icon | Meaning |\n'
-        + '| :---: | :--- |\n'
-        + '| {VERSION}❗| dev version (usually a branch or a ref) |\n'
-        + '\n'
-        + '### Added & removed packages\n'
-        + '| Icon | Meaning |\n'
-        + '| :---: | :--- |\n'
-        + '| ➕ | Added package |\n'
-        + '| ➖ | Removed package |\n'
-        + '\n'
-        + '</details>\n'
-        + '\n';
-}
-exports.createCaptionBody = createCaptionBody;
-
-
-/***/ }),
-
-/***/ 9376:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.displayName = exports.displayVersion = exports.getDirectionIcon = exports.createDiffTableBody = exports.isDiffTypeFilter = void 0;
-/**
- * Will return a function used to retrieve only T type objects
- */
-function isDiffTypeFilter(updateType) {
-    return function (item) {
-        return item.update.type === updateType;
-    };
-}
-exports.isDiffTypeFilter = isDiffTypeFilter;
-function createDiffTableBody(packageDiffListList, header, columnList, separatorList, rowDataProvider) {
-    return '## ' + header + '\n'
-        + '| ' + columnList.join(' | ') + ' |\n'
-        + '| ' + separatorList.join(' | ') + ' |\n'
-        + packageDiffListList.map((packageDiffList) => packageDiffList.map((item) => '| ' + rowDataProvider(item).join(' | ') + ' |').join('\n'))
-            .filter(item => item.length > 0) // Remove empty line (from empty list)
-            .join('\n') + '\n'
-        + '\n';
-}
-exports.createDiffTableBody = createDiffTableBody;
-function getDirectionIcon(version) {
-    if ('UPDATED' === version.update.type) {
-        switch (version.update.direction) {
-            case 'UP':
-                return '↗️️';
-            case 'DOWN':
-                return '↘️‼️️';
-            case 'NONE':
-                return '✔️';
-            case 'UNKNOWN':
-                return '➡️';
-        }
-    }
-    else if ('ADDED' === version.update.type) {
-        return '➕️';
-    }
-    return '⁉️️️️';
-}
-exports.getDirectionIcon = getDirectionIcon;
-function displayVersion(version) {
-    return version.full
-        + (version.isDev ? '❗' : '');
-}
-exports.displayVersion = displayVersion;
-function displayName(versionDiff) {
-    let modifier = '';
-    if (versionDiff.isRootDevRequirement) {
-        modifier = '_'; // Italic
-    }
-    else if (versionDiff.isRootRequirement) {
-        modifier = '**'; // Bold
-    }
-    return modifier
-        + (versionDiff.extra.link !== undefined ? '[' + versionDiff.name + '](' + versionDiff.extra.link + ')' : versionDiff.name)
-        + (versionDiff.isAbandoned ? ':skull_and_crossbones:' : '')
-        + modifier;
-}
-exports.displayName = displayName;
-
-
-/***/ }),
-
-/***/ 2562:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __asyncValues = (this && this.__asyncValues) || function (o) {
-    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-    var m = o[Symbol.asyncIterator], i;
-    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
-    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
-    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getFileBetween = exports.getFile = exports.get = void 0;
-const index_1 = __importDefault(__nccwpck_require__(8253));
-function get(ownerName, repoName, path, commitHash) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const { data } = yield index_1.default.rest.repos.getContent({
-                owner: ownerName,
-                repo: repoName,
-                path: path,
-                ref: commitHash,
-            });
-            return data;
-        }
-        catch (e) {
-            if (e.status !== undefined && e.status === 404) {
-                return undefined;
-            }
-            throw e;
-        }
-    });
-}
-exports.get = get;
-function getFile(ownerName, repoName, path, commitHash) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const res = yield get(ownerName, repoName, path, commitHash);
-        if (res === undefined) {
-            return undefined;
-        }
-        const file = res;
-        const contentType = file.type || null;
-        if (contentType !== 'file') {
-            throw new Error(`Expected type="file" but received "${contentType}" !`);
-        }
-        return file;
-    });
-}
-exports.getFile = getFile;
-function getFileBetween(ownerName, repoName, baseSha, headSha, filename) {
-    var _a, e_1, _b, _c;
-    var _d;
-    return __awaiter(this, void 0, void 0, function* () {
-        const pageIterator = index_1.default.paginate.iterator(index_1.default.rest.repos.compareCommitsWithBasehead, {
-            owner: ownerName,
-            repo: repoName,
-            basehead: `${baseSha}...${headSha}`,
-            per_page: 100,
-        });
-        try {
-            for (var _e = true, pageIterator_1 = __asyncValues(pageIterator), pageIterator_1_1; pageIterator_1_1 = yield pageIterator_1.next(), _a = pageIterator_1_1.done, !_a;) {
-                _c = pageIterator_1_1.value;
-                _e = false;
-                try {
-                    const response = _c;
-                    const file = ((_d = response.data.files) === null || _d === void 0 ? void 0 : _d.find(item => item.filename === filename)) || undefined;
-                    if (file !== undefined) {
-                        return file;
-                    }
-                }
-                finally {
-                    _e = true;
-                }
-            }
-        }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (!_e && !_a && (_b = pageIterator_1.return)) yield _b.call(pageIterator_1);
-            }
-            finally { if (e_1) throw e_1.error; }
-        }
-        return undefined;
-    });
-}
-exports.getFileBetween = getFileBetween;
-
-
-/***/ }),
-
-/***/ 8253:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const core_1 = __nccwpck_require__(2186);
-const github_1 = __nccwpck_require__(5438);
-const ghToken = (0, core_1.getInput)('gh-token', { required: true, trimWhitespace: true });
-exports["default"] = (0, github_1.getOctokit)(ghToken);
-
-
-/***/ }),
-
-/***/ 6311:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __asyncValues = (this && this.__asyncValues) || function (o) {
-    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-    var m = o[Symbol.asyncIterator], i;
-    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
-    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
-    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.createComment = exports.deleteComment = exports.getLastCommentMatching = exports.getFile = void 0;
-const index_1 = __importDefault(__nccwpck_require__(8253));
-function getFile(ownerName, repoName, prId, filename) {
-    var _a, e_1, _b, _c;
-    return __awaiter(this, void 0, void 0, function* () {
-        const pageIterator = index_1.default.paginate.iterator(index_1.default.rest.pulls.listFiles, {
-            owner: ownerName,
-            repo: repoName,
-            pull_number: prId,
-            per_page: 100,
-        });
-        try {
-            for (var _d = true, pageIterator_1 = __asyncValues(pageIterator), pageIterator_1_1; pageIterator_1_1 = yield pageIterator_1.next(), _a = pageIterator_1_1.done, !_a;) {
-                _c = pageIterator_1_1.value;
-                _d = false;
-                try {
-                    const { data } = _c;
-                    for (const file of data) {
-                        if (file.filename === filename) {
-                            return file;
-                        }
-                    }
-                }
-                finally {
-                    _d = true;
-                }
-            }
-        }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (!_d && !_a && (_b = pageIterator_1.return)) yield _b.call(pageIterator_1);
-            }
-            finally { if (e_1) throw e_1.error; }
-        }
-        return undefined;
-    });
-}
-exports.getFile = getFile;
-function getLastCommentMatching(ownerName, repoName, pullNumber, bodyMatch) {
-    var _a, e_2, _b, _c;
-    return __awaiter(this, void 0, void 0, function* () {
-        const pageIterator = index_1.default.paginate.iterator(index_1.default.rest.issues.listComments, {
-            owner: ownerName,
-            repo: repoName,
-            issue_number: pullNumber,
-        });
-        try {
-            for (var _d = true, pageIterator_2 = __asyncValues(pageIterator), pageIterator_2_1; pageIterator_2_1 = yield pageIterator_2.next(), _a = pageIterator_2_1.done, !_a;) {
-                _c = pageIterator_2_1.value;
-                _d = false;
-                try {
-                    const response = _c;
-                    const comment = response.data.find(item => item.body && bodyMatch.test(item.body));
-                    if (comment !== undefined) {
-                        return comment;
-                    }
-                }
-                finally {
-                    _d = true;
-                }
-            }
-        }
-        catch (e_2_1) { e_2 = { error: e_2_1 }; }
-        finally {
-            try {
-                if (!_d && !_a && (_b = pageIterator_2.return)) yield _b.call(pageIterator_2);
-            }
-            finally { if (e_2) throw e_2.error; }
-        }
-        return undefined;
-    });
-}
-exports.getLastCommentMatching = getLastCommentMatching;
-function deleteComment(ownerName, repoName, commentId) {
-    return __awaiter(this, void 0, void 0, function* () {
-        yield index_1.default.rest.issues.deleteComment({
-            owner: ownerName,
-            repo: repoName,
-            comment_id: commentId,
-        });
-    });
-}
-exports.deleteComment = deleteComment;
-function createComment(ownerName, repoName, pullNumber, body) {
-    return __awaiter(this, void 0, void 0, function* () {
-        yield index_1.default.rest.issues.createComment({
-            owner: ownerName,
-            repo: repoName,
-            issue_number: pullNumber,
-            body,
-        });
-    });
-}
-exports.createComment = createComment;
-
-
-/***/ }),
-
-/***/ 8231:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const core_1 = __nccwpck_require__(2186);
-const logger = {
-    info: core_1.info,
-    error: core_1.error,
-    debug: core_1.debug,
-};
-exports["default"] = logger;
-
-
-/***/ }),
-
-/***/ 9496:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const core = __importStar(__nccwpck_require__(2186));
-const core_1 = __nccwpck_require__(2186);
-const github_1 = __nccwpck_require__(5438);
-const logger_1 = __importDefault(__nccwpck_require__(8231));
-const utils_1 = __nccwpck_require__(4729);
-function run() {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const repositoryData = github_1.context.payload.repository;
-            if (undefined === repositoryData) {
-                throw new Error("Repository context is undefined !");
-            }
-            const packageManagerType = (0, core_1.getInput)("manager", {
-                required: true,
-                trimWhitespace: true,
-            });
-            const postResults = (0, core_1.getBooleanInput)("post-results", {
-                required: true,
-                trimWhitespace: true,
-            });
-            const force = (0, core_1.getBooleanInput)("force", {
-                required: true,
-                trimWhitespace: true,
-            });
-            const behavior = (0, utils_1.behaviorFactory)(github_1.context.eventName, repositoryData, github_1.context.payload, packageManagerType, postResults, force);
-            const packagesDiff = yield behavior.execute();
-            core.setOutput("diff", packagesDiff);
-        }
-        catch (error) {
-            logger_1.default.error(error instanceof Error ? error : `Unknown error ! ${error}`);
-            core.setFailed("An error occurred ! See log above.");
-        }
-    });
-}
-run();
-
-
-/***/ }),
-
-/***/ 4729:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.packageManagerFactory = exports.behaviorFactory = void 0;
-const GithubPRBehavior_1 = __nccwpck_require__(7225);
-const logger_1 = __importDefault(__nccwpck_require__(8231));
-const Composer_1 = __importDefault(__nccwpck_require__(9800));
-const GithubPushBehavior_1 = __nccwpck_require__(6560);
-function behaviorFactory(event_name, repositoryData, webHookPayload, packageManagerType, postResults, force) {
-    switch (event_name) {
-        case 'pull_request':
-            logger_1.default.debug(`Using PR behavior for PR #${webHookPayload.number}`);
-            if (webHookPayload.pull_request === undefined) {
-                throw new Error('Pull Request context is undefined !');
-            }
-            return new GithubPRBehavior_1.GithubPRBehavior(repositoryData.owner.login, repositoryData.name, webHookPayload.pull_request, packageManagerType, postResults, force);
-        case 'push':
-            logger_1.default.debug(`Using push behavior for ref ${webHookPayload.ref}`);
-            if (webHookPayload.before === undefined || webHookPayload.after === undefined) {
-                throw new Error('before and after commit must exist !');
-            }
-            return new GithubPushBehavior_1.GithubPushBehavior(repositoryData.owner.login, repositoryData.name, webHookPayload.before, webHookPayload.after, packageManagerType, postResults, force);
-    }
-    throw new Error('Context type "' + event_name + '" is not supported !');
-}
-exports.behaviorFactory = behaviorFactory;
-function packageManagerFactory(packageManagerType) {
-    switch (packageManagerType) {
-        case 'composer':
-            logger_1.default.debug('Using Composer package manager!');
-            return new Composer_1.default();
-    }
-    throw new Error(`Package manager type "${packageManagerType}" is not supported !`);
-}
-exports.packageManagerFactory = packageManagerFactory;
-
-
-/***/ }),
 
 /***/ 7351:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
@@ -11433,6 +10133,1306 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
+/***/ 5585:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.GithubFileManager = void 0;
+const contents_1 = __nccwpck_require__(9604);
+const pulls_1 = __nccwpck_require__(145);
+class GithubFileManager {
+    constructor(repositoryOwner, repositoryName) {
+        this.repositoryOwner = repositoryOwner;
+        this.repositoryName = repositoryName;
+    }
+    getPRFile(filename, prNumber, fileStatusFilter = undefined) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const file = yield (0, pulls_1.getFile)(this.repositoryOwner, this.repositoryName, prNumber, filename);
+            if (!file || !fileStatusFilter) {
+                return file;
+            }
+            return (yield this.filterFiles(filename, [file], fileStatusFilter)).pop();
+        });
+    }
+    getFileBetween(filename, baseSha, headSha, fileStatusFilter = undefined) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const file = yield (0, contents_1.getFileBetween)(this.repositoryOwner, this.repositoryName, baseSha, headSha, filename);
+            if (!file || !fileStatusFilter) {
+                return file;
+            }
+            return (yield this.filterFiles(filename, [file], fileStatusFilter)).pop();
+        });
+    }
+    filterFiles(filename, fileList, fileStatusFilter = undefined) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = [];
+            for (const file of fileList) {
+                if (filename === file.filename && fileStatusFilter ? fileStatusFilter.includes(file.status) : true) {
+                    result.push(file);
+                }
+            }
+            return result;
+        });
+    }
+    getFileContentAt(filename, commitSha) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const data = yield (0, contents_1.getFile)(this.repositoryOwner, this.repositoryName, filename, commitSha);
+            if (data === undefined) {
+                return undefined;
+            }
+            if (data.encoding !== 'base64') {
+                throw new Error(`Expected base64 encoded file but received "${data.encoding}" !`);
+            }
+            return this.base64ContentToUTF8(data.content);
+        });
+    }
+    base64ContentToUTF8(content) {
+        return Buffer.from(content, 'base64')
+            .toString('utf-8');
+    }
+}
+exports.GithubFileManager = GithubFileManager;
+
+
+/***/ }),
+
+/***/ 9378:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.GithubPRCommentManager = void 0;
+const comment_body_1 = __importStar(__nccwpck_require__(1991));
+const pulls_1 = __nccwpck_require__(145);
+const logger_1 = __importDefault(__nccwpck_require__(4636));
+class GithubPRCommentManager {
+    constructor(repositoryOwner, repositoryName, prId, packageManagerType, postResults) {
+        this.previousComment = null;
+        this.repositoryOwner = repositoryOwner;
+        this.repositoryName = repositoryName;
+        this.prId = prId;
+        this.packageManagerType = packageManagerType;
+        this.postResults = postResults;
+    }
+    getPrevious() {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.previousComment === null) {
+                this.previousComment = undefined;
+                if (this.postResults) {
+                    logger_1.default.debug('Loading previous comment ...');
+                    const comment = yield (0, pulls_1.getLastCommentMatching)(this.repositoryOwner, this.repositoryName, this.prId, new RegExp('^'
+                        + comment_body_1.COMMENT_HEADER.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
+                        + (0, comment_body_1.commentPkgTypeFactory)(this.packageManagerType)));
+                    const match = (_a = comment === null || comment === void 0 ? void 0 : comment.body) === null || _a === void 0 ? void 0 : _a.match(new RegExp(comment_body_1.COMMENT_COMMIT_REGEXP));
+                    if (comment && match) {
+                        this.previousComment = Object.assign(Object.assign({}, comment), { commitRef: match[1] });
+                    }
+                }
+            }
+            return this.previousComment;
+        });
+    }
+    createNewIfNeeded(commitSha, packagesDiff) {
+        var _a, _b;
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.postResults) {
+                return;
+            }
+            const commentBody = (0, comment_body_1.default)(this.packageManagerType, commitSha, packagesDiff);
+            if (commentBody === undefined) {
+                logger_1.default.debug('Nothing to post ! Removing previous if it exists !');
+                return this.deletePreviousIfExisting();
+            }
+            const previousComment = yield this.getPrevious();
+            if (previousComment) {
+                // Remove first line of each bodies as they contains commit information (and so can't never match)
+                const previousBodyToCompare = (_a = previousComment.body) === null || _a === void 0 ? void 0 : _a.substring(((_b = previousComment.body) === null || _b === void 0 ? void 0 : _b.indexOf("\n")) + 1);
+                const newBodyToCompare = commentBody.substring(commentBody.indexOf("\n") + 1);
+                if (previousBodyToCompare === newBodyToCompare) {
+                    // Avoid deleting comment and then create the exact same one
+                    logger_1.default.info('Same comment as before, nothing to do. Bye !');
+                    return;
+                }
+            }
+            yield this.deletePreviousIfExisting();
+            logger_1.default.debug('Posting comment ...');
+            return (0, pulls_1.createComment)(this.repositoryOwner, this.repositoryName, this.prId, commentBody);
+        });
+    }
+    deletePreviousIfExisting() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const previousComment = yield this.getPrevious();
+            if (previousComment) {
+                logger_1.default.info('Removing previous comment ...');
+                return (0, pulls_1.deleteComment)(this.repositoryOwner, this.repositoryName, previousComment.id);
+            }
+        });
+    }
+}
+exports.GithubPRCommentManager = GithubPRCommentManager;
+
+
+/***/ }),
+
+/***/ 1976:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const index_1 = __importDefault(__nccwpck_require__(6548));
+class Composer extends index_1.default {
+    constructor() {
+        super('composer.json', 'composer.lock');
+    }
+    loadLockFile(content) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return JSON.parse(content);
+        });
+    }
+    loadRequirementFile(content) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return JSON.parse(content);
+        });
+    }
+    extractLockPackageList(lockFile) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const reduceFn = (isDevRequirement) => (acc, item) => {
+                var _a, _b, _c;
+                acc[item.name] = Object.assign(Object.assign({}, item), { isDevRequirement, link: ((_a = item.support) === null || _a === void 0 ? void 0 : _a.wiki) || ((_b = item.support) === null || _b === void 0 ? void 0 : _b.docs) || ((_c = item.support) === null || _c === void 0 ? void 0 : _c.source) || item.homepage || undefined });
+                return acc;
+            };
+            return (lockFile.packages || []).reduce(reduceFn(false), (lockFile['packages-dev'] || []).reduce(reduceFn(true), {}));
+        });
+    }
+    extractPackageVersion(lockPackage) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (/^v?\d+\.\d+\.\d+/.test(lockPackage.version)) {
+                const match = this.sanitizeTag(lockPackage.version)
+                    .match(/^(\d+)\.(\d+)\.(\d+)(.*)?/);
+                // TagPackageVersion
+                return {
+                    full: lockPackage.version,
+                    isDev: false,
+                    type: 'TAG',
+                    major: match[1] && match[1].length ? match[1] : null,
+                    minor: match[2] && match[2].length ? match[2] : null,
+                    patch: match[3] && match[3].length ? match[3] : null,
+                    extra: match[4] && match[4].length ? match[4] : null,
+                };
+            }
+            // CommitPackageVersion
+            return {
+                // Append the commit ref (only the first 7 chars (=short ref))
+                full: lockPackage.version + '#' + lockPackage.dist.reference.substr(0, 7),
+                isDev: true,
+                type: 'COMMIT',
+                commit: lockPackage.dist.reference
+            };
+        });
+    }
+    getPackageInfos(lockPackage, requirementFile) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const rootRequirements = requirementFile[lockPackage.isDevRequirement ? 'require-dev' : 'require'] || {};
+            const isRootRequirement = undefined !== rootRequirements[lockPackage.name];
+            return Promise.resolve({
+                isRootRequirement: isRootRequirement,
+                isRootDevRequirement: isRootRequirement && lockPackage.isDevRequirement,
+                isAbandoned: lockPackage.abandoned === true,
+                link: lockPackage.link
+            });
+        });
+    }
+    sanitizeTag(version) {
+        return 'v' === version.charAt(0)
+            ? version.substr(1) // Remove 'v' prefix if it exists
+            : version;
+    }
+}
+exports["default"] = Composer;
+
+
+/***/ }),
+
+/***/ 6548:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+class PackageManager {
+    constructor(requirementFilename, lockFilename) {
+        this.requirementFilename = requirementFilename;
+        this.lockFilename = lockFilename;
+    }
+    getRequirementFilename() {
+        return this.requirementFilename;
+    }
+    getLockFilename() {
+        return this.lockFilename;
+    }
+}
+exports["default"] = PackageManager;
+
+
+/***/ }),
+
+/***/ 5145:
+/***/ (function(__unused_webpack_module, exports) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+class PackageVersionDiffListCreator {
+    constructor(packageManager, githubFileManager, baseCommitSha, headCommitSha) {
+        this.packageManager = packageManager;
+        this.githubFileManager = githubFileManager;
+        this.baseCommitSha = baseCommitSha;
+        this.headCommitSha = headCommitSha;
+    }
+    createPackageVersionList() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const [previousLockFileContent, currentLockFileContent, previousRequirementFileContent, currentRequirementFileContent] = yield Promise.all([
+                this.githubFileManager.getFileContentAt(this.packageManager.getLockFilename(), this.baseCommitSha),
+                this.githubFileManager.getFileContentAt(this.packageManager.getLockFilename(), this.headCommitSha),
+                this.githubFileManager.getFileContentAt(this.packageManager.getRequirementFilename(), this.baseCommitSha),
+                this.githubFileManager.getFileContentAt(this.packageManager.getRequirementFilename(), this.headCommitSha),
+            ]);
+            const [previousLockFile, currentLockFile, previousRequirementFile, currentRequirementFile] = yield Promise.all([
+                previousLockFileContent ? this.packageManager.loadLockFile(previousLockFileContent) : undefined,
+                currentLockFileContent ? this.packageManager.loadLockFile(currentLockFileContent) : undefined,
+                previousRequirementFileContent ? this.packageManager.loadRequirementFile(previousRequirementFileContent) : undefined,
+                currentRequirementFileContent ? this.packageManager.loadRequirementFile(currentRequirementFileContent) : undefined,
+            ]);
+            const list = yield this.createPackageVersionsDiff(previousLockFile, currentLockFile, previousRequirementFile, currentRequirementFile);
+            // Order by name, isRootRequirement and isRootDevRequirement
+            // Output => list with root non dev requirements first, then root dev requirements, then others. All sorted by their name
+            list.sort((a, b) => {
+                if (a.isRootRequirement && b.isRootRequirement) {
+                    // If both root requirements, sort by dev version vs non dev version
+                    if (a.isRootDevRequirement && b.isRootDevRequirement) {
+                        // If both dev version, sort by name
+                        return (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0);
+                    }
+                    return (!a.isRootDevRequirement && b.isRootDevRequirement) ? 1 : ((a.isRootDevRequirement && !b.isRootDevRequirement) ? -1 : 0);
+                }
+                return (!a.isRootRequirement && b.isRootRequirement) ? 1 : ((a.isRootRequirement && !b.isRootRequirement) ? -1 : 0);
+            });
+            return list;
+        });
+    }
+    createPackageVersionsDiff(previousLockFile, currentLockFile, previousRequirementFile, currentRequirementFile) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (previousLockFile === undefined && currentLockFile === undefined) {
+                throw new Error('At least a previous or current lock file has to be provided');
+            }
+            if (previousRequirementFile === undefined && currentRequirementFile === undefined) {
+                throw new Error('At least a previous or current requirement file has to be provided');
+            }
+            const packageProcessedList = {};
+            const promiseList = [];
+            const [previousLockPackageList, currentLockPackageList] = yield Promise.all([
+                previousLockFile ? this.packageManager.extractLockPackageList(previousLockFile) : {},
+                currentLockFile ? this.packageManager.extractLockPackageList(currentLockFile) : {},
+            ]);
+            // Loop over current to find Added / Updated + all other packages
+            Object.keys(currentLockPackageList).forEach(packageName => {
+                packageProcessedList[packageName] = true;
+                promiseList.push(this.createPackageDiff(packageName, previousLockPackageList ? previousLockPackageList[packageName] : undefined, currentLockPackageList[packageName], previousRequirementFile, currentRequirementFile));
+            });
+            // Loop over previous (skipping already processed packages) to find Removed packages
+            Object.keys(previousLockPackageList).forEach(packageName => {
+                if (!packageProcessedList[packageName]) {
+                    packageProcessedList[packageName] = true;
+                    promiseList.push(this.createPackageDiff(packageName, previousLockPackageList[packageName], currentLockPackageList ? currentLockPackageList[packageName] : undefined, previousRequirementFile, currentRequirementFile));
+                }
+            });
+            return Promise.all(promiseList);
+        });
+    }
+    createPackageDiff(packageName, previousLockPackage, currentLockPackage, previousRequirementFile, currentRequirementFile) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (previousLockPackage === undefined && currentLockPackage === undefined) {
+                throw new Error('At least a previous or current lock package has to be provided');
+            }
+            if (previousRequirementFile === undefined && currentRequirementFile === undefined) {
+                throw new Error('At least a previous or current requirement file has to be provided');
+            }
+            const [previousVersionData, currentVersionData] = yield Promise.all([
+                previousLockPackage ? this.packageManager.extractPackageVersion(previousLockPackage) : undefined,
+                currentLockPackage ? this.packageManager.extractPackageVersion(currentLockPackage) : undefined,
+            ]);
+            const updateType = this.getUpdateType(previousVersionData, currentVersionData);
+            const isRemoval = currentLockPackage === undefined;
+            const lockPackage = isRemoval ? previousLockPackage : currentLockPackage;
+            const requirementFile = isRemoval ? previousRequirementFile : currentRequirementFile;
+            const packageInfos = yield this.packageManager.getPackageInfos(lockPackage, requirementFile);
+            const base = {
+                name: packageName,
+                isRootRequirement: packageInfos.isRootRequirement,
+                isRootDevRequirement: packageInfos.isRootDevRequirement,
+                isAbandoned: packageInfos.isAbandoned,
+                extra: {
+                    link: packageInfos.link,
+                }
+            };
+            if ('UPDATED' === updateType) {
+                if (!previousVersionData || !currentVersionData) {
+                    throw new Error('UPDATED require previous and current package versions');
+                }
+                // UpdatedPackageDiff
+                return Object.assign(Object.assign({}, base), { update: {
+                        type: updateType,
+                        subType: this.getUpdateSubType(updateType, previousVersionData, currentVersionData),
+                        direction: this.getUpdateDirection(updateType, previousVersionData, currentVersionData)
+                    }, previous: previousVersionData, current: currentVersionData });
+            }
+            const defaultUpdateData = {
+                type: updateType,
+                subType: 'UNKNOWN',
+                direction: 'UNKNOWN',
+            };
+            if ('ADDED' === defaultUpdateData.type) {
+                if (!currentVersionData) {
+                    throw new Error('ADDED require current package version');
+                }
+                // AddedPackageDiff
+                return Object.assign(Object.assign({}, base), { update: defaultUpdateData, current: currentVersionData });
+            }
+            if ('REMOVED' === defaultUpdateData.type) {
+                if (!previousVersionData) {
+                    throw new Error('REMOVED require previous package version');
+                }
+                // RemovedPackageDiff
+                return Object.assign(Object.assign({}, base), { update: defaultUpdateData, previous: previousVersionData });
+            }
+            if ('NONE' === defaultUpdateData.type) {
+                if (!previousVersionData || !currentVersionData) {
+                    throw new Error('NONE require previous and current package versions');
+                }
+                // NoUpdatePackageDiff
+                return Object.assign(Object.assign({}, base), { update: defaultUpdateData, previous: previousVersionData, current: currentVersionData });
+            }
+            // UnknownUpdatePackageDiff
+            return Object.assign(Object.assign({}, base), { update: defaultUpdateData, previous: previousVersionData, current: currentVersionData });
+        });
+    }
+    getUpdateDirection(updateType, previous, current) {
+        if ('NONE' === updateType || 'UNKNOWN' === updateType) {
+            return updateType;
+        }
+        if (undefined === previous || undefined === current || 'TAG' !== previous.type || 'TAG' !== current.type) {
+            return 'UNKNOWN';
+        }
+        let before;
+        let after;
+        if (previous.major !== current.major) {
+            before = previous.major;
+            after = current.major;
+        }
+        else if (previous.minor !== current.minor) {
+            before = previous.minor;
+            after = current.minor;
+        }
+        else if (previous.patch !== current.patch) {
+            before = previous.patch;
+            after = current.patch;
+        }
+        else {
+            return 'NONE';
+        }
+        if (!before || !after) {
+            return 'UNKNOWN';
+        }
+        else {
+            return parseInt(before) > parseInt(after)
+                ? 'DOWN'
+                : 'UP';
+        }
+    }
+    getUpdateType(previous, current) {
+        if (!previous && current) {
+            return 'ADDED';
+        }
+        else if (previous && !current) {
+            return 'REMOVED';
+        }
+        else if (!previous || !current) {
+            return 'UNKNOWN';
+        }
+        else if (previous.full === current.full) {
+            return 'NONE';
+        }
+        return 'UPDATED';
+    }
+    getUpdateSubType(updateType, previous, current) {
+        if ('NONE' === updateType || 'UNKNOWN' === updateType) {
+            return updateType;
+        }
+        else if (!previous || !current) {
+            return 'UNKNOWN';
+        }
+        if ('TAG' !== previous.type || 'TAG' !== current.type) {
+            return 'UNKNOWN'; // Not doable to know the sub type in that case as we can only parse tags !
+        }
+        else if (previous.major !== current.major) {
+            return 'MAJOR';
+        }
+        else if (previous.minor !== current.minor) {
+            return 'MINOR';
+        }
+        else if (previous.patch !== current.patch) {
+            return 'PATCH';
+        }
+        return 'UNKNOWN';
+    }
+}
+exports["default"] = PackageVersionDiffListCreator;
+
+
+/***/ }),
+
+/***/ 1091:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.GithubPRBehavior = void 0;
+const GithubFileManager_1 = __nccwpck_require__(5585);
+const GithubPRCommentManager_1 = __nccwpck_require__(9378);
+const logger_1 = __importDefault(__nccwpck_require__(4636));
+const PackageVersionDiffListCreator_1 = __importDefault(__nccwpck_require__(5145));
+const utils_1 = __nccwpck_require__(1314);
+class GithubPRBehavior {
+    constructor(repositoryOwner, repositoryName, payload, packageManagerType, postResults, force) {
+        this.prId = payload.number;
+        this.baseCommitSha = payload.base.sha;
+        this.headCommitSha = payload.head.sha;
+        this.force = force;
+        this.packageManager = (0, utils_1.packageManagerFactory)(packageManagerType);
+        this.githubFileManager = new GithubFileManager_1.GithubFileManager(repositoryOwner, repositoryName);
+        this.githubCommentManager = new GithubPRCommentManager_1.GithubPRCommentManager(repositoryOwner, repositoryName, this.prId, packageManagerType, postResults);
+    }
+    execute() {
+        return __awaiter(this, void 0, void 0, function* () {
+            logger_1.default.debug('Creating diff ...');
+            if (yield this.shouldCreateDiff()) {
+                logger_1.default.info(this.packageManager.getLockFilename() + ' updated ! Gathering data ...');
+                const packageVersionDiffListCreator = new PackageVersionDiffListCreator_1.default(this.packageManager, this.githubFileManager, this.baseCommitSha, this.headCommitSha);
+                logger_1.default.debug('Creating diff ...');
+                const packagesDiff = yield packageVersionDiffListCreator.createPackageVersionList();
+                yield this.manageDiffNotification(packagesDiff);
+                return packagesDiff;
+            }
+            logger_1.default.info(this.packageManager.getLockFilename() + ' not updated on that PR !');
+            yield this.githubCommentManager.deletePreviousIfExisting();
+            return [];
+        });
+    }
+    manageDiffNotification(packagesDiff) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (packagesDiff.length) {
+                return this.githubCommentManager.createNewIfNeeded(this.headCommitSha, packagesDiff);
+            }
+            return this.githubCommentManager.deletePreviousIfExisting();
+        });
+    }
+    shouldCreateDiff() {
+        return __awaiter(this, void 0, void 0, function* () {
+            // /!\ Checking only between comment commit and latest commit may produce bad result
+            // see https://github.com/yoanm/github-action-deps-versions-checker/issues/63
+            // ==> Always check between base branch and latest commit instead
+            logger_1.default.debug('Checking if lock file has been updated on PR ...');
+            const lockFile = yield this.githubFileManager.getPRFile(this.packageManager.getLockFilename(), this.prId, ['modified', 'added', 'removed']);
+            return lockFile !== undefined;
+        });
+    }
+}
+exports.GithubPRBehavior = GithubPRBehavior;
+
+
+/***/ }),
+
+/***/ 9303:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.GithubPushBehavior = void 0;
+const GithubFileManager_1 = __nccwpck_require__(5585);
+const logger_1 = __importDefault(__nccwpck_require__(4636));
+const PackageVersionDiffListCreator_1 = __importDefault(__nccwpck_require__(5145));
+const utils_1 = __nccwpck_require__(1314);
+class GithubPushBehavior {
+    //private readonly githubCommentManager: GithubPRCommentManager;
+    constructor(repositoryOwner, repositoryName, baseCommitSha, headCommitSha, packageManagerType, postResults, force) {
+        this.baseCommitSha = baseCommitSha;
+        this.headCommitSha = headCommitSha;
+        this.force = force;
+        this.packageManager = (0, utils_1.packageManagerFactory)(packageManagerType);
+        this.githubFileManager = new GithubFileManager_1.GithubFileManager(repositoryOwner, repositoryName);
+        /*this.githubCommentManager = new GithubPRCommentManager(
+            repositoryOwner,
+            repositoryName,
+            this.prId,
+            packageManagerType,
+            postResults
+        );*/
+    }
+    execute() {
+        return __awaiter(this, void 0, void 0, function* () {
+            logger_1.default.debug('Creating diff ...');
+            if (yield this.shouldCreateDiff()) {
+                logger_1.default.info(this.packageManager.getLockFilename() + ' updated ! Gathering data ...');
+                const packageVersionDiffListCreator = new PackageVersionDiffListCreator_1.default(this.packageManager, this.githubFileManager, this.baseCommitSha, this.headCommitSha);
+                logger_1.default.debug('Creating diff ...');
+                const packagesDiff = yield packageVersionDiffListCreator.createPackageVersionList();
+                yield this.manageDiffNotification(packagesDiff);
+                return packagesDiff;
+            }
+            return [];
+        });
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    manageDiffNotification(packagesDiff) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return;
+            /*
+            if (packagesDiff.length) {
+                return this.githubCommentManager.createNewIfNeeded(this.headCommitSha, packagesDiff);
+            }
+    
+            return this.githubCommentManager.deletePreviousIfExisting();
+             */
+        });
+    }
+    shouldCreateDiff() {
+        return __awaiter(this, void 0, void 0, function* () {
+            logger_1.default.debug(`Checking if lock file has been updated between ${this.baseCommitSha.substr(0, 7)} and ${this.headCommitSha.substr(0, 7)} ...`);
+            const lockFile = yield this.githubFileManager.getFileBetween(this.packageManager.getLockFilename(), this.baseCommitSha, this.headCommitSha, ['modified', 'added', 'removed']);
+            if (lockFile === undefined) {
+                logger_1.default.info(`${this.packageManager.getLockFilename()} not updated on between ${this.baseCommitSha.substr(0, 7)} and ${this.headCommitSha.substr(0, 7)} ...`);
+            }
+            return lockFile !== undefined;
+        });
+    }
+}
+exports.GithubPushBehavior = GithubPushBehavior;
+
+
+/***/ }),
+
+/***/ 1991:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.commentPkgTypeFactory = exports.COMMENT_COMMIT_REGEXP = exports.COMMENT_HEADER = void 0;
+const sections_1 = __nccwpck_require__(7359);
+const utils_1 = __nccwpck_require__(5974);
+exports.COMMENT_HEADER = '<!-- packagesVersionsChecker -->';
+exports.COMMENT_COMMIT_REGEXP = '<!-- commit="([^"]+)" -->';
+const commentPkgTypeFactory = (packageManagerType) => `<!-- type="${packageManagerType}" -->`;
+exports.commentPkgTypeFactory = commentPkgTypeFactory;
+function createBody(packageManagerType, commit, packagesDiff) {
+    const updatedPackageDiffList = packagesDiff.filter((0, utils_1.isDiffTypeFilter)('UPDATED'));
+    const addedPackageDiffList = packagesDiff.filter((0, utils_1.isDiffTypeFilter)('ADDED'));
+    const removedPackageDiffList = packagesDiff.filter((0, utils_1.isDiffTypeFilter)('REMOVED'));
+    const unknownPackageDiffList = packagesDiff.filter((0, utils_1.isDiffTypeFilter)('UNKNOWN'));
+    const listCount = updatedPackageDiffList.length
+        + addedPackageDiffList.length
+        + removedPackageDiffList.length
+        + unknownPackageDiffList.length;
+    if (listCount === 0) {
+        return undefined;
+    }
+    return `${exports.COMMENT_HEADER}${(0, exports.commentPkgTypeFactory)(packageManagerType)}<!-- commit="${commit}" --> \n`
+        + `# 🔎 ${getPackageManagerName(packageManagerType)} packages versions checker 🔍 \n`
+        + '\n'
+        + (0, sections_1.createRiskyUpdatesBody)([...updatedPackageDiffList, ...addedPackageDiffList])
+        + (0, sections_1.createMinorVersionUpdatesBody)(updatedPackageDiffList)
+        + (0, sections_1.createPatchVersionUpdatesBody)(updatedPackageDiffList)
+        + (0, sections_1.createAddedAndRemovedBody)([
+            ...addedPackageDiffList,
+            ...removedPackageDiffList,
+        ])
+        + (0, sections_1.createUnknownBody)(unknownPackageDiffList)
+        + (0, sections_1.createCaptionBody)();
+}
+exports["default"] = createBody;
+function getPackageManagerName(packageManagerType) {
+    switch (packageManagerType) {
+        case 'composer':
+            return 'Composer';
+    }
+    return '';
+}
+
+
+/***/ }),
+
+/***/ 7359:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.createCaptionBody = exports.createUnknownBody = exports.createAddedAndRemovedBody = exports.createPatchVersionUpdatesBody = exports.createMinorVersionUpdatesBody = exports.createRiskyUpdatesBody = void 0;
+const utils_1 = __nccwpck_require__(5974);
+function sortByPkgName(list) {
+    return list.sort((a, b) => a.name.localeCompare(b.name));
+}
+function createRiskyUpdatesBody(packagesDiff) {
+    const majorUpdateList = sortByPkgName(packagesDiff.filter(item => 'MAJOR' === item.update.subType));
+    const unknownUpdateList = sortByPkgName(packagesDiff.filter(item => 'UPDATED' === item.update.type && 'UNKNOWN' === item.update.subType));
+    const riskyAddedList = sortByPkgName(packagesDiff.filter(item => 'ADDED' === item.update.type && item.current.isDev));
+    const totalCount = majorUpdateList.length + unknownUpdateList.length + riskyAddedList.length;
+    if (0 === totalCount) {
+        return '';
+    }
+    return (0, utils_1.createDiffTableBody)([majorUpdateList, unknownUpdateList, riskyAddedList], `${totalCount} risky update${totalCount > 1 ? 's' : ''}`, ['Name', 'From', '  ', 'To'], [':---', '---:', ':---:', '---:'], item => [
+        (0, utils_1.displayName)(item),
+        (0, utils_1.isDiffTypeFilter)('ADDED')(item) ? '' : (0, utils_1.displayVersion)(item.previous),
+        (0, utils_1.getDirectionIcon)(item),
+        (0, utils_1.displayVersion)(item.current)
+    ]);
+}
+exports.createRiskyUpdatesBody = createRiskyUpdatesBody;
+function createMinorVersionUpdatesBody(packagesDiff) {
+    const list = sortByPkgName(packagesDiff.filter(item => 'MINOR' === item.update.subType));
+    if (0 === list.length) {
+        return '';
+    }
+    return (0, utils_1.createDiffTableBody)([list], `${list.length} minor version update${list.length > 1 ? 's' : ''}`, ['Name', 'From', '  ', 'To'], [':---', '---:', ':---:', '---:'], item => [
+        (0, utils_1.displayName)(item),
+        (0, utils_1.displayVersion)(item.previous),
+        (0, utils_1.getDirectionIcon)(item),
+        (0, utils_1.displayVersion)(item.current)
+    ]);
+}
+exports.createMinorVersionUpdatesBody = createMinorVersionUpdatesBody;
+function createPatchVersionUpdatesBody(packagesDiff) {
+    const list = sortByPkgName(packagesDiff.filter(item => 'PATCH' === item.update.subType));
+    if (0 === list.length) {
+        return '';
+    }
+    return (0, utils_1.createDiffTableBody)([list], `${list.length} patch version update${list.length > 1 ? 's' : ''}`, ['Name', 'From', '  ', 'To'], [':---', '---:', ':---:', '---:'], item => [
+        (0, utils_1.displayName)(item),
+        (0, utils_1.displayVersion)(item.previous),
+        (0, utils_1.getDirectionIcon)(item),
+        (0, utils_1.displayVersion)(item.current)
+    ]);
+}
+exports.createPatchVersionUpdatesBody = createPatchVersionUpdatesBody;
+function createAddedAndRemovedBody(packagesDiff) {
+    if (0 === packagesDiff.length) {
+        return '';
+    }
+    const addedPackageList = sortByPkgName(packagesDiff.filter(item => (0, utils_1.isDiffTypeFilter)('ADDED')(item) && !item.current.isDev));
+    const removedPackageList = sortByPkgName(packagesDiff.filter((0, utils_1.isDiffTypeFilter)('REMOVED')));
+    return (0, utils_1.createDiffTableBody)([addedPackageList, removedPackageList], `${addedPackageList.length} package${addedPackageList.length > 1 ? 's' : ''} added & ${removedPackageList.length} package${removedPackageList.length > 1 ? 's' : ''} removed`, ['', 'Name', 'Version'], [':---:', ':---', '---:'], item => {
+        if ((0, utils_1.isDiffTypeFilter)('ADDED')(item)) {
+            return ['➕', (0, utils_1.displayName)(item), (0, utils_1.displayVersion)(item.current)];
+        }
+        return ['➖', (0, utils_1.displayName)(item), (0, utils_1.displayVersion)(item.previous)];
+    });
+}
+exports.createAddedAndRemovedBody = createAddedAndRemovedBody;
+function createUnknownBody(packagesDiff) {
+    if (0 === packagesDiff.length) {
+        return '';
+    }
+    return (0, utils_1.createDiffTableBody)([packagesDiff], `${packagesDiff.length} unknown operation${packagesDiff.length > 1 ? 's' : ''}`, ['Name'], [':---'], item => [(0, utils_1.displayName)(item)]);
+}
+exports.createUnknownBody = createUnknownBody;
+function createCaptionBody() {
+    return '\n'
+        + '\n'
+        + '<details>\n'
+        + ' <summary>Caption</summary>\n'
+        + '\n'
+        + 'Abandoned package ::skull_and_crossbones:\n'
+        + '### Root dependencies\n'
+        + '|   | Meaning |\n'
+        + '| :---: | :--- |\n'
+        + '| **Bold** | Root dependency |\n'
+        + '| _Italic_ | Root dev dependency |'
+        + '\n'
+        + '### Version update directions\n'
+        + '| Icon | Meaning |\n'
+        + '| :---: | :--- |\n'
+        + '| ↗ | Upgrade |\n'
+        + '| ↘️‼ | Downgrade |\n'
+        + '| ➡️ | Unknown |\n'
+        + '| ✔ | Unchanged |\n'
+        + '| ⁉️ | Unmanaged |\n'
+        + '\n'
+        + '### Versions\n'
+        + '| Icon | Meaning |\n'
+        + '| :---: | :--- |\n'
+        + '| {VERSION}❗| dev version (usually a branch or a ref) |\n'
+        + '\n'
+        + '### Added & removed packages\n'
+        + '| Icon | Meaning |\n'
+        + '| :---: | :--- |\n'
+        + '| ➕ | Added package |\n'
+        + '| ➖ | Removed package |\n'
+        + '\n'
+        + '</details>\n'
+        + '\n';
+}
+exports.createCaptionBody = createCaptionBody;
+
+
+/***/ }),
+
+/***/ 5974:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.displayName = exports.displayVersion = exports.getDirectionIcon = exports.createDiffTableBody = exports.isDiffTypeFilter = void 0;
+/**
+ * Will return a function used to retrieve only T type objects
+ */
+function isDiffTypeFilter(updateType) {
+    return function (item) {
+        return item.update.type === updateType;
+    };
+}
+exports.isDiffTypeFilter = isDiffTypeFilter;
+function createDiffTableBody(packageDiffListList, header, columnList, separatorList, rowDataProvider) {
+    return '## ' + header + '\n'
+        + '| ' + columnList.join(' | ') + ' |\n'
+        + '| ' + separatorList.join(' | ') + ' |\n'
+        + packageDiffListList.map((packageDiffList) => packageDiffList.map((item) => '| ' + rowDataProvider(item).join(' | ') + ' |').join('\n'))
+            .filter(item => item.length > 0) // Remove empty line (from empty list)
+            .join('\n') + '\n'
+        + '\n';
+}
+exports.createDiffTableBody = createDiffTableBody;
+function getDirectionIcon(version) {
+    if ('UPDATED' === version.update.type) {
+        switch (version.update.direction) {
+            case 'UP':
+                return '↗️️';
+            case 'DOWN':
+                return '↘️‼️️';
+            case 'NONE':
+                return '✔️';
+            case 'UNKNOWN':
+                return '➡️';
+        }
+    }
+    else if ('ADDED' === version.update.type) {
+        return '➕️';
+    }
+    return '⁉️️️️';
+}
+exports.getDirectionIcon = getDirectionIcon;
+function displayVersion(version) {
+    return version.full
+        + (version.isDev ? '❗' : '');
+}
+exports.displayVersion = displayVersion;
+function displayName(versionDiff) {
+    let modifier = '';
+    if (versionDiff.isRootDevRequirement) {
+        modifier = '_'; // Italic
+    }
+    else if (versionDiff.isRootRequirement) {
+        modifier = '**'; // Bold
+    }
+    return modifier
+        + (versionDiff.extra.link !== undefined ? '[' + versionDiff.name + '](' + versionDiff.extra.link + ')' : versionDiff.name)
+        + (versionDiff.isAbandoned ? ':skull_and_crossbones:' : '')
+        + modifier;
+}
+exports.displayName = displayName;
+
+
+/***/ }),
+
+/***/ 9604:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __asyncValues = (this && this.__asyncValues) || function (o) {
+    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
+    var m = o[Symbol.asyncIterator], i;
+    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
+    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
+    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getFileBetween = exports.getFile = exports.get = void 0;
+const index_1 = __importDefault(__nccwpck_require__(8992));
+function get(ownerName, repoName, path, commitHash) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const { data } = yield index_1.default.rest.repos.getContent({
+                owner: ownerName,
+                repo: repoName,
+                path: path,
+                ref: commitHash,
+            });
+            return data;
+        }
+        catch (e) {
+            if (e.status !== undefined && e.status === 404) {
+                return undefined;
+            }
+            throw e;
+        }
+    });
+}
+exports.get = get;
+function getFile(ownerName, repoName, path, commitHash) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const res = yield get(ownerName, repoName, path, commitHash);
+        if (res === undefined) {
+            return undefined;
+        }
+        const file = res;
+        const contentType = file.type || null;
+        if (contentType !== 'file') {
+            throw new Error(`Expected type="file" but received "${contentType}" !`);
+        }
+        return file;
+    });
+}
+exports.getFile = getFile;
+function getFileBetween(ownerName, repoName, baseSha, headSha, filename) {
+    var _a, e_1, _b, _c;
+    var _d;
+    return __awaiter(this, void 0, void 0, function* () {
+        const pageIterator = index_1.default.paginate.iterator(index_1.default.rest.repos.compareCommitsWithBasehead, {
+            owner: ownerName,
+            repo: repoName,
+            basehead: `${baseSha}...${headSha}`,
+            per_page: 100,
+        });
+        try {
+            for (var _e = true, pageIterator_1 = __asyncValues(pageIterator), pageIterator_1_1; pageIterator_1_1 = yield pageIterator_1.next(), _a = pageIterator_1_1.done, !_a;) {
+                _c = pageIterator_1_1.value;
+                _e = false;
+                try {
+                    const response = _c;
+                    const file = ((_d = response.data.files) === null || _d === void 0 ? void 0 : _d.find(item => item.filename === filename)) || undefined;
+                    if (file !== undefined) {
+                        return file;
+                    }
+                }
+                finally {
+                    _e = true;
+                }
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (!_e && !_a && (_b = pageIterator_1.return)) yield _b.call(pageIterator_1);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        return undefined;
+    });
+}
+exports.getFileBetween = getFileBetween;
+
+
+/***/ }),
+
+/***/ 8992:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const core_1 = __nccwpck_require__(2186);
+const github_1 = __nccwpck_require__(5438);
+const ghToken = (0, core_1.getInput)('gh-token', { required: true, trimWhitespace: true });
+exports["default"] = (0, github_1.getOctokit)(ghToken);
+
+
+/***/ }),
+
+/***/ 145:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __asyncValues = (this && this.__asyncValues) || function (o) {
+    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
+    var m = o[Symbol.asyncIterator], i;
+    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
+    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
+    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.createComment = exports.deleteComment = exports.getLastCommentMatching = exports.getFile = void 0;
+const index_1 = __importDefault(__nccwpck_require__(8992));
+function getFile(ownerName, repoName, prId, filename) {
+    var _a, e_1, _b, _c;
+    return __awaiter(this, void 0, void 0, function* () {
+        const pageIterator = index_1.default.paginate.iterator(index_1.default.rest.pulls.listFiles, {
+            owner: ownerName,
+            repo: repoName,
+            pull_number: prId,
+            per_page: 100,
+        });
+        try {
+            for (var _d = true, pageIterator_1 = __asyncValues(pageIterator), pageIterator_1_1; pageIterator_1_1 = yield pageIterator_1.next(), _a = pageIterator_1_1.done, !_a;) {
+                _c = pageIterator_1_1.value;
+                _d = false;
+                try {
+                    const { data } = _c;
+                    for (const file of data) {
+                        if (file.filename === filename) {
+                            return file;
+                        }
+                    }
+                }
+                finally {
+                    _d = true;
+                }
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (!_d && !_a && (_b = pageIterator_1.return)) yield _b.call(pageIterator_1);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        return undefined;
+    });
+}
+exports.getFile = getFile;
+function getLastCommentMatching(ownerName, repoName, pullNumber, bodyMatch) {
+    var _a, e_2, _b, _c;
+    return __awaiter(this, void 0, void 0, function* () {
+        const pageIterator = index_1.default.paginate.iterator(index_1.default.rest.issues.listComments, {
+            owner: ownerName,
+            repo: repoName,
+            issue_number: pullNumber,
+        });
+        try {
+            for (var _d = true, pageIterator_2 = __asyncValues(pageIterator), pageIterator_2_1; pageIterator_2_1 = yield pageIterator_2.next(), _a = pageIterator_2_1.done, !_a;) {
+                _c = pageIterator_2_1.value;
+                _d = false;
+                try {
+                    const response = _c;
+                    const comment = response.data.find(item => item.body && bodyMatch.test(item.body));
+                    if (comment !== undefined) {
+                        return comment;
+                    }
+                }
+                finally {
+                    _d = true;
+                }
+            }
+        }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        finally {
+            try {
+                if (!_d && !_a && (_b = pageIterator_2.return)) yield _b.call(pageIterator_2);
+            }
+            finally { if (e_2) throw e_2.error; }
+        }
+        return undefined;
+    });
+}
+exports.getLastCommentMatching = getLastCommentMatching;
+function deleteComment(ownerName, repoName, commentId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield index_1.default.rest.issues.deleteComment({
+            owner: ownerName,
+            repo: repoName,
+            comment_id: commentId,
+        });
+    });
+}
+exports.deleteComment = deleteComment;
+function createComment(ownerName, repoName, pullNumber, body) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield index_1.default.rest.issues.createComment({
+            owner: ownerName,
+            repo: repoName,
+            issue_number: pullNumber,
+            body,
+        });
+    });
+}
+exports.createComment = createComment;
+
+
+/***/ }),
+
+/***/ 6144:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const core = __importStar(__nccwpck_require__(2186));
+const core_1 = __nccwpck_require__(2186);
+const github_1 = __nccwpck_require__(5438);
+const logger_1 = __importDefault(__nccwpck_require__(4636));
+const utils_1 = __nccwpck_require__(1314);
+function run() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const repositoryData = github_1.context.payload.repository;
+            if (undefined === repositoryData) {
+                throw new Error("Repository context is undefined !");
+            }
+            const packageManagerType = (0, core_1.getInput)("manager", {
+                required: true,
+                trimWhitespace: true,
+            });
+            const postResults = (0, core_1.getBooleanInput)("post-results", {
+                required: true,
+                trimWhitespace: true,
+            });
+            const force = (0, core_1.getBooleanInput)("force", {
+                required: true,
+                trimWhitespace: true,
+            });
+            const behavior = (0, utils_1.behaviorFactory)(github_1.context.eventName, repositoryData, github_1.context.payload, packageManagerType, postResults, force);
+            const packagesDiff = yield behavior.execute();
+            core.setOutput("diff", packagesDiff);
+        }
+        catch (error) {
+            logger_1.default.error(error instanceof Error ? error : `Unknown error ! ${error}`);
+            core.setFailed("An error occurred ! See log above.");
+        }
+    });
+}
+run();
+
+
+/***/ }),
+
+/***/ 4636:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const core_1 = __nccwpck_require__(2186);
+const logger = {
+    info: core_1.info,
+    error: core_1.error,
+    debug: core_1.debug,
+};
+exports["default"] = logger;
+
+
+/***/ }),
+
+/***/ 1314:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.packageManagerFactory = exports.behaviorFactory = void 0;
+const GithubPRBehavior_1 = __nccwpck_require__(1091);
+const logger_1 = __importDefault(__nccwpck_require__(4636));
+const Composer_1 = __importDefault(__nccwpck_require__(1976));
+const GithubPushBehavior_1 = __nccwpck_require__(9303);
+function behaviorFactory(event_name, repositoryData, webHookPayload, packageManagerType, postResults, force) {
+    switch (event_name) {
+        case 'pull_request':
+            logger_1.default.debug(`Using PR behavior for PR #${webHookPayload.number}`);
+            if (webHookPayload.pull_request === undefined) {
+                throw new Error('Pull Request context is undefined !');
+            }
+            return new GithubPRBehavior_1.GithubPRBehavior(repositoryData.owner.login, repositoryData.name, webHookPayload.pull_request, packageManagerType, postResults, force);
+        case 'push':
+            logger_1.default.debug(`Using push behavior for ref ${webHookPayload.ref}`);
+            if (webHookPayload.before === undefined || webHookPayload.after === undefined) {
+                throw new Error('before and after commit must exist !');
+            }
+            return new GithubPushBehavior_1.GithubPushBehavior(repositoryData.owner.login, repositoryData.name, webHookPayload.before, webHookPayload.after, packageManagerType, postResults, force);
+    }
+    throw new Error('Context type "' + event_name + '" is not supported !');
+}
+exports.behaviorFactory = behaviorFactory;
+function packageManagerFactory(packageManagerType) {
+    switch (packageManagerType) {
+        case 'composer':
+            logger_1.default.debug('Using Composer package manager!');
+            return new Composer_1.default();
+    }
+    throw new Error(`Package manager type "${packageManagerType}" is not supported !`);
+}
+exports.packageManagerFactory = packageManagerFactory;
+
+
+/***/ }),
+
 /***/ 2877:
 /***/ ((module) => {
 
@@ -11611,9 +11611,8 @@ module.exports = JSON.parse('[[[0,44],"disallowed_STD3_valid"],[[45,46],"valid"]
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __nccwpck_require__(9496);
+/******/ 	var __webpack_exports__ = __nccwpck_require__(6144);
 /******/ 	module.exports = __webpack_exports__;
 /******/ 	
 /******/ })()
 ;
-//# sourceMappingURL=index.js.map
