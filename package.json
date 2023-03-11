@@ -10,7 +10,9 @@
   "version": "1.0.0",
   "main": "dist/main.js",
   "scripts": {
-    "package": "ncc build --source-map --license LICENSE"
+    "compile": "rm -rf dist && tsc --newLine lf",
+    "lint": "eslint .",
+    "package": "ncc build --no-cache --source-map --license LICENSE"
   },
   "devDependencies": {
     "@octokit/openapi-types": "^16.0.0",

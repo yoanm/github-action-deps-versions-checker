@@ -8,11 +8,11 @@ install:
 	yarn install
 
 .PHONY: build
-build: install compile
+build: install compile package
 
 .PHONY: compile
 compile:
-	rm -rf dist && node_modules/.bin/tsc
+	npm run compile
 
 .PHONY: package
 package:
@@ -20,7 +20,7 @@ package:
 
 .PHONY: lint
 lint:
-	node_modules/.bin/eslint .
+	npm run lint
 
 .PHONY: test
 test:
