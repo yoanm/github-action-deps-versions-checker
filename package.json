@@ -16,7 +16,7 @@
     "@octokit/openapi-types": "^14.0.0",
     "@octokit/types": "^8.0.0",
     "@octokit/webhooks-definitions": "^3.67.3",
-    "@types/node": "^18.11.18",
+    "@types/node": "^18.15.0",
     "@typescript-eslint/parser": "^5.48.0",
     "@vercel/ncc": "^0.31.1",
     "eslint": "^8.31.0",
