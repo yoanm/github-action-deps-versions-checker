@@ -13,7 +13,7 @@
     "package": "ncc build --source-map --license LICENSE"
   },
   "devDependencies": {
-    "@octokit/openapi-types": "^14.0.0",
+    "@octokit/openapi-types": "^16.0.0",
     "@octokit/types": "^8.0.0",
     "@octokit/webhooks-definitions": "^3.67.3",
     "@types/node": "^18.15.11",
