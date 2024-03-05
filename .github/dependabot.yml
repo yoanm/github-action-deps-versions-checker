@@ -13,20 +13,19 @@ updates:
     schedule:
       interval: 'monthly'
     groups:
-        npm-prod-patch:
+        npm-prod-major:
           dependency-type: "production"
-          update-types: ["patch"]
+          update-types: ["major"]
         npm-prod-minor:
           dependency-type: "production"
           update-types: ["minor"]
         npm-prod-others:
           dependency-type: "production"
-        npm-dev-patch:
+        npm-dev-major:
           dependency-type: "development"
-          update-types: ["patch"]
+          update-types: ["major"]
         npm-dev-minor:
           dependency-type: "development"
           update-types: ["minor"]
         npm-dev-others:
           dependency-type: "development"
-
