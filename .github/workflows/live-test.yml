@@ -21,14 +21,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout current code"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Retrieve node version for the action
         id: node_version
         run: |
           make get-action-nodejs-version
           echo "::set-output name=version::$(make get-action-nodejs-version)"
       - name: Configure NodeJs version
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: '${{ steps.node_version.outputs.version }}'
       - name: "Execute action for composer"
