@@ -6,26 +6,26 @@ updates:
       interval: 'monthly'
     groups:
       all-actions:
-        patterns: [ "*" ]
+        patterns: ["*"]
   - package-ecosystem: 'npm'
     # Look for `package.json` and `lock` files in the `root` directory
     directory: '/'
     schedule:
       interval: 'monthly'
     groups:
-        npm-prod-major:
-          dependency-type: "production"
-          update-types: ["major"]
-        npm-prod-minor:
-          dependency-type: "production"
-          update-types: ["minor"]
-        npm-prod-others:
-          dependency-type: "production"
-        npm-dev-major:
-          dependency-type: "development"
-          update-types: ["major"]
-        npm-dev-minor:
-          dependency-type: "development"
-          update-types: ["minor"]
-        npm-dev-others:
-          dependency-type: "development"
+      npm-prod-major:
+        dependency-type: "production"
+        update-types: ["major"]
+      npm-prod-minor:
+        dependency-type: "production"
+        update-types: ["minor"]
+      npm-prod-others:
+        dependency-type: "production"
+      npm-dev-major:
+        dependency-type: "development"
+        update-types: ["major"]
+      npm-dev-minor:
+        dependency-type: "development"
+        update-types: ["minor"]
+      npm-dev-others:
+        dependency-type: "development"
