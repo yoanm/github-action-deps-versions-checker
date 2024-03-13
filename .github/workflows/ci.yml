@@ -18,18 +18,29 @@ jobs:
     steps:
       - name: "Checkout"
         uses: actions/checkout@v4
+
       - name: Retrieve node version for the action
         id: node_version
         run: |
           make get-action-nodejs-version
           echo "version=$(make get-action-nodejs-version)" >> $GITHUB_OUTPUT
+
       - name: Configure NodeJs version
         uses: actions/setup-node@v4
         with:
           node-version: '${{ steps.node_version.outputs.version }}'
+
       - name: "Build "
         run: make build && make package
+
       - name: "Detect forgotten compilation before push"
-        run: test -z "$(git diff --name-only dist/)"
+        run: |
+          if test -z "$(git diff --name-only dist/)"; then
+            echo "JS files up-to-date 👌";
+            exit 0;
+          fi
+          echo "::error::JS files are outdated ! Run 'nvm use && make build && make package && git add dist && git commit -m \"Re-compile TS files\"'.";
+          exit 1;
+
       - name: "Lint"
         run: make lint
