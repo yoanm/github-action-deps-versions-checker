@@ -10,7 +10,7 @@ on:
     # The branches below must be a subset of the branches above
     branches: [ master ]
   schedule:
-    - cron: '33 15 * * 1'
+    - cron: '28 2 1 * *' # Once by month (randomly picked time !)
 
 concurrency:
   group: "CodeQl-${{ github.head_ref }}"
