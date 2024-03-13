@@ -8,8 +8,9 @@ updates:
 #
   - package-ecosystem: "github-actions"
     directory: "/"
-    schedule:
-      interval: 'monthly'
+    schedule: # Create PRs during week-ends, they will be ready on monday morning
+      interval: 'weekly'
+      day: 'sunday'
     commit-message:
       prefix: "[dependabot][ghaction] - " # No need to specify prod/dev for GHAction as there is only "production" updates !
       include: "scope"
@@ -32,8 +33,9 @@ updates:
 #
   - package-ecosystem: 'npm'
     directory: '/'
-    schedule:
-      interval: 'monthly'
+    schedule: # Create PRs during week-ends, they will be ready on monday morning
+      interval: 'weekly'
+      day: 'sunday'
     versioning-strategy: "increase"
     commit-message:
       prefix: "[dependabot][prod][npm] - "
