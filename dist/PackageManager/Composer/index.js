@@ -57,7 +57,7 @@ class Composer extends index_1.default {
             return {
                 // Append the commit ref (only the first 7 chars (=short ref))
                 full: lockPackage.version + '#' + lockPackage.dist.reference.substr(0, 7),
-                isDev: true,
+                isDev: true, // Commit version are always dev version (else it's a tag)
                 type: 'COMMIT',
                 commit: lockPackage.dist.reference
             };

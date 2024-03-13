@@ -17,8 +17,8 @@ class GithubFileManager {
         this.repositoryOwner = repositoryOwner;
         this.repositoryName = repositoryName;
     }
-    getPRFile(filename, prNumber, fileStatusFilter = undefined) {
-        return __awaiter(this, void 0, void 0, function* () {
+    getPRFile(filename_1, prNumber_1) {
+        return __awaiter(this, arguments, void 0, function* (filename, prNumber, fileStatusFilter = undefined) {
             const file = yield (0, pulls_1.getFile)(this.repositoryOwner, this.repositoryName, prNumber, filename);
             if (!file || !fileStatusFilter) {
                 return file;
@@ -26,8 +26,8 @@ class GithubFileManager {
             return (yield this.filterFiles(filename, [file], fileStatusFilter)).pop();
         });
     }
-    getFileBetween(filename, baseSha, headSha, fileStatusFilter = undefined) {
-        return __awaiter(this, void 0, void 0, function* () {
+    getFileBetween(filename_1, baseSha_1, headSha_1) {
+        return __awaiter(this, arguments, void 0, function* (filename, baseSha, headSha, fileStatusFilter = undefined) {
             const file = yield (0, contents_1.getFileBetween)(this.repositoryOwner, this.repositoryName, baseSha, headSha, filename);
             if (!file || !fileStatusFilter) {
                 return file;
@@ -35,8 +35,8 @@ class GithubFileManager {
             return (yield this.filterFiles(filename, [file], fileStatusFilter)).pop();
         });
     }
-    filterFiles(filename, fileList, fileStatusFilter = undefined) {
-        return __awaiter(this, void 0, void 0, function* () {
+    filterFiles(filename_1, fileList_1) {
+        return __awaiter(this, arguments, void 0, function* (filename, fileList, fileStatusFilter = undefined) {
             const result = [];
             for (const file of fileList) {
                 if (filename === file.filename && fileStatusFilter ? fileStatusFilter.includes(file.status) : true) {
