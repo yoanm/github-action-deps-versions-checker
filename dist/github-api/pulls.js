@@ -22,8 +22,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createComment = exports.deleteComment = exports.getLastCommentMatching = exports.getFile = void 0;
 const index_1 = __importDefault(require("./index"));
 function getFile(ownerName, repoName, prId, filename) {
-    var _a, e_1, _b, _c;
     return __awaiter(this, void 0, void 0, function* () {
+        var _a, e_1, _b, _c;
         const pageIterator = index_1.default.paginate.iterator(index_1.default.rest.pulls.listFiles, {
             owner: ownerName,
             repo: repoName,
@@ -31,19 +31,14 @@ function getFile(ownerName, repoName, prId, filename) {
             per_page: 100,
         });
         try {
-            for (var _d = true, pageIterator_1 = __asyncValues(pageIterator), pageIterator_1_1; pageIterator_1_1 = yield pageIterator_1.next(), _a = pageIterator_1_1.done, !_a;) {
+            for (var _d = true, pageIterator_1 = __asyncValues(pageIterator), pageIterator_1_1; pageIterator_1_1 = yield pageIterator_1.next(), _a = pageIterator_1_1.done, !_a; _d = true) {
                 _c = pageIterator_1_1.value;
                 _d = false;
-                try {
-                    const { data } = _c;
-                    for (const file of data) {
-                        if (file.filename === filename) {
-                            return file;
-                        }
+                const { data } = _c;
+                for (const file of data) {
+                    if (file.filename === filename) {
+                        return file;
                     }
-                }
-                finally {
-                    _d = true;
                 }
             }
         }
@@ -59,26 +54,21 @@ function getFile(ownerName, repoName, prId, filename) {
 }
 exports.getFile = getFile;
 function getLastCommentMatching(ownerName, repoName, pullNumber, bodyMatch) {
-    var _a, e_2, _b, _c;
     return __awaiter(this, void 0, void 0, function* () {
+        var _a, e_2, _b, _c;
         const pageIterator = index_1.default.paginate.iterator(index_1.default.rest.issues.listComments, {
             owner: ownerName,
             repo: repoName,
             issue_number: pullNumber,
         });
         try {
-            for (var _d = true, pageIterator_2 = __asyncValues(pageIterator), pageIterator_2_1; pageIterator_2_1 = yield pageIterator_2.next(), _a = pageIterator_2_1.done, !_a;) {
+            for (var _d = true, pageIterator_2 = __asyncValues(pageIterator), pageIterator_2_1; pageIterator_2_1 = yield pageIterator_2.next(), _a = pageIterator_2_1.done, !_a; _d = true) {
                 _c = pageIterator_2_1.value;
                 _d = false;
-                try {
-                    const response = _c;
-                    const comment = response.data.find(item => item.body && bodyMatch.test(item.body));
-                    if (comment !== undefined) {
-                        return comment;
-                    }
-                }
-                finally {
-                    _d = true;
+                const response = _c;
+                const comment = response.data.find(item => item.body && bodyMatch.test(item.body));
+                if (comment !== undefined) {
+                    return comment;
                 }
             }
         }

@@ -57,9 +57,9 @@ function getFile(ownerName, repoName, path, commitHash) {
 }
 exports.getFile = getFile;
 function getFileBetween(ownerName, repoName, baseSha, headSha, filename) {
-    var _a, e_1, _b, _c;
-    var _d;
     return __awaiter(this, void 0, void 0, function* () {
+        var _a, e_1, _b, _c;
+        var _d;
         const pageIterator = index_1.default.paginate.iterator(index_1.default.rest.repos.compareCommitsWithBasehead, {
             owner: ownerName,
             repo: repoName,
@@ -67,18 +67,13 @@ function getFileBetween(ownerName, repoName, baseSha, headSha, filename) {
             per_page: 100,
         });
         try {
-            for (var _e = true, pageIterator_1 = __asyncValues(pageIterator), pageIterator_1_1; pageIterator_1_1 = yield pageIterator_1.next(), _a = pageIterator_1_1.done, !_a;) {
+            for (var _e = true, pageIterator_1 = __asyncValues(pageIterator), pageIterator_1_1; pageIterator_1_1 = yield pageIterator_1.next(), _a = pageIterator_1_1.done, !_a; _e = true) {
                 _c = pageIterator_1_1.value;
                 _e = false;
-                try {
-                    const response = _c;
-                    const file = ((_d = response.data.files) === null || _d === void 0 ? void 0 : _d.find(item => item.filename === filename)) || undefined;
-                    if (file !== undefined) {
-                        return file;
-                    }
-                }
-                finally {
-                    _e = true;
+                const response = _c;
+                const file = ((_d = response.data.files) === null || _d === void 0 ? void 0 : _d.find(item => item.filename === filename)) || undefined;
+                if (file !== undefined) {
+                    return file;
                 }
             }
         }

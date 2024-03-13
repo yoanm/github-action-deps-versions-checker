@@ -49,8 +49,8 @@ class GithubPRCommentManager {
         this.postResults = postResults;
     }
     getPrevious() {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             if (this.previousComment === null) {
                 this.previousComment = undefined;
                 if (this.postResults) {
@@ -68,8 +68,8 @@ class GithubPRCommentManager {
         });
     }
     createNewIfNeeded(commitSha, packagesDiff) {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
             if (!this.postResults) {
                 return;
             }
