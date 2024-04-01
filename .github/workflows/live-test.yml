@@ -8,8 +8,8 @@ on: # rebuild any PRs and main branch changes
     branches: [ master ]
 #    tags:
 #      - v*
-  schedule:
-    - cron: '36 9 1 * *'
+#  schedule:
+#    - cron: '36 9 1 * *'
 
 concurrency:
   group: "Live-test-${{ github.head_ref }}"
