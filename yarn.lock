@@ -162,6 +162,11 @@
   resolved "https://registry.yarnpkg.com/@octokit/openapi-types/-/openapi-types-20.0.0.tgz#9ec2daa0090eeb865ee147636e0c00f73790c6e5"
   integrity sha512-EtqRBEjp1dL/15V7WiX5LJMIxxkdiGJnabzYx5Apx4FkQIFgAfKumXeYAqqJCj1s+BMX4cPFIFC4OLCR6stlnA==
 
+"@octokit/openapi-types@^21.0.0":
+  version "21.2.0"
+  resolved "https://registry.yarnpkg.com/@octokit/openapi-types/-/openapi-types-21.2.0.tgz#d699a060dd6814fae4e5b601a5d530b6edd94136"
+  integrity sha512-xx+Xd6I7rYvul/hgUDqv6TeGX0IOGnhSg9IOeYgd/uI7IAqUy6DE2B6Ipv2M4mWoxaMcWjIzgTIcv8pMO3F3vw==
+
 "@octokit/plugin-paginate-rest@^9.0.0":
   version "9.2.1"
   resolved "https://registry.yarnpkg.com/@octokit/plugin-paginate-rest/-/plugin-paginate-rest-9.2.1.tgz#2e2a2f0f52c9a4b1da1a3aa17dabe3c459b9e401"
@@ -176,12 +181,12 @@
   dependencies:
     "@octokit/types" "^12.6.0"
 
-"@octokit/plugin-rest-endpoint-methods@^11.0.1":
-  version "11.0.1"
-  resolved "https://registry.yarnpkg.com/@octokit/plugin-rest-endpoint-methods/-/plugin-rest-endpoint-methods-11.0.1.tgz#fd03b00c015da8fc95d0ccded65a78fca9e8cd2a"
-  integrity sha512-OcuMW0Ftkhad14vPfE0pK7uQK9qzvIZUvcMy71GZOAqlE39hvPwOUz4ylCPgr4YUVdFUc7bY8SjdcG1r8dVGDA==
+"@octokit/plugin-rest-endpoint-methods@^12.2.0":
+  version "12.2.0"
+  resolved "https://registry.yarnpkg.com/@octokit/plugin-rest-endpoint-methods/-/plugin-rest-endpoint-methods-12.2.0.tgz#dca25f24e2b6ae4cca8614f58867609a4286e21e"
+  integrity sha512-pedYlTRKpOVfdhRynGlvdlc5otxlKRveWQFsDWeyM+nuyYYKyTxUfLGCRBgfg3DJrCCtnUIvwhFEBsDTnGiz6A==
   dependencies:
-    "@octokit/types" "^12.6.0"
+    "@octokit/types" "^13.1.0"
 
 "@octokit/request-error@^5.0.0":
   version "5.0.1"
@@ -208,6 +213,13 @@
   integrity sha512-1rhSOfRa6H9w4YwK0yrf5faDaDTb+yLyBUKOCV4xtCDB5VmIPqd/v9yr9o6SAzOAlRxMiRiCic6JVM1/kunVkw==
   dependencies:
     "@octokit/openapi-types" "^20.0.0"
+
+"@octokit/types@^13.1.0":
+  version "13.1.0"
+  resolved "https://registry.yarnpkg.com/@octokit/types/-/types-13.1.0.tgz#d99ec2996eb617a484120d706b5ce96905cb1fb0"
+  integrity sha512-nBwAFOYqVUUJ2AZFK4ZzESQptaAVqdTDKk8gE0Xr0o99WuPDSrhUC38x0F40xD9OUxXhOOuZKWNNVVLPSHQDvQ==
+  dependencies:
+    "@octokit/openapi-types" "^21.0.0"
 
 "@octokit/webhooks-definitions@^3.67.3":
   version "3.67.3"
