@@ -22,7 +22,7 @@
     "eslint": "^9.21.0",
     "eslint-plugin-github": "^5.1.8",
     "eslint-plugin-jest": "^28.11.0",
-    "typescript": "^5.4.3"
+    "typescript": "^5.8.2"
   },
   "repository": {
     "type": "git",
