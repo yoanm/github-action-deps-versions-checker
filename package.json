@@ -13,16 +13,16 @@
     "package": "ncc build --source-map --license LICENSE"
   },
   "devDependencies": {
-    "@octokit/openapi-types": "^24.0.0",
-    "@octokit/types": "^13.8.0",
+    "@octokit/openapi-types": "^24.2.0",
+    "@octokit/types": "^13.10.0",
     "@octokit/webhooks-definitions": "^3.67.3",
     "@types/node": "^22",
-    "@typescript-eslint/parser": "^8.25.0",
+    "@typescript-eslint/parser": "^8.29.0",
     "@vercel/ncc": "^0.38.1",
-    "eslint": "^9.21.0",
+    "eslint": "^9.24.0",
     "eslint-plugin-github": "^5.1.8",
     "eslint-plugin-jest": "^28.11.0",
-    "typescript": "^5.4.3"
+    "typescript": "^5.8.3"
   },
   "repository": {
     "type": "git",
