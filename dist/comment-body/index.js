@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.commentPkgTypeFactory = exports.COMMENT_COMMIT_REGEXP = exports.COMMENT_HEADER = void 0;
+exports.default = createBody;
 const sections_1 = require("./sections");
 const utils_1 = require("./utils");
 exports.COMMENT_HEADER = '<!-- packagesVersionsChecker -->';
@@ -32,7 +33,6 @@ function createBody(packageManagerType, commit, packagesDiff) {
         + (0, sections_1.createUnknownBody)(unknownPackageDiffList)
         + (0, sections_1.createCaptionBody)();
 }
-exports.default = createBody;
 function getPackageManagerName(packageManagerType) {
     switch (packageManagerType) {
         case 'composer':

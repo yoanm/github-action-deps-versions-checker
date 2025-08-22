@@ -19,7 +19,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getFileBetween = exports.getFile = exports.get = void 0;
+exports.get = get;
+exports.getFile = getFile;
+exports.getFileBetween = getFileBetween;
 const index_1 = __importDefault(require("./index"));
 function get(ownerName, repoName, path, commitHash) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -40,7 +42,6 @@ function get(ownerName, repoName, path, commitHash) {
         }
     });
 }
-exports.get = get;
 function getFile(ownerName, repoName, path, commitHash) {
     return __awaiter(this, void 0, void 0, function* () {
         const res = yield get(ownerName, repoName, path, commitHash);
@@ -55,7 +56,6 @@ function getFile(ownerName, repoName, path, commitHash) {
         return file;
     });
 }
-exports.getFile = getFile;
 function getFileBetween(ownerName, repoName, baseSha, headSha, filename) {
     return __awaiter(this, void 0, void 0, function* () {
         var _a, e_1, _b, _c;
@@ -87,4 +87,3 @@ function getFileBetween(ownerName, repoName, baseSha, headSha, filename) {
         return undefined;
     });
 }
-exports.getFileBetween = getFileBetween;
