@@ -1,6 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createCaptionBody = exports.createUnknownBody = exports.createAddedAndRemovedBody = exports.createPatchVersionUpdatesBody = exports.createMinorVersionUpdatesBody = exports.createRiskyUpdatesBody = void 0;
+exports.createRiskyUpdatesBody = createRiskyUpdatesBody;
+exports.createMinorVersionUpdatesBody = createMinorVersionUpdatesBody;
+exports.createPatchVersionUpdatesBody = createPatchVersionUpdatesBody;
+exports.createAddedAndRemovedBody = createAddedAndRemovedBody;
+exports.createUnknownBody = createUnknownBody;
+exports.createCaptionBody = createCaptionBody;
 const utils_1 = require("./utils");
 function sortByPkgName(list) {
     return list.sort((a, b) => a.name.localeCompare(b.name));
@@ -20,7 +25,6 @@ function createRiskyUpdatesBody(packagesDiff) {
         (0, utils_1.displayVersion)(item.current)
     ]);
 }
-exports.createRiskyUpdatesBody = createRiskyUpdatesBody;
 function createMinorVersionUpdatesBody(packagesDiff) {
     const list = sortByPkgName(packagesDiff.filter(item => 'MINOR' === item.update.subType));
     if (0 === list.length) {
@@ -33,7 +37,6 @@ function createMinorVersionUpdatesBody(packagesDiff) {
         (0, utils_1.displayVersion)(item.current)
     ]);
 }
-exports.createMinorVersionUpdatesBody = createMinorVersionUpdatesBody;
 function createPatchVersionUpdatesBody(packagesDiff) {
     const list = sortByPkgName(packagesDiff.filter(item => 'PATCH' === item.update.subType));
     if (0 === list.length) {
@@ -46,7 +49,6 @@ function createPatchVersionUpdatesBody(packagesDiff) {
         (0, utils_1.displayVersion)(item.current)
     ]);
 }
-exports.createPatchVersionUpdatesBody = createPatchVersionUpdatesBody;
 function createAddedAndRemovedBody(packagesDiff) {
     if (0 === packagesDiff.length) {
         return '';
@@ -60,14 +62,12 @@ function createAddedAndRemovedBody(packagesDiff) {
         return ['➖', (0, utils_1.displayName)(item), (0, utils_1.displayVersion)(item.previous)];
     });
 }
-exports.createAddedAndRemovedBody = createAddedAndRemovedBody;
 function createUnknownBody(packagesDiff) {
     if (0 === packagesDiff.length) {
         return '';
     }
     return (0, utils_1.createDiffTableBody)([packagesDiff], `${packagesDiff.length} unknown operation${packagesDiff.length > 1 ? 's' : ''}`, ['Name'], [':---'], item => [(0, utils_1.displayName)(item)]);
 }
-exports.createUnknownBody = createUnknownBody;
 function createCaptionBody() {
     return '\n'
         + '\n'
@@ -104,4 +104,3 @@ function createCaptionBody() {
         + '</details>\n'
         + '\n';
 }
-exports.createCaptionBody = createCaptionBody;

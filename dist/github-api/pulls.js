@@ -19,7 +19,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createComment = exports.deleteComment = exports.getLastCommentMatching = exports.getFile = void 0;
+exports.getFile = getFile;
+exports.getLastCommentMatching = getLastCommentMatching;
+exports.deleteComment = deleteComment;
+exports.createComment = createComment;
 const index_1 = __importDefault(require("./index"));
 function getFile(ownerName, repoName, prId, filename) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -52,7 +55,6 @@ function getFile(ownerName, repoName, prId, filename) {
         return undefined;
     });
 }
-exports.getFile = getFile;
 function getLastCommentMatching(ownerName, repoName, pullNumber, bodyMatch) {
     return __awaiter(this, void 0, void 0, function* () {
         var _a, e_2, _b, _c;
@@ -82,7 +84,6 @@ function getLastCommentMatching(ownerName, repoName, pullNumber, bodyMatch) {
         return undefined;
     });
 }
-exports.getLastCommentMatching = getLastCommentMatching;
 function deleteComment(ownerName, repoName, commentId) {
     return __awaiter(this, void 0, void 0, function* () {
         yield index_1.default.rest.issues.deleteComment({
@@ -92,7 +93,6 @@ function deleteComment(ownerName, repoName, commentId) {
         });
     });
 }
-exports.deleteComment = deleteComment;
 function createComment(ownerName, repoName, pullNumber, body) {
     return __awaiter(this, void 0, void 0, function* () {
         yield index_1.default.rest.issues.createComment({
@@ -103,4 +103,3 @@ function createComment(ownerName, repoName, pullNumber, body) {
         });
     });
 }
-exports.createComment = createComment;

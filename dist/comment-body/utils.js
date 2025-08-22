@@ -1,6 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.displayName = exports.displayVersion = exports.getDirectionIcon = exports.createDiffTableBody = exports.isDiffTypeFilter = void 0;
+exports.isDiffTypeFilter = isDiffTypeFilter;
+exports.createDiffTableBody = createDiffTableBody;
+exports.getDirectionIcon = getDirectionIcon;
+exports.displayVersion = displayVersion;
+exports.displayName = displayName;
 /**
  * Will return a function used to retrieve only T type objects
  */
@@ -9,7 +13,6 @@ function isDiffTypeFilter(updateType) {
         return item.update.type === updateType;
     };
 }
-exports.isDiffTypeFilter = isDiffTypeFilter;
 function createDiffTableBody(packageDiffListList, header, columnList, separatorList, rowDataProvider) {
     return '## ' + header + '\n'
         + '| ' + columnList.join(' | ') + ' |\n'
@@ -19,7 +22,6 @@ function createDiffTableBody(packageDiffListList, header, columnList, separatorL
             .join('\n') + '\n'
         + '\n';
 }
-exports.createDiffTableBody = createDiffTableBody;
 function getDirectionIcon(version) {
     if ('UPDATED' === version.update.type) {
         switch (version.update.direction) {
@@ -38,12 +40,10 @@ function getDirectionIcon(version) {
     }
     return '⁉️️️️';
 }
-exports.getDirectionIcon = getDirectionIcon;
 function displayVersion(version) {
     return version.full
         + (version.isDev ? '❗' : '');
 }
-exports.displayVersion = displayVersion;
 function displayName(versionDiff) {
     let modifier = '';
     if (versionDiff.isRootDevRequirement) {
@@ -57,4 +57,3 @@ function displayName(versionDiff) {
         + (versionDiff.isAbandoned ? ':skull_and_crossbones:' : '')
         + modifier;
 }
-exports.displayName = displayName;
