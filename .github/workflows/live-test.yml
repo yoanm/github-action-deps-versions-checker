@@ -28,7 +28,7 @@ jobs:
           make get-action-nodejs-version
           echo "::set-output name=version::$(make get-action-nodejs-version)"
       - name: Configure NodeJs version
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version: '${{ steps.node_version.outputs.version }}'
       - name: "Execute action for composer"
